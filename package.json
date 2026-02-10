@@ -17,6 +17,7 @@
         "@arikajs/cli": "file:../cli",
         "@arikajs/console": "file:../console",
         "@arikajs/dispatcher": "file:../dispatcher",
+        "@arikajs/encryption": "file:../encryption",
         "@arikajs/events": "file:../events",
         "@arikajs/foundation": "file:../foundation",
         "@arikajs/http": "file:../http",

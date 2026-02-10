@@ -10,7 +10,7 @@ export class Application extends FoundationApplication {
         super(basePath);
 
         // Initialize Core Components
-        this.router = new Router();
+        this.router = new Router(this.getContainer());
 
         // Register within container
         this.instance(Router, this.router);
@@ -55,10 +55,52 @@ export class Application extends FoundationApplication {
             await this.boot();
         }
 
-        console.log(`ArikaJS application listening on http://localhost:${port}`);
+        const http = await import('node:http');
+        const { Request, Response, Pipeline } = await import('@arikajs/http');
+        // @ts-ignore
+        const { BodyParserMiddleware } = await import('@arikajs/http/dist/Middleware/BodyParserMiddleware');
 
-        // This is a placeholder for actual server start logic
-        // which would involve @arikajs/http and @arikajs/dispatcher
+        const server = http.createServer(async (req, res) => {
+            const request = new Request(this, req);
+            const response = new Response(res);
+
+            try {
+                // Setup middleware pipeline
+                const pipeline = new Pipeline();
+
+                // Add default body parser
+                pipeline.pipe(new BodyParserMiddleware());
+
+                // Execute pipeline
+                const finalResponse = await pipeline.handle(request, async (req) => {
+                    const result = await this.router.dispatch(req);
+
+                    if (result instanceof Response) {
+                        return result;
+                    }
+
+                    if (typeof result === 'object' && result !== null) {
+                        return response.json(result);
+                    }
+
+                    return response.send(String(result || ''));
+                });
+
+                finalResponse.terminate();
+            } catch (error: any) {
+                if (!res.headersSent) {
+                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Internal Server Error', message: error.message }));
+                }
+            }
+        });
+
+        return new Promise<void>((resolve) => {
+            server.listen(port, () => {
+                console.log(`ArikaJS application listening on http://localhost:${port}`);
+                resolve();
+            });
+        });
     }
 
     /**
