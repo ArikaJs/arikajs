@@ -16,6 +16,7 @@
         "@arikajs/cache": "file:../cache",
         "@arikajs/cli": "file:../cli",
         "@arikajs/console": "file:../console",
+        "@arikajs/database": "file:../database",
         "@arikajs/dispatcher": "file:../dispatcher",
         "@arikajs/encryption": "file:../encryption",
         "@arikajs/events": "file:../events",
