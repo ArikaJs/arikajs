@@ -22,6 +22,7 @@ describe('ArikaJS Framework', () => {
 
     it('boots correctly', async () => {
         const app = createApp();
+        app.config().set('app.key', 'base64:sm957Y1wUYo8Uj8yL1fD7vX+X6y8gG+E6XpXnJz+I=');
         await app.boot();
         assert.ok(app.isBooted());
     });

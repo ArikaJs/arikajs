@@ -1,6 +1,6 @@
 import { ServiceProvider } from '@arikajs/foundation';
 import { Encrypter } from '@arikajs/encryption';
-import { LoggingServiceProvider } from '@arikajs/logging';
+import { LoggingServiceProvider } from './LoggingServiceProvider';
 
 export class FrameworkServiceProvider extends ServiceProvider {
     public async register() {
