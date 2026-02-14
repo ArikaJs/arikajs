@@ -4,6 +4,7 @@ import { Pipeline } from '@arikajs/middleware';
 import { Dispatcher } from '@arikajs/dispatcher';
 import { RequestLoggingMiddleware } from './Middleware/RequestLoggingMiddleware';
 import { BodyParserMiddleware } from '@arikajs/http';
+import { Handler } from './Handler';
 
 export class Kernel {
     /**
@@ -14,17 +15,26 @@ export class Kernel {
         new BodyParserMiddleware(),
     ];
 
-    constructor(protected app: Application) { }
+    protected handler: Handler;
+
+    constructor(protected app: Application) {
+        this.handler = new Handler();
+    }
 
     /**
      * Handle an incoming HTTP request.
      */
     public async handle(request: Request, response: Response): Promise<Response> {
-        return await (new Pipeline<Request, Response>(this.app.getContainer()))
-            .pipe(this.middleware)
-            .handle(request, async (req: Request) => {
-                return this.dispatchToRouter(req, response);
-            });
+        try {
+            return await (new Pipeline<Request, Response>(this.app.getContainer()))
+                .pipe(this.middleware)
+                .handle(request, async (req: Request) => {
+                    return this.dispatchToRouter(req, response);
+                }, response);
+        } catch (error: any) {
+            this.handler.report(error);
+            return this.handler.render(request, error, response);
+        }
     }
 
     /**

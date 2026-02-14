@@ -1,11 +1,15 @@
 import { ServiceProvider } from '@arikajs/foundation';
 import { Encrypter } from '@arikajs/encryption';
 import { LoggingServiceProvider } from './LoggingServiceProvider';
+import { AuthServiceProvider } from './AuthServiceProvider';
+import { ValidationServiceProvider } from './ValidationServiceProvider';
 
 export class FrameworkServiceProvider extends ServiceProvider {
     public async register() {
-        // Register Logging Service
+        // Register Core Services
         await this.app.register(LoggingServiceProvider);
+        await this.app.register(AuthServiceProvider);
+        await this.app.register(ValidationServiceProvider);
 
         // Register framework specific services
         this.app.singleton('encrypter', () => {
