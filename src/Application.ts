@@ -2,8 +2,9 @@ import { Application as FoundationApplication } from '@arikajs/foundation';
 import { Router, Route } from '@arikajs/router';
 import { FrameworkServiceProvider } from './providers/FrameworkServiceProvider';
 import { Log } from '@arikajs/logging';
+import { Application as ApplicationContract } from './Contracts/Application';
 
-export class Application extends FoundationApplication {
+export class Application extends FoundationApplication implements ApplicationContract {
     protected router: Router;
 
     constructor(basePath: string = process.cwd()) {
@@ -65,7 +66,7 @@ export class Application extends FoundationApplication {
         const server = http.createServer(async (req, res) => {
             // Instantiate Request and Response
             // In a future refactor, these could also be resolved from factories
-            const request = new Request(this as any, req);
+            const request = new Request(this, req);
             const response = new Response(res);
 
             try {

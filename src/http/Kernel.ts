@@ -1,5 +1,5 @@
-import { Application } from '../Application';
-import { Request, Response } from '@arikajs/http';
+import { Application } from '../Contracts/Application';
+import { Request, Response, NotFoundHttpException } from '@arikajs/http';
 import { Pipeline } from '@arikajs/middleware';
 import { Dispatcher } from '@arikajs/dispatcher';
 import { RequestLoggingMiddleware } from './Middleware/RequestLoggingMiddleware';
@@ -19,7 +19,11 @@ export class Kernel {
     protected handler: Handler;
 
     constructor(protected app: Application) {
-        this.handler = new Handler();
+        try {
+            this.handler = this.app.make(Handler);
+        } catch (e) {
+            this.handler = new Handler();
+        }
     }
 
     /**
@@ -46,7 +50,7 @@ export class Kernel {
         const matched = router.match(request.method(), request.path());
 
         if (!matched) {
-            return response.status(404).json({ error: 'Route not found' });
+            throw new NotFoundHttpException(`Route not found: [${request.method()}] ${request.path()}`);
         }
 
         const dispatcher = new Dispatcher(this.app.getContainer());
