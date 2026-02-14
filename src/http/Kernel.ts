@@ -44,8 +44,11 @@ export class Kernel {
      */
     public async handle(request: Request, response: Response): Promise<Response> {
         try {
-            return await (new Pipeline<Request, Response>(this.app.getContainer()))
-                .pipe(this.middleware)
+            const pipeline = new Pipeline<Request, Response>(this.app.getContainer());
+            pipeline.setMiddlewareGroups(this.middlewareGroups);
+            pipeline.setAliases(this.routeMiddleware);
+
+            return await pipeline.pipe(this.middleware)
                 .handle(request, async (req: Request) => {
                     return this.dispatchToRouter(req, response);
                 }, response);
