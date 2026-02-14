@@ -95,4 +95,26 @@ describe('ArikaJS Framework', () => {
         assert.strictEqual(mockRes.headers['Access-Control-Allow-Origin'], '*');
         assert.strictEqual(mockRes.headers['Access-Control-Allow-Methods'], 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     });
+
+    it('initializes the database manager and facade', async () => {
+        const app = createApp();
+        app.config().set('app.key', 'base64:sm957Y1wUYo8Uj8yL1fD7vX+X6y8gG+E6XpXnJz+I=');
+        app.config().set('database', {
+            default: 'sqlite',
+            connections: {
+                sqlite: {
+                    driver: 'sqlite',
+                    database: ':memory:'
+                }
+            }
+        });
+
+        await app.boot();
+
+        const { DatabaseManager, Database } = await import('@arikajs/database');
+
+        const manager = app.make(DatabaseManager);
+        assert.ok(manager instanceof DatabaseManager);
+        assert.strictEqual(manager, Database.getManager());
+    });
 });
