@@ -3,7 +3,7 @@ import { Request, Response } from '@arikajs/http';
 import { Pipeline } from '@arikajs/middleware';
 import { Dispatcher } from '@arikajs/dispatcher';
 import { RequestLoggingMiddleware } from './Middleware/RequestLoggingMiddleware';
-import { BodyParserMiddleware } from '@arikajs/http';
+import { BodyParserMiddleware, CorsMiddleware } from '@arikajs/http';
 import { Handler } from './Handler';
 
 export class Kernel {
@@ -11,6 +11,7 @@ export class Kernel {
      * The application's global HTTP middleware stack.
      */
     protected middleware: any[] = [
+        new CorsMiddleware(),
         new RequestLoggingMiddleware(),
         new BodyParserMiddleware(),
     ];

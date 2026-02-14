@@ -94,7 +94,8 @@ The framework layer is responsible for:
 
 - Creating the Application instance
 - Registering all core service providers
-- Booting the HTTP kernel
+- Booting the HTTP kernel with Global Middleware
+- Handling global exceptions and standardized JSON errors
 - Linking router → dispatcher → middleware
 - Managing request → response lifecycle
 - Exposing a stable developer API
