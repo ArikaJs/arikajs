@@ -1,6 +1,7 @@
 
 import { ServiceProvider } from '@arikajs/foundation';
-import { HttpKernel, Router } from '@arikajs/http';
+import { Router } from '@arikajs/router';
+import { Kernel } from '../http/Kernel';
 
 export class HttpServiceProvider extends ServiceProvider {
     /**
@@ -9,14 +10,12 @@ export class HttpServiceProvider extends ServiceProvider {
     public async register(): Promise<void> {
         // Register the Router as a singleton
         this.app.singleton(Router, () => {
-            const router = new Router();
-            router.setApplication(this.app);
-            return router;
+            return new Router(this.app.getContainer() as any);
         });
 
-        // Register the HttpKernel
-        this.app.singleton(HttpKernel, () => {
-            return new HttpKernel(this.app);
+        // Register the Kernel
+        this.app.singleton(Kernel, () => {
+            return new Kernel(this.app as any);
         });
     }
 

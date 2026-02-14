@@ -59,10 +59,13 @@ export class Application extends FoundationApplication {
         const { Request, Response } = await import('@arikajs/http');
         const { Kernel } = await import('./http/Kernel');
 
-        const kernel = new Kernel(this);
+        // Resolve Kernel from the container
+        const kernel = this.make(Kernel);
 
         const server = http.createServer(async (req, res) => {
-            const request = new Request(this, req);
+            // Instantiate Request and Response
+            // In a future refactor, these could also be resolved from factories
+            const request = new Request(this as any, req);
             const response = new Response(res);
 
             try {
@@ -71,7 +74,11 @@ export class Application extends FoundationApplication {
             } catch (error: any) {
                 if (!res.headersSent) {
                     res.writeHead(500, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: 'Internal Server Error', message: error.message }));
+                    res.end(JSON.stringify({
+                        error: 'Internal Server Error',
+                        message: error.message,
+                        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+                    }));
                 }
             }
         });

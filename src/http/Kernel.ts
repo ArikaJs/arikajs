@@ -50,7 +50,7 @@ export class Kernel {
         }
 
         const dispatcher = new Dispatcher(this.app.getContainer());
-        return await dispatcher.dispatch(matched, request, response);
+        return await dispatcher.dispatch(matched, request, response) as Response;
     }
 
     /**
