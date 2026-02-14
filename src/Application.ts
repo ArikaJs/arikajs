@@ -1,7 +1,7 @@
-
 import { Application as FoundationApplication } from '@arikajs/foundation';
 import { Router, Route } from '@arikajs/router';
 import { FrameworkServiceProvider } from './providers/FrameworkServiceProvider';
+import { Log } from '@arikajs/logging';
 
 export class Application extends FoundationApplication {
     protected router: Router;
@@ -59,6 +59,8 @@ export class Application extends FoundationApplication {
         const { Request, Response, Pipeline } = await import('@arikajs/http');
         // @ts-ignore
         const { BodyParserMiddleware } = await import('@arikajs/http/dist/Middleware/BodyParserMiddleware');
+        // @ts-ignore
+        const { RequestLoggingMiddleware } = await import('@arikajs/http/dist/Middleware/RequestLoggingMiddleware');
 
         const server = http.createServer(async (req, res) => {
             const request = new Request(this, req);
@@ -68,7 +70,8 @@ export class Application extends FoundationApplication {
                 // Setup middleware pipeline
                 const pipeline = new Pipeline();
 
-                // Add default body parser
+                // Add default middlewares
+                pipeline.pipe(new RequestLoggingMiddleware());
                 pipeline.pipe(new BodyParserMiddleware());
 
                 // Execute pipeline
@@ -97,7 +100,7 @@ export class Application extends FoundationApplication {
 
         return new Promise<void>((resolve) => {
             server.listen(port, () => {
-                console.log(`ArikaJS application listening on http://localhost:${port}`);
+                Log.info(`ArikaJS application listening on http://localhost:${port}`);
                 resolve();
             });
         });
