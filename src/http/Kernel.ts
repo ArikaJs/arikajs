@@ -16,6 +16,19 @@ export class Kernel {
         new BodyParserMiddleware(),
     ];
 
+    /**
+     * The application's route middleware groups.
+     */
+    protected middlewareGroups: Record<string, any[]> = {
+        web: [],
+        api: [],
+    };
+
+    /**
+     * The application's route middleware.
+     */
+    protected routeMiddleware: Record<string, any> = {};
+
     protected handler: Handler;
 
     constructor(protected app: Application) {
@@ -54,6 +67,9 @@ export class Kernel {
         }
 
         const dispatcher = new Dispatcher(this.app.getContainer());
+        dispatcher.setMiddlewareGroups(this.middlewareGroups);
+        dispatcher.setRouteMiddleware(this.routeMiddleware);
+
         return await dispatcher.dispatch(matched, request, response) as Response;
     }
 
