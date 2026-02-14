@@ -60,7 +60,7 @@ export class Application extends FoundationApplication {
         // @ts-ignore
         const { BodyParserMiddleware } = await import('@arikajs/http/dist/Middleware/BodyParserMiddleware');
         // @ts-ignore
-        const { RequestLoggingMiddleware } = await import('@arikajs/http/dist/Middleware/RequestLoggingMiddleware');
+        const { RequestLoggingMiddleware } = await import('./http/Middleware/RequestLoggingMiddleware');
 
         const server = http.createServer(async (req, res) => {
             const request = new Request(this, req);
