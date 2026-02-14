@@ -56,40 +56,18 @@ export class Application extends FoundationApplication {
         }
 
         const http = await import('node:http');
-        const { Request, Response, Pipeline } = await import('@arikajs/http');
-        // @ts-ignore
-        const { BodyParserMiddleware } = await import('@arikajs/http/dist/Middleware/BodyParserMiddleware');
-        // @ts-ignore
-        const { RequestLoggingMiddleware } = await import('./http/Middleware/RequestLoggingMiddleware');
+        const { Request, Response } = await import('@arikajs/http');
+        const { Kernel } = await import('./http/Kernel');
+
+        const kernel = new Kernel(this);
 
         const server = http.createServer(async (req, res) => {
             const request = new Request(this, req);
             const response = new Response(res);
 
             try {
-                // Setup middleware pipeline
-                const pipeline = new Pipeline();
-
-                // Add default middlewares
-                pipeline.pipe(new RequestLoggingMiddleware());
-                pipeline.pipe(new BodyParserMiddleware());
-
-                // Execute pipeline
-                const finalResponse = await pipeline.handle(request, async (req) => {
-                    const result = await this.router.dispatch(req);
-
-                    if (result instanceof Response) {
-                        return result;
-                    }
-
-                    if (typeof result === 'object' && result !== null) {
-                        return response.json(result);
-                    }
-
-                    return response.send(String(result || ''));
-                });
-
-                finalResponse.terminate();
+                const finalResponse = await kernel.handle(request, response);
+                kernel.terminate(request, finalResponse);
             } catch (error: any) {
                 if (!res.headersSent) {
                     res.writeHead(500, { 'Content-Type': 'application/json' });
