@@ -9,9 +9,13 @@ export { Repository as Config } from '@arikajs/foundation';
 
 // Re-export HTTP items
 export { Request, Response } from '@arikajs/http';
+export { Kernel } from './http/Kernel';
 
 // Re-export Routing items
 export { Route } from '@arikajs/router';
+
+// Re-export Middleware items
+export { Pipeline, MiddlewareHandler } from '@arikajs/middleware';
 
 // Re-export Database items
 export { Model, Database as DB, Schema } from '@arikajs/database';

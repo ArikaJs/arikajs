@@ -63,17 +63,22 @@ export class Kernel {
      */
     protected async dispatchToRouter(request: Request, response: Response): Promise<Response> {
         const router = this.app.getRouter();
-        const matched = router.match(request.method(), request.path());
 
-        if (!matched) {
+        // Ensure router's dispatcher has kernel's middleware configuration
+        if ((router as any).setMiddlewareGroups) {
+            (router as any).setMiddlewareGroups(this.middlewareGroups);
+        }
+        if ((router as any).setRouteMiddleware) {
+            (router as any).setRouteMiddleware(this.routeMiddleware);
+        }
+
+        const result = await router.dispatch(request, response);
+
+        if (result === null) {
             throw new NotFoundHttpException(`Route not found: [${request.method()}] ${request.path()}`);
         }
 
-        const dispatcher = new Dispatcher(this.app.getContainer());
-        dispatcher.setMiddlewareGroups(this.middlewareGroups);
-        dispatcher.setRouteMiddleware(this.routeMiddleware);
-
-        return await dispatcher.dispatch(matched, request, response) as Response;
+        return result as Response;
     }
 
     /**
