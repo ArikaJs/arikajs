@@ -11,7 +11,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org/)
 
-[Documentation](https://arikajs.com/docs) | [Quick Start](#quick-start) | [Examples](https://github.com/arikajs/examples) | [Community](https://discord.gg/arikajs)
+[Quick Start](#quick-start) | [Examples](https://github.com/arikajs/examples) | [Community](https://discord.gg/arikajs)
 
 </div>
 
@@ -354,15 +354,14 @@ describe('User API', () => {
 
 ## 📖 Documentation
 
-For comprehensive documentation, visit [arikajs.com/docs](https://arikajs.com/docs)
+Comprehensive documentation is available in the [GitHub repository](https://github.com/arikajs/arikajs).
 
-- [Installation Guide](https://arikajs.com/docs/installation)
-- [Routing](https://arikajs.com/docs/routing)
-- [Controllers](https://arikajs.com/docs/controllers)
-- [Database & ORM](https://arikajs.com/docs/database)
-- [Authentication](https://arikajs.com/docs/authentication)
-- [Validation](https://arikajs.com/docs/validation)
-- [API Reference](https://arikajs.com/docs/api)
+For guides and examples, check out:
+- [Installation Guide](https://github.com/arikajs/arikajs#installation)
+- [Routing](https://github.com/arikajs/arikajs#routing)
+- [Controllers](https://github.com/arikajs/arikajs#controllers)
+- [Database & ORM](https://github.com/arikajs/arikajs#models-active-record)
+- [Examples](https://github.com/arikajs/examples)
 
 ---
 
@@ -400,11 +399,10 @@ ArikaJS draws inspiration from the best practices and patterns of modern web fra
 
 ## 💬 Community & Support
 
-- 📖 [Documentation](https://arikajs.com/docs)
+- 📖 [Documentation](https://github.com/arikajs/arikajs#readme)
 - 💬 [Discord Community](https://discord.gg/arikajs)
 - 🐦 [Twitter](https://twitter.com/arikajs)
 - 🐛 [Issue Tracker](https://github.com/arikajs/arikajs/issues)
-- 📧 [Email Support](mailto:support@arikajs.com)
 
 ---
 
@@ -412,6 +410,6 @@ ArikaJS draws inspiration from the best practices and patterns of modern web fra
 
 **Built with ❤️ by the ArikaJS Team**
 
-[Website](https://arikajs.com) • [GitHub](https://github.com/arikajs) • [npm](https://www.npmjs.com/package/arikajs)
+[GitHub](https://github.com/arikajs) • [npm](https://www.npmjs.com/package/arikajs)
 
 </div>
