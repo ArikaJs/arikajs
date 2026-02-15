@@ -4,7 +4,7 @@
 
 ![ArikaJS Logo](https://via.placeholder.com/200x200?text=ArikaJS)
 
-**A Modern, Elegant PHP Laravel-Inspired Framework for Node.js**
+**A Modern, Elegant Web Framework for Node.js**
 
 [![npm version](https://img.shields.io/npm/v/arikajs.svg)](https://www.npmjs.com/package/arikajs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -19,7 +19,7 @@
 
 ## 🚀 What is ArikaJS?
 
-ArikaJS is a **modern, elegant, and powerful** Node.js framework inspired by the best features of PHP Laravel, bringing the joy of Laravel development to the TypeScript/JavaScript ecosystem. Built from the ground up with TypeScript, ArikaJS provides a robust foundation for building scalable web applications and APIs.
+ArikaJS is a **modern, elegant, and powerful** Node.js framework that brings enterprise-grade features and developer-friendly patterns to the TypeScript/JavaScript ecosystem. Built from the ground up with TypeScript, ArikaJS provides a robust foundation for building scalable web applications and APIs with an intuitive, expressive syntax.
 
 ### ✨ Key Features
 
@@ -394,10 +394,7 @@ ArikaJS is open-sourced software licensed under the [MIT license](LICENSE).
 
 ## 🙏 Acknowledgments
 
-ArikaJS is inspired by:
-- [Laravel](https://laravel.com) - The PHP framework for web artisans
-- [NestJS](https://nestjs.com) - A progressive Node.js framework
-- [Adonis.js](https://adonisjs.com) - Node.js web framework
+ArikaJS draws inspiration from the best practices and patterns of modern web frameworks, including elegant API design, developer experience focus, and enterprise-grade architecture.
 
 ---
 
