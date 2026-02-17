@@ -44,9 +44,24 @@ ArikaJS is a **modern, elegant, and powerful** Node.js framework that brings ent
 
 ## 📦 Installation
 
-### Quick Start with CLI
+### Option 1: Quick Start (Using npx)
 
-The fastest way to get started is using the ArikaJS CLI:
+The fastest way to create a new ArikaJS project is using `npx`. No installation required!
+
+```bash
+# Create a new project
+npx @arikajs/cli new my-app
+
+# Navigate to your project
+cd my-app
+
+# Start developing
+npm run dev
+```
+
+### Option 2: Global Installation
+
+If you prefer to have the `arika` command available everywhere, you can install the CLI globally:
 
 ```bash
 # Install the CLI globally
@@ -54,9 +69,7 @@ npm install -g @arikajs/cli
 
 # Create a new project
 arika new my-app
-
-# Navigate to your project
-cd my-app
+```
 
 # Install dependencies
 npm install
