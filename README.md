@@ -6,10 +6,14 @@
 
 **A Modern, Elegant Web Framework for Node.js**
 
-[![npm version](https://img.shields.io/npm/v/arikajs.svg)](https://www.npmjs.com/package/arikajs)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org/)
+[![npm version](https://img.shields.io/npm/v/arikajs.svg?style=flat-square)](https://www.npmjs.com/package/arikajs)
+[![npm downloads](https://img.shields.io/npm/dm/arikajs.svg?style=flat-square)](https://www.npmjs.com/package/arikajs)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg?style=flat-square)](https://nodejs.org/)
+[![GitHub stars](https://img.shields.io/github/stars/arikajs/arikajs.svg?style=flat-square)](https://github.com/arikajs/arikajs/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/arikajs/arikajs.svg?style=flat-square)](https://github.com/arikajs/arikajs/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/arikajs/arikajs/pulls)
 
 [Quick Start](#quick-start) | [Examples](https://github.com/arikajs/examples) | [Community](https://discord.gg/arikajs)
 
