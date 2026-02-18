@@ -3,7 +3,7 @@ import { Request, Response, NotFoundHttpException } from '@arikajs/http';
 import { Pipeline } from '@arikajs/middleware';
 import { Dispatcher } from '@arikajs/dispatcher';
 import { RequestLoggingMiddleware } from './Middleware/RequestLoggingMiddleware';
-import { BodyParserMiddleware, CorsMiddleware } from '@arikajs/http';
+import { BodyParserMiddleware, CorsMiddleware, TrimStrings, ConvertEmptyStringsToNull } from '@arikajs/http';
 import { Handler } from './Handler';
 
 export class Kernel {
@@ -14,6 +14,8 @@ export class Kernel {
         new CorsMiddleware(),
         new RequestLoggingMiddleware(),
         new BodyParserMiddleware(),
+        new TrimStrings(),
+        new ConvertEmptyStringsToNull(),
     ];
 
     /**
