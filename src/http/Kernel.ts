@@ -5,6 +5,8 @@ import { Dispatcher } from '@arikajs/dispatcher';
 import { RequestLoggingMiddleware } from './Middleware/RequestLoggingMiddleware';
 import { BodyParserMiddleware, CorsMiddleware, TrimStrings, ConvertEmptyStringsToNull } from '@arikajs/http';
 import { Handler } from './Handler';
+import { ViewMiddleware } from './Middleware/ViewMiddleware';
+
 
 export class Kernel {
     /**
@@ -16,6 +18,7 @@ export class Kernel {
         new BodyParserMiddleware(),
         new TrimStrings(),
         new ConvertEmptyStringsToNull(),
+        ViewMiddleware,
     ];
 
     /**

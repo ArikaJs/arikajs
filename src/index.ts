@@ -31,3 +31,6 @@ export { Encrypter } from '@arikajs/encryption';
 
 // Re-export Logging items
 export { Log } from '@arikajs/logging';
+
+// Re-export View items
+export { View } from '@arikajs/view';
