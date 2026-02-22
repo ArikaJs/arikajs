@@ -30,6 +30,9 @@ export { Queue, BaseJob } from '@arikajs/queue';
 // Re-export Event items
 export { Event } from '@arikajs/events';
 
+// Re-export Scheduler items
+export { Scheduler, Schedule } from '@arikajs/scheduler';
+
 // Re-export Encryption items
 export { Encrypter } from '@arikajs/encryption';
 

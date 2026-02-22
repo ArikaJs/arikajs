@@ -27,6 +27,7 @@
     "@arikajs/middleware": "file:../middleware",
     "@arikajs/queue": "file:../queue",
     "@arikajs/router": "file:../router",
+    "@arikajs/scheduler": "file:../scheduler",
     "@arikajs/storage": "file:../storage",
     "@arikajs/validation": "file:../validation",
     "@arikajs/view": "file:../view"
