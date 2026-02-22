@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![ArikaJS Logo](https://via.placeholder.com/200x200?text=ArikaJS)
+![ArikaJS Logo](http://13.232.79.11:7800/down/oZ9NpyKtAQzK.png)
 
 **A Modern, Elegant Web Framework for Node.js**
 
