@@ -401,6 +401,40 @@ For guides and examples, check out:
 
 ---
 
+## 🏗 Architecture
+
+```text
+arikajs/
+├── src/
+│   ├── Contracts
+│   │   └── Application.ts
+│   ├── http
+│   │   ├── Middleware
+│   │   │   ├── RequestLoggingMiddleware.ts
+│   │   │   ├── ValidateRequestMiddleware.ts
+│   │   │   └── ViewMiddleware.ts
+│   │   ├── Handler.ts
+│   │   └── Kernel.ts
+│   ├── providers
+│   │   ├── AuthServiceProvider.ts
+│   │   ├── DatabaseServiceProvider.ts
+│   │   ├── EventsServiceProvider.ts
+│   │   ├── FrameworkServiceProvider.ts
+│   │   ├── HttpServiceProvider.ts
+│   │   ├── LoggingServiceProvider.ts
+│   │   ├── SchedulerServiceProvider.ts
+│   │   ├── ValidationServiceProvider.ts
+│   │   └── ViewServiceProvider.ts
+│   ├── Application.ts
+│   ├── createApp.ts
+│   ├── helpers.ts
+│   └── index.ts
+├── tests/
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
@@ -449,38 +483,4 @@ ArikaJS draws inspiration from the best practices and patterns of modern web fra
 [GitHub](https://github.com/arikajs) • [npm](https://www.npmjs.com/package/arikajs)
 
 </div>
-
-## 🏗 Architecture
-
-```text
-arikajs/
-├── src/
-│   ├── Contracts
-│   │   └── Application.ts
-│   ├── http
-│   │   ├── Middleware
-│   │   │   ├── RequestLoggingMiddleware.ts
-│   │   │   ├── ValidateRequestMiddleware.ts
-│   │   │   └── ViewMiddleware.ts
-│   │   ├── Handler.ts
-│   │   └── Kernel.ts
-│   ├── providers
-│   │   ├── AuthServiceProvider.ts
-│   │   ├── DatabaseServiceProvider.ts
-│   │   ├── EventsServiceProvider.ts
-│   │   ├── FrameworkServiceProvider.ts
-│   │   ├── HttpServiceProvider.ts
-│   │   ├── LoggingServiceProvider.ts
-│   │   ├── SchedulerServiceProvider.ts
-│   │   ├── ValidationServiceProvider.ts
-│   │   └── ViewServiceProvider.ts
-│   ├── Application.ts
-│   ├── createApp.ts
-│   ├── helpers.ts
-│   └── index.ts
-├── tests/
-├── package.json
-├── tsconfig.json
-└── README.md
-```
 
