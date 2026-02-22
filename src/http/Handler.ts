@@ -82,11 +82,26 @@ export class Handler {
     }
 
     /**
+     * Set the exceptions that should not be reported.
+     */
+    public dontReportExceptions(exceptions: any[]): this {
+        this.dontReport = [...this.dontReport, ...exceptions];
+        return this;
+    }
+
+    /**
+     * Map an exception to a custom renderer.
+     */
+    public map(type: any, renderer: (request: Request, error: any, response: Response) => Response): this {
+        this.renderers.set(type, renderer);
+        return this;
+    }
+
+    /**
      * Register a custom renderer for an exception type.
      */
     public renderable(type: any, renderer: (request: Request, error: any, response: Response) => Response): this {
-        this.renderers.set(type, renderer);
-        return this;
+        return this.map(type, renderer);
     }
 
     /**

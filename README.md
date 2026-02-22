@@ -38,7 +38,9 @@ ArikaJS is a **modern, elegant, and powerful** Node.js framework that brings ent
 - 🔄 **Queue System** - Background job processing
 - 📦 **Service Providers** - Modular application architecture
 - 🎨 **Template Engine** - Flexible view rendering
+- ⚡ **Event System** - Decouple your application with powerful events and listeners
 - 🧪 **Testing Ready** - Built with testing in mind
+- 🛠️ **Global Helpers** - Intuitive functions like `app()`, `config()`, and `route()`
 
 ---
 
@@ -265,6 +267,23 @@ export class PaymentServiceProvider extends ServiceProvider {
         // Bootstrap logic
     }
 }
+```
+
+### 🛠️ Global Helpers
+
+ArikaJS provides several global helper functions to make your code more concise:
+
+```typescript
+import { app, config, route } from 'arikajs';
+
+// Access the application container
+const userService = app().make(UserService);
+
+// Get configuration values with defaults
+const debug = config('app.debug', false);
+
+// Generate URLs for named routes
+const profileUrl = route('users.show', { id: 1 });
 ```
 
 ### Database Migrations

@@ -5,6 +5,7 @@ import { AuthServiceProvider } from './AuthServiceProvider';
 import { ValidationServiceProvider } from './ValidationServiceProvider';
 import { DatabaseServiceProvider } from './DatabaseServiceProvider';
 import { ViewServiceProvider } from './ViewServiceProvider';
+import { EventsServiceProvider } from './EventsServiceProvider';
 
 export class FrameworkServiceProvider extends ServiceProvider {
     public async register() {
@@ -14,6 +15,7 @@ export class FrameworkServiceProvider extends ServiceProvider {
         await this.app.register(ValidationServiceProvider);
         await this.app.register(DatabaseServiceProvider);
         await this.app.register(ViewServiceProvider);
+        await this.app.register(EventsServiceProvider);
 
         // Register framework specific services
         this.app.singleton('encrypter', () => {

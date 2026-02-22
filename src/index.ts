@@ -1,6 +1,7 @@
 
 export * from './Application';
 export * from './createApp';
+export * from './helpers';
 
 // Re-export common foundation items for convenience
 export { ServiceProvider } from '@arikajs/foundation';
@@ -25,6 +26,9 @@ export { Cache } from '@arikajs/cache';
 
 // Re-export Queue items
 export { Queue, BaseJob } from '@arikajs/queue';
+
+// Re-export Event items
+export { Event } from '@arikajs/events';
 
 // Re-export Encryption items
 export { Encrypter } from '@arikajs/encryption';

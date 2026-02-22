@@ -117,4 +117,24 @@ describe('ArikaJS Framework', () => {
         assert.ok(manager instanceof DatabaseManager);
         assert.strictEqual(manager, Database.getManager());
     });
+
+    it('provides global helpers', async () => {
+        const appInstance = createApp();
+        appInstance.config().set('app.name', 'ArikaTest');
+
+        const { app: appHelper, config: configHelper } = await import('../src');
+
+        assert.strictEqual(appHelper(), appInstance);
+        assert.strictEqual(configHelper('app.name'), 'ArikaTest');
+    });
+
+    it('initializes the event facade', async () => {
+        const appInstance = createApp();
+        appInstance.config().set('app.key', 'base64:sm957Y1wUYo8Uj8yL1fD7vX+X6y8gG+E6XpXnJz+I=');
+
+        await appInstance.boot();
+
+        const { Event } = await import('@arikajs/events');
+        assert.ok(Event.getManager() !== null);
+    });
 });

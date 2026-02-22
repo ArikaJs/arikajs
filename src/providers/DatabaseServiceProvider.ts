@@ -35,6 +35,12 @@ export class DatabaseServiceProvider extends ServiceProvider {
      */
     public async boot() {
         // Initialize the static Database facade
-        Database.setManager(this.app.resolve(DatabaseManager));
+        const dbManager = this.app.resolve(DatabaseManager);
+        Database.setManager(dbManager);
+
+        // Register caching for query builder
+        if (this.app.getContainer().has('cache')) {
+            dbManager.setCache(this.app.resolve('cache'));
+        }
     }
 }
