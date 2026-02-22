@@ -119,15 +119,14 @@ export class Application extends FoundationApplication implements ApplicationCon
     protected displayBanner(port: number) {
         const env = this.config().get('app.env', 'development');
 
-        console.log(`\x1b[32m
-   _____         .__ __             _________
-  /  _  \\_______ |__|  | __  ____   \\______  \\
- /  /_\\  \\_  __ \\|  |  |/ / /  _ \\    |    __/
-/    |    \\  | \\/|  |    < (  <_> )   |    |
-\\____|__  /__|   |__|__|_ \\ \\____/ /\\_|____|
-         \\/              \\/        \\/
+        console.log(`\x1b[38;5;99m
+     _         _ _              _ ____  
+    / \\   _ __(_) | ____ _     | / ___| 
+   / _ \\ | '__| | |/ / _\` |    | \\___ \\ 
+  / ___ \\| |  | |   < (_| |  __| |___) |
+ /_/   \\_\\_|  |_|_|\\_\\__,_| |____|____/ 
 \x1b[0m`);
-        console.log(` \x1b[1mArikaJS Framework\x1b[0m \x1b[32mv${this.version()}\x1b[0m`);
+        console.log(` \x1b[1mArikaJS Framework\x1b[0m \x1b[38;5;99mv${this.version()}\x1b[0m`);
         console.log(` \x1b[90mEnvironment:\x1b[0m \x1b[33m${env}\x1b[0m`);
         console.log(` \x1b[90mLocal URL:\x1b[0m   \x1b[36mhttp://localhost:${port}\x1b[0m`);
         console.log('');

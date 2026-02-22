@@ -30,7 +30,9 @@
     "@arikajs/scheduler": "file:../scheduler",
     "@arikajs/storage": "file:../storage",
     "@arikajs/validation": "file:../validation",
-    "@arikajs/view": "file:../view"
+    "@arikajs/view": "file:../view",
+    "@types/serve-static": "^2.2.0",
+    "serve-static": "^2.2.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

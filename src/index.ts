@@ -41,3 +41,6 @@ export { Log } from '@arikajs/logging';
 
 // Re-export View items
 export { View } from '@arikajs/view';
+
+// Re-export Validation items
+export { Validator } from '@arikajs/validation';
