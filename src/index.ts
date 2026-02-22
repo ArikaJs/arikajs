@@ -19,7 +19,7 @@ export { Route } from '@arikajs/router';
 export { Pipeline, MiddlewareHandler } from '@arikajs/middleware';
 
 // Re-export Database items
-export { Model, Database as DB, Schema } from '@arikajs/database';
+export { Model, Database as DB, Schema, Migration, SchemaBuilder } from '@arikajs/database';
 
 // Re-export Cache items
 export { Cache } from '@arikajs/cache';

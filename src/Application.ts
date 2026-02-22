@@ -137,8 +137,11 @@ export class Application extends FoundationApplication implements ApplicationCon
      */
     public async terminate() {
         if (this.server) {
-            this.server.close(() => {
-                Log.info('HTTP server closed.');
+            await new Promise<void>((resolve) => {
+                this.server.close(() => {
+                    Log.info('HTTP server closed.');
+                    resolve();
+                });
             });
         }
 
