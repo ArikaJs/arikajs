@@ -2,6 +2,7 @@
 import { Application } from './Application';
 import { Route } from '@arikajs/router';
 import { Log } from '@arikajs/logging';
+import { Translator } from '@arikajs/localization';
 
 /**
  * Get the application instance.
@@ -41,3 +42,14 @@ export function info(message: string, context: any = {}) {
 export function route(name: string, params: any = {}): string {
     return app().getRouter().route(name, params);
 }
+
+/**
+ * Translate the given message.
+ */
+export function lang(key: string, replace: Record<string, any> = {}, locale: string | null = null): string {
+    return (app().make(Translator) as Translator).get(key, replace, locale);
+}
+
+// Alias for common patterns
+export const trans = lang;
+export const __ = lang;

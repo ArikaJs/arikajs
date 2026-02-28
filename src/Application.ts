@@ -10,6 +10,7 @@ export class Application extends FoundationApplication implements ApplicationCon
 
     protected router: Router;
     protected server?: any;
+    protected isTerminating: boolean = false;
 
     constructor(basePath: string = process.cwd()) {
         super(basePath);
@@ -136,6 +137,9 @@ export class Application extends FoundationApplication implements ApplicationCon
      * Gracefully terminate the application.
      */
     public async terminate() {
+        if (this.isTerminating) return;
+        this.isTerminating = true;
+
         if (this.server) {
             await new Promise<void>((resolve) => {
                 this.server.close(() => {
@@ -148,7 +152,17 @@ export class Application extends FoundationApplication implements ApplicationCon
         // Potential for other service termination (DB, Queues, etc.)
         // This is where we would call something like this.getContainer().terminate()
 
-        process.exit(0);
+        // Remove signal listeners to prevent double triggers during exit
+        process.removeAllListeners('SIGINT');
+        process.removeAllListeners('SIGTERM');
+
+        // If we are in a testing or specific environment, we might not want to exit
+        if (process.env.NODE_ENV !== 'test') {
+            // Give a short delay for logs to flush before exiting
+            setTimeout(() => {
+                process.exit(0);
+            }, 50);
+        }
     }
 
     /**

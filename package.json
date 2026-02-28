@@ -30,6 +30,7 @@
     "@arikajs/scheduler": "file:../scheduler",
     "@arikajs/storage": "file:../storage",
     "@arikajs/validation": "file:../validation",
+    "@arikajs/localization": "file:../localization",
     "@arikajs/view": "file:../view",
     "@types/serve-static": "^2.2.0",
     "serve-static": "^2.2.1"

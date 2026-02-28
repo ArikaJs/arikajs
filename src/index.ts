@@ -1,7 +1,7 @@
 
 export * from './Application';
-export * from './createApp';
-export * from './helpers';
+export { createApp } from './createApp';
+export { app, config, info, route, lang, trans, __ } from './helpers';
 
 // Re-export common foundation items for convenience
 export { ServiceProvider } from '@arikajs/foundation';
@@ -44,3 +44,12 @@ export { View } from '@arikajs/view';
 
 // Re-export Validation items
 export { Validator } from '@arikajs/validation';
+
+// Re-export Localization items
+export { Translator } from '@arikajs/localization';
+
+// Re-export Mail items
+export { Mail, Mailable } from '@arikajs/mail';
+
+// Re-export Auth items
+export { AuthManager, AuthContext, Hasher, EloquentUserProvider, Authenticate } from '@arikajs/auth';
