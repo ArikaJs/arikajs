@@ -1,0 +1,55 @@
+{
+  "name": "@arikajs/database",
+  "version": "0.0.4",
+  "description": "Database layer for the ArikaJS framework with MySQL & PostgreSQL support.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:tests": "tsc -p tsconfig.test.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "test": "npx tsx tests/Database.test.ts",
+    "test:watch": "npx tsx --watch tests/Database.test.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "database",
+    "mysql",
+    "postgresql",
+    "query-builder",
+    "orm",
+    "active-record",
+    "migrations"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arikajs/database.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arikajs/database/issues"
+  },
+  "homepage": "https://github.com/arikajs/database#readme",
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "mongodb": "^7.1.0",
+    "mysql2": "^3.11.5",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/mongodb": "^4.0.6",
+    "@types/node": "^20.11.24",
+    "@types/pg": "^8.11.10",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
+}

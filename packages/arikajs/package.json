@@ -1,0 +1,45 @@
+{
+  "name": "arikajs",
+  "version": "0.0.4",
+  "description": "The ArikaJS Framework.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "test": "npx tsx tests/Framework.test.ts"
+  },
+  "dependencies": {
+    "@arikajs/auth": "^0.0.4",
+    "@arikajs/authorization": "^0.0.4",
+    "@arikajs/cache": "^0.0.4",
+    "@arikajs/cli": "^0.0.4",
+    "@arikajs/console": "^0.0.4",
+    "@arikajs/database": "^0.0.4",
+    "@arikajs/dispatcher": "^0.0.4",
+    "@arikajs/encryption": "^0.0.4",
+    "@arikajs/events": "^0.0.4",
+    "@arikajs/foundation": "^0.0.4",
+    "@arikajs/http": "^0.0.4",
+    "@arikajs/localization": "^0.0.4",
+    "@arikajs/logging": "^0.0.4",
+    "@arikajs/mail": "^0.0.4",
+    "@arikajs/middleware": "^0.0.4",
+    "@arikajs/queue": "^0.0.4",
+    "@arikajs/router": "^0.0.4",
+    "@arikajs/scheduler": "^0.0.4",
+    "@arikajs/storage": "^0.0.4",
+    "@arikajs/validation": "^0.0.4",
+    "@arikajs/view": "^0.0.4",
+    "@types/serve-static": "^2.2.0",
+    "busboy": "^1.6.0",
+    "serve-static": "^2.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "tsx": "^4.21.0",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
+}

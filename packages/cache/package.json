@@ -1,0 +1,46 @@
+{
+  "name": "@arikajs/cache",
+  "version": "0.0.4",
+  "description": "Simple, fast, and driver-based caching system for the ArikaJS framework.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:tests": "tsc -p tsconfig.test.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "test": "npm run build && npm run build:tests && node scripts/fix-test-imports.js && node --test 'dist/tests/**/*.test.js'",
+    "test:watch": "npm run build && npm run build:tests && node --test --watch 'dist/tests/**/*.test.js'"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "cache",
+    "memory",
+    "redis",
+    "performance"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arikajs/cache.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arikajs/cache/issues"
+  },
+  "homepage": "https://github.com/arikajs/cache#readme",
+  "dependencies": {
+    "ioredis": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
+}

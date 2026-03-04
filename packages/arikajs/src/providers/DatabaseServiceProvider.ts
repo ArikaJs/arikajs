@@ -1,0 +1,46 @@
+
+import { ServiceProvider } from '@arikajs/foundation';
+import { DatabaseManager, Database } from '@arikajs/database';
+
+export class DatabaseServiceProvider extends ServiceProvider {
+    /**
+     * Register the database services.
+     */
+    public async register() {
+        this.app.singleton('db', () => {
+            const config = this.app.config().get('database');
+
+            if (!config) {
+                // If no config provided, we'll use a default memory sqlite for convenience
+                // though usually this should throw in production.
+                return new DatabaseManager({
+                    default: 'sqlite',
+                    connections: {
+                        sqlite: {
+                            driver: 'sqlite',
+                            database: ':memory:'
+                        }
+                    }
+                } as any);
+            }
+
+            return new DatabaseManager(config as any);
+        });
+
+        this.app.bind(DatabaseManager, () => this.app.resolve('db'));
+    }
+
+    /**
+     * Boot the database services.
+     */
+    public async boot() {
+        // Initialize the static Database facade
+        const dbManager = this.app.resolve(DatabaseManager);
+        Database.setManager(dbManager);
+
+        // Register caching for query builder
+        if (this.app.getContainer().has('cache')) {
+            dbManager.setCache(this.app.resolve('cache'));
+        }
+    }
+}

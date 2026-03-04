@@ -1,0 +1,26 @@
+# Logic
+node_modules/
+dist/
+build/
+.env
+.DS_Store
+
+# Roadmap (Private)
+ARIKA_ROADMAP.md
+README.md
+PUBLIC_ROADMAP.md
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Workspace
+.vscode/
+.idea/
+*.tsbuildinfo
+
+# Scripts
+scripts/
+
+

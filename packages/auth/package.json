@@ -1,0 +1,51 @@
+{
+    "name": "@arikajs/auth",
+    "version": "0.0.4",
+    "description": "Flexible, multi-guard authentication system for the ArikaJS framework.",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "build:tests": "tsc -p tsconfig.test.json",
+        "clean": "rm -rf dist",
+        "prepare": "echo skip",
+        "test": "npm run build && npm run build:tests && node scripts/fix-test-imports.js && node --test 'dist/tests/**/*.test.js'",
+        "test:watch": "npm run build && npm run build:tests && node --test --watch 'dist/tests/**/*.test.js'"
+    },
+    "files": [
+        "dist"
+    ],
+    "keywords": [
+        "arika",
+        "arika-js",
+        "framework",
+        "auth",
+        "authentication",
+        "guard",
+        "session",
+        "jwt"
+    ],
+    "engines": {
+        "node": ">=20.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/arikajs/auth.git"
+    },
+    "bugs": {
+        "url": "https://github.com/arikajs/auth/issues"
+    },
+    "homepage": "https://github.com/arikajs/auth#readme",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "jsonwebtoken": "^9.0.3"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^2.4.6",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/node": "^20.11.24",
+        "typescript": "^5.3.3"
+    },
+    "author": "Prakash Tank"
+}

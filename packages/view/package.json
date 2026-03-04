@@ -1,0 +1,45 @@
+{
+    "name": "@arikajs/view",
+    "version": "0.0.4",
+    "description": "Server-side rendering and template engine for the ArikaJS framework.",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "build:tests": "tsc -p tsconfig.test.json",
+        "clean": "rm -rf dist",
+        "prepare": "echo skip",
+        "test": "npm run build && npm run build:tests && node scripts/fix-test-imports.js && node --test 'dist/tests/**/*.test.js'",
+        "test:watch": "npm run build && npm run build:tests && node --test --watch 'dist/tests/**/*.test.js'"
+    },
+    "files": [
+        "dist"
+    ],
+    "keywords": [
+        "arika",
+        "arika-js",
+        "framework",
+        "view",
+        "template",
+        "ssr",
+        "renderer"
+    ],
+    "engines": {
+        "node": ">=20.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/arikajs/view.git"
+    },
+    "bugs": {
+        "url": "https://github.com/arikajs/view/issues"
+    },
+    "homepage": "https://github.com/arikajs/view#readme",
+    "dependencies": {},
+    "devDependencies": {
+        "@types/node": "^20.11.24",
+        "typescript": "^5.3.3"
+    },
+    "author": "Prakash Tank"
+}

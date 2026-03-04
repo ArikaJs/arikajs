@@ -1,0 +1,23 @@
+{
+  "name": "@arikajs/config",
+  "version": "0.0.4",
+  "description": "Premium configuration management for ArikaJS.",
+  "type": "module",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "test": "npx tsx --test tests/**/*.test.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.1"
+  },
+  "author": "Prakash Tank"
+}

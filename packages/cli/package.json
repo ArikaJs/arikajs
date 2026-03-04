@@ -1,0 +1,58 @@
+{
+  "name": "@arikajs/cli",
+  "version": "0.0.4",
+  "description": "The command-line interface for the ArikaJS framework.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "arika": "dist/bin/arika.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && cp -R templates dist/ && chmod +x dist/bin/arika.js",
+    "build:tests": "tsc -p tsconfig.test.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "test": "npm run build && npm run build:tests && node --test 'dist/tests/**/*.test.js'",
+    "test:watch": "npm run build && npm run build:tests && node --test --watch 'dist/tests/**/*.test.js'"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "cli",
+    "console",
+    "scaffolding"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arikajs/cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arikajs/cli/issues"
+  },
+  "homepage": "https://github.com/arikajs/cli#readme",
+  "dependencies": {
+    "@arikajs/console": "^0.0.4",
+    "@arikajs/database": "^0.0.4",
+    "@arikajs/docs": "^0.0.4",
+    "@arikajs/scheduler": "^0.0.4",
+    "inquirer": "^8.2.7",
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "@types/inquirer": "^8.2.12",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
+}

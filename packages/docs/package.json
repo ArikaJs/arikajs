@@ -1,0 +1,32 @@
+{
+  "name": "@arikajs/docs",
+  "version": "0.0.4",
+  "description": "API documentation and Postman collection generator for ArikaJS.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "test": "npm run build && node --test 'dist/tests/**/*.test.js'"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "docs",
+    "postman",
+    "openapi",
+    "documentation"
+  ],
+  "dependencies": {
+    "@arikajs/router": "^0.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
+}

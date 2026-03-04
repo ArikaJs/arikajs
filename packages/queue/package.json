@@ -1,0 +1,47 @@
+{
+  "name": "@arikajs/queue",
+  "version": "0.0.4",
+  "description": "Asynchronous job processing for the ArikaJS framework.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:tests": "tsc -p tsconfig.test.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "test": "npx tsx --test tests/**/*.test.ts",
+    "test:watch": "npx tsx --test --watch tests/**/*.test.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "queue",
+    "job",
+    "background-job",
+    "redis",
+    "worker"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arikajs/queue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arikajs/queue/issues"
+  },
+  "homepage": "https://github.com/arikajs/queue#readme",
+  "dependencies": {
+    "ioredis": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
+}

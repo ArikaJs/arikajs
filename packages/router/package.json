@@ -1,0 +1,47 @@
+{
+    "name": "@arikajs/router",
+    "version": "0.0.4",
+    "description": "Routing and request-dispatching layer of the ArikaJS framework.",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "clean": "rm -rf dist",
+        "prepare": "echo skip",
+        "lint": "eslint src --ext .ts",
+        "test": "npx tsx --test tests/**/*.test.ts",
+        "test:watch": "npx tsx --test --watch tests/**/*.test.ts"
+    },
+    "files": [
+        "dist"
+    ],
+    "keywords": [
+        "arika",
+        "arika-js",
+        "framework",
+        "router",
+        "routing",
+        "dispatcher"
+    ],
+    "engines": {
+        "node": ">=20.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/arikajs/router.git"
+    },
+    "bugs": {
+        "url": "https://github.com/arikajs/router/issues"
+    },
+    "homepage": "https://github.com/arikajs/router#readme",
+    "dependencies": {
+        "@arikajs/http": "^0.0.4",
+        "@arikajs/dispatcher": "^0.0.4"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.24",
+        "typescript": "^5.3.3"
+    },
+    "author": "Prakash Tank"
+}

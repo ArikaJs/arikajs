@@ -1,0 +1,42 @@
+{
+  "name": "@arikajs/http",
+  "version": "0.0.4",
+  "description": "Native HTTP layer for the ArikaJS framework.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arikajs/http.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arikajs/http/issues"
+  },
+  "homepage": "https://github.com/arikajs/http#readme",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "test": "npx tsx --test tests/*.test.ts",
+    "test:watch": "npx tsx --test --watch tests/*.test.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@types/serve-static": "^2.2.0",
+    "busboy": "^1.6.0",
+    "cookie": "^1.1.1",
+    "serve-static": "^2.2.1"
+  },
+  "devDependencies": {
+    "@types/busboy": "^1.5.4",
+    "@types/cookie": "^0.6.0",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
+}

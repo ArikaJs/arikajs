@@ -1,0 +1,42 @@
+{
+    "name": "@arikajs/localization",
+    "version": "0.0.4",
+    "description": "Flexible and powerful localization system for ArikaJS",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "test": "jest",
+        "prepublishOnly": "npm run build"
+    },
+    "keywords": [
+        "arikajs",
+        "localization",
+        "translation",
+        "i18n",
+        "l10n"
+    ],
+    "author": "ArikaJs",
+    "license": "MIT",
+    "homepage": "https://github.com/ArikaJs/localization#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ArikaJs/localization.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ArikaJs/localization/issues"
+    },
+    "dependencies": {
+        "@arikajs/foundation": "^0.0.4"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.12",
+        "@types/node": "^20.11.24",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.1.2",
+        "typescript": "^5.3.3"
+    }
+}
