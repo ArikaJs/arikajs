@@ -8,7 +8,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist",
-    "test": "npm run build && node --test 'dist/tests/**/*.test.js'"
+    "test": "npm run build && node --test 'dist/tests/**/*.test.js'",
+    "dev": "tsc -p tsconfig.json --watch"
   },
   "files": [
     "dist"

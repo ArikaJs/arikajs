@@ -10,7 +10,8 @@
     "clean": "rm -rf dist",
     "prepare": "echo skip",
     "test": "npx tsx tests/Dispatcher.test.ts",
-    "test:watch": "npx tsx --watch tests/Dispatcher.test.ts"
+    "test:watch": "npx tsx --watch tests/Dispatcher.test.ts",
+    "dev": "tsc -p tsconfig.json --watch"
   },
   "files": [
     "dist"

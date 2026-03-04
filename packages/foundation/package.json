@@ -13,7 +13,8 @@
     "lint": "eslint src --ext .ts",
     "test": "npm run build && npm run build:tests && node --test 'dist/tests/**/*.test.js'",
     "test:watch": "npm run build && npm run build:tests && node --test --watch 'dist/tests/**/*.test.js'",
-    "example": "npm run build && node dist/examples/basic.js"
+    "example": "npm run build && node dist/examples/basic.js",
+    "dev": "tsc -p tsconfig.json --watch"
   },
   "files": [
     "dist"

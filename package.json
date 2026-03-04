@@ -5,7 +5,8 @@
     "packageManager": "npm@10.9.2",
     "scripts": {
         "build": "npx turbo build",
-        "test": "turbo test",
+        "dev": "npx turbo dev --parallel",
+        "test": "npx turbo test",
         "lint": "turbo lint",
         "clean": "turbo clean && rm -rf packages/*/dist packages/*/node_modules node_modules",
         "test:all": "./scripts/test-all.sh",

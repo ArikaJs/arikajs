@@ -11,7 +11,8 @@
     "clean": "rm -rf dist",
     "prepare": "echo skip",
     "test": "npx tsx --test tests/**/*.test.ts",
-    "test:watch": "npx tsx --test --watch tests/**/*.test.ts"
+    "test:watch": "npx tsx --test --watch tests/**/*.test.ts",
+    "dev": "tsc -p tsconfig.json --watch"
   },
   "files": [
     "dist"
