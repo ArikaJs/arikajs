@@ -2,10 +2,12 @@
     "name": "arikajs-monorepo",
     "private": true,
     "description": "A Modern, Elegant Web Framework for Node.js",
+    "packageManager": "npm@10.9.2",
     "scripts": {
-        "test": "npm test --workspaces --if-present",
-        "build": "npm run build --workspaces --if-present",
-        "clean": "rm -rf packages/*/dist packages/*/node_modules node_modules",
+        "build": "npx turbo build",
+        "test": "turbo test",
+        "lint": "turbo lint",
+        "clean": "turbo clean && rm -rf packages/*/dist packages/*/node_modules node_modules",
         "test:all": "./scripts/test-all.sh"
     },
     "workspaces": [
@@ -15,6 +17,8 @@
         "node": ">=20"
     },
     "devDependencies": {
-        "typescript": "^5.3.3"
+        "pnpm": "^10.30.3",
+        "turbo": "^2.8.13",
+        "typescript": "^5.9.3"
     }
 }
