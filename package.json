@@ -8,7 +8,10 @@
         "test": "turbo test",
         "lint": "turbo lint",
         "clean": "turbo clean && rm -rf packages/*/dist packages/*/node_modules node_modules",
-        "test:all": "./scripts/test-all.sh"
+        "test:all": "./scripts/test-all.sh",
+        "change": "changeset",
+        "version-packages": "changeset version",
+        "release": "npm run build && changeset publish"
     },
     "workspaces": [
         "packages/*"
@@ -17,6 +20,7 @@
         "node": ">=20"
     },
     "devDependencies": {
+        "@changesets/cli": "^2.30.0",
         "pnpm": "^10.30.3",
         "turbo": "^2.8.13",
         "typescript": "^5.9.3"
