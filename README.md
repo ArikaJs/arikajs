@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![ArikaJS Logo](http://13.232.79.11:7800/down/oZ9NpyKtAQzK.png)
+<img src="./packages/cli/templates/app/public/assets/img/logo.png" alt="ArikaJS Logo" width="400">
 
 **A Modern, Elegant Web Framework for Node.js**
 
