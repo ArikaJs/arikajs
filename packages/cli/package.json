@@ -32,12 +32,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arikajs/cli.git"
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/cli"
   },
   "bugs": {
-    "url": "https://github.com/arikajs/cli/issues"
+    "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/arikajs/cli#readme",
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/cli#readme",
   "dependencies": {
     "@arikajs/console": "^0.0.4",
     "@arikajs/database": "^0.0.4",

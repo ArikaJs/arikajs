@@ -1,45 +1,46 @@
 {
-    "name": "@arikajs/dispatcher",
-    "version": "0.0.4",
-    "description": "Request dispatching and handler execution layer of the ArikaJS framework.",
-    "license": "MIT",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "scripts": {
-        "build": "tsc -p tsconfig.json",
-        "clean": "rm -rf dist",
-        "prepare": "echo skip",
-        "test": "npx tsx tests/Dispatcher.test.ts",
-        "test:watch": "npx tsx --watch tests/Dispatcher.test.ts"
-    },
-    "files": [
-        "dist"
-    ],
-    "keywords": [
-        "arika",
-        "arika-js",
-        "framework",
-        "dispatcher",
-        "controller",
-        "middleware"
-    ],
-    "engines": {
-        "node": ">=20.0.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/arikajs/dispatcher.git"
-    },
-    "bugs": {
-        "url": "https://github.com/arikajs/dispatcher/issues"
-    },
-    "homepage": "https://github.com/arikajs/dispatcher#readme",
-    "dependencies": {
-        "@arikajs/middleware": "^0.0.4"
-    },
-    "devDependencies": {
-        "@types/node": "^20.11.24",
-        "typescript": "^5.3.3"
-    },
-    "author": "Prakash Tank"
+  "name": "@arikajs/dispatcher",
+  "version": "0.0.4",
+  "description": "Request dispatching and handler execution layer of the ArikaJS framework.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "test": "npx tsx tests/Dispatcher.test.ts",
+    "test:watch": "npx tsx --watch tests/Dispatcher.test.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "framework",
+    "dispatcher",
+    "controller",
+    "middleware"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/dispatcher"
+  },
+  "bugs": {
+    "url": "https://github.com/ArikaJs/arikajs/issues"
+  },
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/dispatcher#readme",
+  "dependencies": {
+    "@arikajs/middleware": "^0.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
 }

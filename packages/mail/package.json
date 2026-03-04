@@ -1,52 +1,53 @@
 {
-    "name": "@arikajs/mail",
-    "version": "0.0.4",
-    "description": "Email delivery system for the ArikaJS framework.",
-    "license": "MIT",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "scripts": {
-        "build": "tsc -p tsconfig.json",
-        "build:tests": "tsc -p tsconfig.test.json",
-        "clean": "rm -rf dist",
-        "prepare": "echo skip",
-        "test": "npx tsx --test tests/**/*.test.ts",
-        "test:watch": "npx tsx --test --watch tests/**/*.test.ts"
-    },
-    "files": [
-        "dist"
-    ],
-    "keywords": [
-        "arika",
-        "arika-js",
-        "framework",
-        "mail",
-        "email",
-        "smtp",
-        "mailer",
-        "mailable"
-    ],
-    "engines": {
-        "node": ">=20.0.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/arikajs/mail.git"
-    },
-    "bugs": {
-        "url": "https://github.com/arikajs/mail/issues"
-    },
-    "homepage": "https://github.com/arikajs/mail#readme",
-    "dependencies": {
-        "@aws-sdk/client-ses": "^3.511.0",
-        "@sendgrid/mail": "^8.1.0",
-        "nodemailer": "^6.9.16",
-        "nodemailer-mailgun-transport": "^2.1.5"
-    },
-    "devDependencies": {
-        "@types/node": "^20.11.24",
-        "@types/nodemailer": "^6.4.14",
-        "typescript": "^5.3.3"
-    },
-    "author": "Prakash Tank"
+  "name": "@arikajs/mail",
+  "version": "0.0.4",
+  "description": "Email delivery system for the ArikaJS framework.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:tests": "tsc -p tsconfig.test.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "test": "npx tsx --test tests/**/*.test.ts",
+    "test:watch": "npx tsx --test --watch tests/**/*.test.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "framework",
+    "mail",
+    "email",
+    "smtp",
+    "mailer",
+    "mailable"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/mail"
+  },
+  "bugs": {
+    "url": "https://github.com/ArikaJs/arikajs/issues"
+  },
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/mail#readme",
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.511.0",
+    "@sendgrid/mail": "^8.1.0",
+    "nodemailer": "^6.9.16",
+    "nodemailer-mailgun-transport": "^2.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/nodemailer": "^6.4.14",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
 }

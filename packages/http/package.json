@@ -4,12 +4,13 @@
   "description": "Native HTTP layer for the ArikaJS framework.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arikajs/http.git"
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/http"
   },
   "bugs": {
-    "url": "https://github.com/arikajs/http/issues"
+    "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/arikajs/http#readme",
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/http#readme",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

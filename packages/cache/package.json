@@ -29,12 +29,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arikajs/cache.git"
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/cache"
   },
   "bugs": {
-    "url": "https://github.com/arikajs/cache/issues"
+    "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/arikajs/cache#readme",
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/cache#readme",
   "dependencies": {
     "ioredis": "^5.9.3"
   },

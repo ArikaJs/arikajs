@@ -32,12 +32,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arikajs/database.git"
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/database"
   },
   "bugs": {
-    "url": "https://github.com/arikajs/database/issues"
+    "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/arikajs/database#readme",
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/database#readme",
   "dependencies": {
     "better-sqlite3": "^11.7.0",
     "mongodb": "^7.1.0",

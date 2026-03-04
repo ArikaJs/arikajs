@@ -1,54 +1,55 @@
 {
-    "name": "@arikajs/storage",
-    "version": "0.0.4",
-    "description": "Filesystem abstraction layer for the ArikaJS framework.",
-    "license": "MIT",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "scripts": {
-        "build": "tsc -p tsconfig.json",
-        "build:tests": "tsc -p tsconfig.test.json",
-        "clean": "rm -rf dist",
-        "prepare": "echo skip",
-        "test": "npm run build && npm run build:tests && node --test 'dist/tests/**/*.test.js'",
-        "test:watch": "npm run build && npm run build:tests && node --test --watch 'dist/tests/**/*.test.js'"
-    },
-    "files": [
-        "dist"
-    ],
-    "keywords": [
-        "arika",
-        "arika-js",
-        "framework",
-        "storage",
-        "filesystem",
-        "file",
-        "disk",
-        "driver"
-    ],
-    "engines": {
-        "node": ">=20.0.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/arikajs/storage.git"
-    },
-    "bugs": {
-        "url": "https://github.com/arikajs/storage/issues"
-    },
-    "homepage": "https://github.com/arikajs/storage#readme",
-    "devDependencies": {
-        "@types/mime-types": "^3.0.1",
-        "@types/node": "^20.11.24",
-        "typescript": "^5.3.3"
-    },
-    "author": "Prakash Tank",
-    "dependencies": {
-        "@arikajs/middleware": "^0.0.4",
-        "@aws-sdk/client-s3": "^3.986.0",
-        "@aws-sdk/s3-request-presigner": "^3.992.0",
-        "@azure/storage-blob": "^12.31.0",
-        "@google-cloud/storage": "^7.19.0",
-        "mime-types": "^3.0.2"
-    }
+  "name": "@arikajs/storage",
+  "version": "0.0.4",
+  "description": "Filesystem abstraction layer for the ArikaJS framework.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:tests": "tsc -p tsconfig.test.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "test": "npm run build && npm run build:tests && node --test 'dist/tests/**/*.test.js'",
+    "test:watch": "npm run build && npm run build:tests && node --test --watch 'dist/tests/**/*.test.js'"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "framework",
+    "storage",
+    "filesystem",
+    "file",
+    "disk",
+    "driver"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/storage"
+  },
+  "bugs": {
+    "url": "https://github.com/ArikaJs/arikajs/issues"
+  },
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/storage#readme",
+  "devDependencies": {
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank",
+  "dependencies": {
+    "@arikajs/middleware": "^0.0.4",
+    "@aws-sdk/client-s3": "^3.986.0",
+    "@aws-sdk/s3-request-presigner": "^3.992.0",
+    "@azure/storage-blob": "^12.31.0",
+    "@google-cloud/storage": "^7.19.0",
+    "mime-types": "^3.0.2"
+  }
 }

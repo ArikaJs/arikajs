@@ -28,12 +28,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arikajs/console.git"
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/console"
   },
   "bugs": {
-    "url": "https://github.com/arikajs/console/issues"
+    "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/arikajs/console#readme",
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/console#readme",
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.11.24",

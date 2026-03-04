@@ -24,5 +24,14 @@
     "typescript": "^5.3.3",
     "tsx": "^4.7.1"
   },
-  "author": "Prakash Tank"
+  "author": "Prakash Tank",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/scheduler"
+  },
+  "bugs": {
+    "url": "https://github.com/ArikaJs/arikajs/issues"
+  },
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/scheduler#readme"
 }

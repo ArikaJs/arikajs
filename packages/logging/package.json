@@ -30,12 +30,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arikajs/logging.git"
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/logging"
   },
   "bugs": {
-    "url": "https://github.com/arikajs/logging/issues"
+    "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/arikajs/logging#readme",
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/logging#readme",
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.11.24",

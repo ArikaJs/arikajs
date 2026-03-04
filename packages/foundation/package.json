@@ -32,12 +32,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arikajs/foundation.git"
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/foundation"
   },
   "bugs": {
-    "url": "https://github.com/arikajs/foundation/issues"
+    "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/arikajs/foundation#readme",
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/foundation#readme",
   "dependencies": {
     "@arikajs/config": "^0.0.4"
   },

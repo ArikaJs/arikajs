@@ -30,12 +30,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arikajs/queue.git"
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/queue"
   },
   "bugs": {
-    "url": "https://github.com/arikajs/queue/issues"
+    "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/arikajs/queue#readme",
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/queue#readme",
   "dependencies": {
     "ioredis": "^5.9.3"
   },
