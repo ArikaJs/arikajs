@@ -354,7 +354,7 @@ Migrated:  0001_create_posts_table
 
 ```bash
 # Clone the repository
-git clone https://github.com/arikajs/cli.git
+git clone https://github.com/arikajs/arikajs/tree/main/packages/cli#readme
 cd cli
 
 # Install dependencies
@@ -432,7 +432,7 @@ cli/
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](https://github.com/arikajs/cli/blob/main/CONTRIBUTING.md).
+We welcome contributions! Please see our [Contributing Guide](https://github.com/arikajs/arikajs/tree/main/packages/cli/blob/main/CONTRIBUTING.md).
 
 ---
 
@@ -444,9 +444,9 @@ The ArikaJS CLI is open-sourced software licensed under the [MIT license](LICENS
 
 ## 💬 Support
 
-- 📖 [Documentation](https://github.com/arikajs/cli#readme)
+- 📖 [Documentation](https://github.com/arikajs/arikajs/tree/main/packages/cli#readme)
 - 💬 [Discord Community](https://discord.gg/arikajs)
-- 🐛 [Issue Tracker](https://github.com/arikajs/cli/issues)
+- 🐛 [Issue Tracker](https://github.com/arikajs/arikajs/tree/main/packages/cli/issues)
 
 ---
 
