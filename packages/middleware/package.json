@@ -37,8 +37,8 @@
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/middleware#readme",
   "dependencies": {
-    "@arikajs/http": "^0.0.4",
-    "@arikajs/logging": "^0.0.4"
+    "@arikajs/http": "*",
+    "@arikajs/logging": "*"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

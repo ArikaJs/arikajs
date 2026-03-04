@@ -11,12 +11,12 @@
     "test": "npx tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
-    "@arikajs/foundation": "^0.0.4",
-    "@arikajs/logging": "^0.0.4",
-    "@arikajs/queue": "^0.0.4",
-    "@arikajs/console": "^0.0.4",
-    "@arikajs/cache": "^0.0.4",
-    "@arikajs/events": "^0.0.4",
+    "@arikajs/foundation": "*",
+    "@arikajs/logging": "*",
+    "@arikajs/queue": "*",
+    "@arikajs/console": "*",
+    "@arikajs/cache": "*",
+    "@arikajs/events": "*",
     "cron-parser": "^4.9.0"
   },
   "devDependencies": {

@@ -22,7 +22,7 @@
     "documentation"
   ],
   "dependencies": {
-    "@arikajs/router": "^0.0.4"
+    "@arikajs/router": "*"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

@@ -37,8 +37,8 @@
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/router#readme",
   "dependencies": {
-    "@arikajs/http": "^0.0.4",
-    "@arikajs/dispatcher": "^0.0.4"
+    "@arikajs/http": "*",
+    "@arikajs/dispatcher": "*"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

@@ -40,13 +40,13 @@
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/foundation#readme",
   "dependencies": {
-    "@arikajs/config": "^0.0.4"
+    "@arikajs/config": "*"
   },
   "devDependencies": {
-    "@arikajs/logging": "^0.0.4",
-    "@arikajs/http": "^0.0.4",
-    "@arikajs/database": "^0.0.4",
-    "@arikajs/cache": "^0.0.4",
+    "@arikajs/logging": "*",
+    "@arikajs/http": "*",
+    "@arikajs/database": "*",
+    "@arikajs/cache": "*",
     "@types/node": "^20.19.31",
     "typescript": "^5.7.0"
   },

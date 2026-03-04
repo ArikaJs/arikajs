@@ -31,7 +31,7 @@
     "url": "https://github.com/ArikaJs/arikajs/issues"
   },
   "dependencies": {
-    "@arikajs/foundation": "^0.0.4"
+    "@arikajs/foundation": "*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

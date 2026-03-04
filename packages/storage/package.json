@@ -45,7 +45,7 @@
   },
   "author": "Prakash Tank",
   "dependencies": {
-    "@arikajs/middleware": "^0.0.4",
+    "@arikajs/middleware": "*",
     "@aws-sdk/client-s3": "^3.986.0",
     "@aws-sdk/s3-request-presigner": "^3.992.0",
     "@azure/storage-blob": "^12.31.0",

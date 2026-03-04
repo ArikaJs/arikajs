@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/dispatcher#readme",
   "dependencies": {
-    "@arikajs/middleware": "^0.0.4"
+    "@arikajs/middleware": "*"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
