@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![ArikaJS Logo](http://13.232.79.11:7800/down/oZ9NpyKtAQzK.png)
+<img src="./templates/app/public/assets/img/logo.png" alt="ArikaJS Logo" width="400">
 
 **The Official Command-Line Interface for ArikaJS**
 
