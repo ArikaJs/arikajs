@@ -59,6 +59,7 @@ export class Dispatcher {
                 controllerMiddleware,
                 resolvedHandler,
                 handler: (req: any, res: any, params: any) => this.invoker.invoke(resolvedHandler, req, res, params),
+                middleware: hasMiddleware ? [...(route.middleware || []), ...(controllerMiddleware || [])] : []
             });
 
             // Pre-serialize simple responses if possible (only if handler takes no arguments)
@@ -135,8 +136,8 @@ export class Dispatcher {
             request.setParams(params);
         }
 
-        // 0. Resolve Route Parameters (Model Binding)
-        const resolvedParams = await this.resolveParameters(params);
+        // 0. Resolve Route Parameters (Model Binding) - only if we have binders
+        const resolvedParams = this.parameterBinders.size > 0 ? await this.resolveParameters(params) : params;
 
         // 1. Resolve Handler
         let resolvedHandler: Function | { controller: any; method: string };
@@ -169,18 +170,17 @@ export class Dispatcher {
 
         // 2. Prepare Middleware Pipeline
         const pipeline = new Pipeline<Request, Response>(this.container);
+
+        if (plan && plan.hasMiddleware) {
+            pipeline.pipe(plan.middleware);
+        } else if (!plan) {
+            // Fallback for non-plan routes
+            if (route.middleware) pipeline.pipe(route.middleware);
+            if (controllerMiddleware) pipeline.pipe(controllerMiddleware);
+        }
+
         pipeline.setMiddlewareGroups(this.middlewareGroups);
         pipeline.setAliases(this.routeMiddleware);
-
-        // Add route-level middleware
-        if (route.middleware && route.middleware.length > 0) {
-            pipeline.pipe(route.middleware);
-        }
-
-        // Add controller-level middleware
-        if (controllerMiddleware && controllerMiddleware.length > 0) {
-            pipeline.pipe(controllerMiddleware);
-        }
 
         // 3. Execute Pipeline
         try {

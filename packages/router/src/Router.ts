@@ -9,6 +9,7 @@ export class Router {
     private dispatcher: Dispatcher;
     private cache: Map<string, MatchedRoute | null> = new Map();
     private modelsSynced = false;
+    private isSynced = false;
 
     constructor(container?: Container) {
         this.matcher = new RouteMatcher();
@@ -28,8 +29,10 @@ export class Router {
     }
 
     public sync() {
+        if (this.isSynced) return;
         this.syncModels();
         this.dispatcher.precompile(RouteRegistry.getInstance().getRoutes());
+        this.isSynced = true;
     }
 
     /**
@@ -68,6 +71,7 @@ export class Router {
      * Match a request to a route.
      */
     public match(method: string, path: string): MatchedRoute | null {
+        if (!this.isSynced) this.sync();
         const cacheKey = `${method.toUpperCase()}:${path}`;
 
         if (this.cache.has(cacheKey)) {
