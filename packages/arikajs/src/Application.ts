@@ -158,7 +158,7 @@ export class Application extends FoundationApplication implements ApplicationCon
                         const buffer = (dispatcher as any).responseResolver.bufferCache.get(plan.route);
 
                         // Scenario 1: Pre-serialized static content
-                        if (buffer && Object.keys(matched.params || {}).length === 0) {
+                        if (buffer && !matched.hasParams) {
                             res.writeHead(200, {
                                 'Content-Type': 'application/json',
                                 'Content-Length': buffer.length,

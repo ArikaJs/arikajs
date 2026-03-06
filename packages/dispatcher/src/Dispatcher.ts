@@ -24,18 +24,28 @@ export class Dispatcher {
     }
 
     public precompile(routes: any[]) {
-        for (const route of routes) {
+        for (let i = 0; i < routes.length; i++) {
+            const route = routes[i];
             const handler = route.handler;
             let resolvedHandler: any;
             let controllerMiddleware: any[] = [];
 
             if (Array.isArray(handler)) {
                 if (this.controllerResolver) {
-                    const resolved = this.controllerResolver.resolve(handler);
-                    resolvedHandler = resolved;
-                    if (typeof resolved.controller.getMiddleware === 'function') {
-                        controllerMiddleware = resolved.controller.getMiddleware() || [];
+                    try {
+                        const resolved = this.controllerResolver.resolve(handler);
+                        resolvedHandler = resolved;
+                        if (typeof resolved.controller.getMiddleware === 'function') {
+                            controllerMiddleware = resolved.controller.getMiddleware() || [];
+                        } else if (resolved.controller.constructor && resolved.controller.constructor.middleware) {
+                            controllerMiddleware = resolved.controller.constructor.middleware;
+                        }
+                    } catch (e) {
+                        // Skip if cannot resolve at boot (e.g. missing container)
+                        continue;
                     }
+                } else {
+                    continue;
                 }
             } else {
                 resolvedHandler = handler;
@@ -45,10 +55,10 @@ export class Dispatcher {
 
             this.executionPlans.set(route, {
                 route,
-                handler: (req: any, res: any, params: any) => this.invoker.invoke(resolvedHandler, req, res, params),
                 hasMiddleware,
                 controllerMiddleware,
-                resolvedHandler
+                resolvedHandler,
+                handler: (req: any, res: any, params: any) => this.invoker.invoke(resolvedHandler, req, res, params),
             });
 
             // Pre-serialize simple responses if possible (only if handler takes no arguments)
@@ -132,23 +142,29 @@ export class Dispatcher {
         let resolvedHandler: Function | { controller: any; method: string };
         let controllerMiddleware: any[] = [];
 
-        if (Array.isArray(handler)) {
-            if (!this.controllerResolver) {
-                throw new Error('Container required for controller resolution.');
-            }
-            const resolved = this.controllerResolver.resolve(handler);
-            resolvedHandler = resolved;
-
-            // Extract controller-level middleware
-            if (typeof resolved.controller.getMiddleware === 'function') {
-                controllerMiddleware = resolved.controller.getMiddleware() || [];
-            } else if (resolved.controller.constructor && resolved.controller.constructor.middleware) {
-                controllerMiddleware = resolved.controller.constructor.middleware;
-            }
-        } else if (typeof handler === 'function') {
-            resolvedHandler = handler;
+        const plan = this.executionPlans.get(route);
+        if (plan) {
+            resolvedHandler = plan.resolvedHandler;
+            controllerMiddleware = plan.controllerMiddleware;
         } else {
-            throw new Error('Invalid route handler.');
+            if (Array.isArray(handler)) {
+                if (!this.controllerResolver) {
+                    throw new Error('Container required for controller resolution.');
+                }
+                const resolved = this.controllerResolver.resolve(handler);
+                resolvedHandler = resolved;
+
+                // Extract controller-level middleware
+                if (typeof resolved.controller.getMiddleware === 'function') {
+                    controllerMiddleware = resolved.controller.getMiddleware() || [];
+                } else if (resolved.controller.constructor && resolved.controller.constructor.middleware) {
+                    controllerMiddleware = resolved.controller.constructor.middleware;
+                }
+            } else if (typeof handler === 'function') {
+                resolvedHandler = handler;
+            } else {
+                throw new Error('Invalid route handler.');
+            }
         }
 
         // 2. Prepare Middleware Pipeline

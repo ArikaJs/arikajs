@@ -15,6 +15,7 @@ export interface RouteDefinition {
 export interface MatchedRoute {
     route: RouteDefinition;
     params: Record<string, string>;
+    hasParams: boolean;
 }
 
 export interface Container {

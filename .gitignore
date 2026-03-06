@@ -19,11 +19,9 @@ yarn-error.log*
 .idea/
 *.tsbuildinfo
 .turbo/
-
-# Project
+# Benchmarks
+benchmark/
 packages/benchmark/
 
 # Scripts
 scripts/
-
-

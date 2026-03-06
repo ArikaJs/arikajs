@@ -79,4 +79,27 @@ describe('Advanced Routing Features', () => {
         assert.strictEqual(matched.route.path, '/api/users');
         assert.deepStrictEqual(matched.route.middleware, ['auth']);
     });
+
+    it('can match different methods correctly for same path', () => {
+        Route.get('/post', () => 'get-post');
+        Route.post('/post', () => 'post-post');
+
+        const getMatch = router.match('GET', '/post');
+        assert.ok(getMatch !== null);
+        assert.strictEqual(getMatch.route.method, 'GET');
+
+        const postMatch = router.match('POST', '/post');
+        assert.ok(postMatch !== null);
+        assert.strictEqual(postMatch.route.method, 'POST');
+    });
+
+    it('can apply multiple regex constraints', () => {
+        Route.get('/user/:id/:name', () => 'user')
+            .where('id', '[0-9]+')
+            .where('name', '[a-z]+');
+
+        assert.ok(router.match('GET', '/user/123/john') !== null);
+        assert.strictEqual(router.match('GET', '/user/abc/john'), null);
+        assert.strictEqual(router.match('GET', '/user/123/JOHN'), null);
+    });
 });
