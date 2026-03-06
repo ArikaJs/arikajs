@@ -13,12 +13,53 @@ export class Dispatcher {
     private routeMiddleware: Record<string, any> = {};
     private parameterBinders: Map<string, (value: any) => Promise<any>> = new Map();
     private exceptionHandler?: (error: any, request: Request, response: Response) => any;
+    public executionPlans: Map<any, any> = new Map();
 
     constructor(private container?: any) {
         this.invoker = new MethodInvoker(container);
         this.responseResolver = new ResponseResolver();
         if (container) {
             this.controllerResolver = new ControllerResolver(container);
+        }
+    }
+
+    public precompile(routes: any[]) {
+        for (const route of routes) {
+            const handler = route.handler;
+            let resolvedHandler: any;
+            let controllerMiddleware: any[] = [];
+
+            if (Array.isArray(handler)) {
+                if (this.controllerResolver) {
+                    const resolved = this.controllerResolver.resolve(handler);
+                    resolvedHandler = resolved;
+                    if (typeof resolved.controller.getMiddleware === 'function') {
+                        controllerMiddleware = resolved.controller.getMiddleware() || [];
+                    }
+                }
+            } else {
+                resolvedHandler = handler;
+            }
+
+            const hasMiddleware = (route.middleware && route.middleware.length > 0) || (controllerMiddleware && controllerMiddleware.length > 0);
+
+            this.executionPlans.set(route, {
+                route,
+                handler: (req: any, res: any, params: any) => this.invoker.invoke(resolvedHandler, req, res, params),
+                hasMiddleware,
+                controllerMiddleware,
+                resolvedHandler
+            });
+
+            // Pre-serialize simple responses if possible (only if handler takes no arguments)
+            if (!hasMiddleware && typeof resolvedHandler === 'function' && resolvedHandler.length === 0) {
+                try {
+                    const result = resolvedHandler();
+                    if (result && typeof result === 'object' && !(result instanceof Promise)) {
+                        this.responseResolver.bufferCache.set(route, Buffer.from(JSON.stringify(result)));
+                    }
+                } catch (e) { }
+            }
         }
     }
 

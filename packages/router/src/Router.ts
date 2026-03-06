@@ -8,6 +8,7 @@ export class Router {
     private matcher: RouteMatcher;
     private dispatcher: Dispatcher;
     private cache: Map<string, MatchedRoute | null> = new Map();
+    private modelsSynced = false;
 
     constructor(container?: Container) {
         this.matcher = new RouteMatcher();
@@ -18,10 +19,17 @@ export class Router {
      * Sync models from the static registry.
      */
     private syncModels(): void {
+        if (this.modelsSynced) return;
         const models = RouteRegistry.getInstance().getModels();
         for (const [key, resolver] of models.entries()) {
             this.dispatcher.bind(key, resolver);
         }
+        this.modelsSynced = true;
+    }
+
+    public sync() {
+        this.syncModels();
+        this.dispatcher.precompile(RouteRegistry.getInstance().getRoutes());
     }
 
     /**

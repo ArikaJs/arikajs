@@ -26,6 +26,12 @@ export class Application extends FoundationApplication implements ApplicationCon
         this.register(FrameworkServiceProvider);
     }
 
+    public async boot(): Promise<void> {
+        if (this.isBooted()) return;
+        await super.boot();
+        (this.router as any).sync();
+    }
+
     public version(): string {
         return Application.VERSION;
     }
@@ -84,25 +90,9 @@ export class Application extends FoundationApplication implements ApplicationCon
 
         // Resolve Kernel from the container
         const kernel = this.make(Kernel);
+        const callback = this.getCallback();
 
-        this.server = http.createServer(async (req, res) => {
-            const request = new Request(this, req);
-            const response = new Response(res);
-
-            try {
-                const finalResponse = await kernel.handle(request, response);
-                kernel.terminate(request, finalResponse);
-            } catch (error: any) {
-                if (!res.headersSent) {
-                    res.writeHead(500, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({
-                        error: 'Internal Server Error',
-                        message: error.message,
-                        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-                    }));
-                }
-            }
-        });
+        this.server = http.createServer(callback);
 
         // Graceful shutdown
         const shutdown = () => this.terminate();
@@ -131,6 +121,127 @@ export class Application extends FoundationApplication implements ApplicationCon
         console.log(` \x1b[90mEnvironment:\x1b[0m \x1b[33m${env}\x1b[0m`);
         console.log(` \x1b[90mLocal URL:\x1b[0m   \x1b[36mhttp://localhost:${port}\x1b[0m`);
         console.log('');
+    }
+
+    /**
+     * Get the HTTP server callback for raw http.createServer() usage.
+     */
+    public getCallback() {
+        if (!this.isBooted()) {
+            throw new Error('Application must be booted before calling getCallback()');
+        }
+
+        const { Kernel } = require('./http/Kernel');
+        const kernel = this.make(Kernel);
+        const { ObjectPool } = require('@arikajs/foundation');
+        const { Request: ArikaRequest, Response: ArikaResponse, RawResponse } = require('@arikajs/http');
+
+        const requestPool = new ObjectPool(
+            () => new (ArikaRequest as any)(this, null),
+            (obj: any) => obj.reset(null)
+        );
+        const responsePool = new ObjectPool(
+            () => new (ArikaResponse as any)(null),
+            (obj: any) => obj.reset(null)
+        );
+
+        return (req: any, res: any) => {
+            // ── ULTRA FAST PATH ──
+            const router = this.getRouter();
+            const matched = router.match(req.method as string, req.url as string);
+
+            if (matched) {
+                const dispatcher = (router as any).dispatcher;
+                if (dispatcher) {
+                    const plan = (dispatcher as any).executionPlans.get(matched.route);
+                    if (plan && !plan.hasMiddleware && (dispatcher as any).parameterBinders.size === 0) {
+                        const buffer = (dispatcher as any).responseResolver.bufferCache.get(plan.route);
+
+                        // Scenario 1: Pre-serialized static content
+                        if (buffer && Object.keys(matched.params || {}).length === 0) {
+                            res.writeHead(200, {
+                                'Content-Type': 'application/json',
+                                'Content-Length': buffer.length,
+                                'Date': (RawResponse as any).dateCache,
+                                'Connection': 'keep-alive'
+                            });
+                            res.end(buffer);
+                            return;
+                        }
+
+                        // Scenario 2: Dynamic handler dispatch
+                        const request = requestPool.acquire();
+                        const response = responsePool.acquire();
+                        request.reset(req);
+                        request.setParams(matched.params);
+                        response.reset(res);
+
+                        const release = () => {
+                            requestPool.release(request);
+                            responsePool.release(response);
+                        };
+
+                        try {
+                            const result = plan.handler(request, response, matched.params);
+
+                            if (result instanceof Promise) {
+                                result.then(async (r) => {
+                                    await (dispatcher as any).responseResolver.resolve(r, response, plan.route);
+                                    (response as any).terminate();
+                                    release();
+                                }).catch((e) => {
+                                    if (!res.headersSent) {
+                                        res.writeHead(500, { 'Content-Type': 'application/json' });
+                                        res.end(JSON.stringify({ error: 'Internal Server Error', message: e.message }));
+                                    }
+                                    release();
+                                });
+                            } else {
+                                const resolved = (dispatcher as any).responseResolver.resolve(result, response, plan.route);
+                                if (resolved instanceof Promise) {
+                                    resolved.then(() => {
+                                        (response as any).terminate();
+                                        release();
+                                    });
+                                } else {
+                                    (response as any).terminate();
+                                    release();
+                                }
+                            }
+                        } catch (e: any) {
+                            if (!res.headersSent) {
+                                res.writeHead(500, { 'Content-Type': 'application/json' });
+                                res.end(JSON.stringify({ error: 'Internal Server Error', message: e.message }));
+                            }
+                            release();
+                        }
+                        return;
+                    }
+                }
+            }
+
+            // ── STANDARD PATH ──
+            const request = requestPool.acquire();
+            const response = responsePool.acquire();
+            request.reset(req);
+            response.reset(res);
+
+            const handleRequest = async () => {
+                try {
+                    const finalResponse = await (kernel as any).handle(request, response);
+                    (kernel as any).terminate(request, finalResponse);
+                } catch (error: any) {
+                    if (!res.headersSent) {
+                        res.writeHead(500, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Internal Server Error', message: error.message }));
+                    }
+                } finally {
+                    requestPool.release(request);
+                    responsePool.release(response);
+                }
+            };
+            handleRequest();
+        };
     }
 
     /**

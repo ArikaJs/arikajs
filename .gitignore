@@ -18,6 +18,10 @@ yarn-error.log*
 .vscode/
 .idea/
 *.tsbuildinfo
+.turbo/
+
+# Project
+packages/benchmark/
 
 # Scripts
 scripts/

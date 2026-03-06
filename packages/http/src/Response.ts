@@ -2,14 +2,22 @@ import { ServerResponse } from 'node:http';
 import * as cookie from 'cookie';
 
 export class Response {
-    private readonly res: ServerResponse;
+    private res!: ServerResponse;
     private _status: number = 200;
     private _headers: Record<string, string | number | string[]> = {};
     private _cookies: string[] = [];
     private _content: string | Buffer | null = null;
 
     constructor(res: ServerResponse) {
-        this.res = res;
+        if (res) this.reset(res);
+    }
+
+    public reset(res: ServerResponse | null) {
+        this.res = res!;
+        this._status = 200;
+        this._headers = {};
+        this._cookies = [];
+        this._content = null;
     }
 
     /**
@@ -152,8 +160,10 @@ export class Response {
         this.res.statusCode = this._status;
 
         // 2. Set Headers
-        for (const [name, value] of Object.entries(this._headers)) {
-            this.res.setHeader(name, value);
+        const headerKeys = Object.keys(this._headers);
+        for (let i = 0; i < headerKeys.length; i++) {
+            const key = headerKeys[i];
+            this.res.setHeader(key, this._headers[key]);
         }
 
         // 3. Set Cookies

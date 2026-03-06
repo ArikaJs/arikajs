@@ -13,3 +13,4 @@ export * from '@arikajs/config';
 // Contracts
 export { Application as ApplicationContract } from './contracts/Application';
 export { Kernel as KernelContract } from './contracts/Kernel';
+export * from './ObjectPool';

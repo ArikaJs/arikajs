@@ -4,30 +4,47 @@ import { URL } from 'node:url';
 import * as cookie from 'cookie';
 
 export class Request {
-    private readonly app: Application;
-    private readonly req: IncomingMessage;
-    private readonly searchParams: URLSearchParams;
+    private app: Application;
+    private req!: IncomingMessage;
+    private _session: any = null;
+    public searchParams!: URLSearchParams;
     private _cookies: Record<string, string | undefined> | null = null;
     private _body: any = null;
     private _params: Record<string, string> = {};
-    public session: any;
 
     constructor(app: Application, req: IncomingMessage) {
         this.app = app;
+        if (req) {
+            this.reset(req);
+        }
+    }
+
+    private _baseUrl: string | null = null;
+
+    public reset(req: IncomingMessage | null) {
+        if (!req) {
+            this.req = null as any;
+            return;
+        }
         this.req = req;
+        (this as any).searchParams = null;
+        this._cookies = null;
+        this._body = null;
+        this._params = {};
+        this._baseUrl = null;
+        this._session = null;
+    }
 
-        const fullUrl = `${this.baseUrl()}${req.url || '/'}`;
-        this.searchParams = new URL(fullUrl).searchParams;
-
-        // Initialize a lightweight in-memory session store (fallback until full session middleware)
-        const store: Record<string, any> = {};
-        this.session = {
-            get(key: string) { return store[key] ?? null; },
-            put(key: string, value: any) { store[key] = value; },
-            forget(key: string) { delete store[key]; },
-            has(key: string) { return key in store; },
-            all() { return { ...store }; },
-        };
+    private ensureSearchParams() {
+        if (!(this as any).searchParams && this.req) {
+            const url = this.req.url || '/';
+            const queryIndex = url.indexOf('?');
+            if (queryIndex === -1) {
+                (this as any).searchParams = new URLSearchParams();
+            } else {
+                (this as any).searchParams = new URLSearchParams(url.slice(queryIndex + 1));
+            }
+        }
     }
 
     /**
@@ -35,15 +52,18 @@ export class Request {
      * Falls back to app.url config if host header is missing.
      */
     baseUrl(): string {
+        if (this._baseUrl) return this._baseUrl;
         const trustProxy = this.app.config().get('http.trustProxy', false);
         const protocol = trustProxy ? (this.header('x-forwarded-proto') as string || 'http') : 'http';
         const host = trustProxy ? (this.header('x-forwarded-host') as string || this.req.headers.host) : this.req.headers.host;
 
         if (host) {
-            return `${protocol}://${host}`;
+            this._baseUrl = `${protocol}://${host}`;
+            return this._baseUrl;
         }
 
-        return this.app.config().get('app.url', 'http://localhost') as string;
+        this._baseUrl = this.app.config().get('app.url', 'http://localhost') as string;
+        return this._baseUrl;
     }
 
     /**
@@ -71,8 +91,9 @@ export class Request {
      * Get the request path.
      */
     path(): string {
-        const url = new URL(this.req.url || '/', `http://${this.req.headers.host || 'localhost'}`);
-        return url.pathname;
+        const url = this.req.url || '/';
+        const queryIndex = url.indexOf('?');
+        return queryIndex === -1 ? url : url.slice(0, queryIndex);
     }
 
     /**
@@ -111,6 +132,7 @@ export class Request {
      * Get a query parameter.
      */
     query(key: string): string | null {
+        this.ensureSearchParams();
         return this.searchParams.get(key);
     }
 
@@ -171,6 +193,7 @@ export class Request {
      * Get all input (query + body).
      */
     all(): any {
+        this.ensureSearchParams();
         const query = Object.fromEntries(this.searchParams.entries());
         const body = typeof this._body === 'object' && this._body !== null ? this._body : {};
         return { ...query, ...body };
@@ -190,6 +213,24 @@ export class Request {
         });
 
         return result;
+    }
+
+    get session(): any {
+        if (!this._session) {
+            const store: Record<string, any> = {};
+            this._session = {
+                get: (key: string) => store[key] ?? null,
+                put: (key: string, value: any) => { store[key] = value; },
+                forget: (key: string) => { delete store[key]; },
+                has: (key: string) => key in store,
+                all: () => ({ ...store }),
+            };
+        }
+        return this._session;
+    }
+
+    set session(value: any) {
+        this._session = value;
     }
 
     /**

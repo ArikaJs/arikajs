@@ -4,6 +4,7 @@ import { NewCommand } from './Commands/NewCommand';
 import { ListCommand } from './Commands/ListCommand';
 import { ServeCommand } from './Commands/ServeCommand';
 import { KeyGenerateCommand } from './Commands/KeyGenerateCommand';
+import { BenchmarkCommand } from './Commands/BenchmarkCommand';
 
 export class Bootstrap {
     public static async boot(): Promise<CommandRegistry> {
@@ -14,6 +15,7 @@ export class Bootstrap {
         registry.register(ListCommand);
         registry.register(ServeCommand);
         registry.register(KeyGenerateCommand);
+        registry.register(BenchmarkCommand);
         registry.registerLazy('docs:generate', 'Generate API documentation, Postman collection, and OpenAPI spec', () => import('./Commands/DocsGenerateCommand'));
         registry.registerLazy('route:list', 'List all registered routes', () => import('./Commands/RouteListCommand'));
 

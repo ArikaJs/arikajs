@@ -12,3 +12,4 @@ export * from './Exceptions/HttpException';
 export * from './Contracts/Application';
 export * from './HttpServiceProvider';
 export * from './Middleware/ServeStaticMiddleware';
+export * from './RawResponse';

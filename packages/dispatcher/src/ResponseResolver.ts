@@ -2,18 +2,26 @@ import { Response } from './Contracts/Http';
 import { Stream } from 'stream';
 
 export class ResponseResolver {
+    public bufferCache: Map<any, Buffer> = new Map();
+
     /**
      * Resolve and normalize the handler return value into a Response object.
      */
-    public async resolve(value: any, response: Response): Promise<Response> {
+    public resolve(value: any, response: Response, route?: any): Response | Promise<Response> {
+        if (route && this.bufferCache.has(route)) {
+            return response.send(this.bufferCache.get(route)!);
+        }
         // Handle null or undefined (empty response)
         if (value === null || value === undefined) {
             return response.status(204).send('');
         }
 
         // Output of a View or object with a render() method
-        if (typeof value.render === 'function') {
-            const rendered = await value.render();
+        if (value && typeof value.render === 'function') {
+            const rendered = value.render();
+            if (rendered instanceof Promise) {
+                return rendered.then(r => response.send(r));
+            }
             return response.send(rendered);
         }
 
