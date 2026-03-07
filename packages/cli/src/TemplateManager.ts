@@ -146,7 +146,11 @@ export class TemplateManager {
                     }
 
                     if (depName) {
-                        const localPath = path.join(devWorkspaceRoot, depName);
+                        let localPath = path.join(devWorkspaceRoot, depName);
+                        if (!fs.existsSync(localPath)) {
+                            localPath = path.join(devWorkspaceRoot, 'packages', depName);
+                        }
+
                         if (fs.existsSync(localPath)) {
                             // Calculate relative path from target directory to local package
                             let relativePath = path.relative(targetDir, localPath);

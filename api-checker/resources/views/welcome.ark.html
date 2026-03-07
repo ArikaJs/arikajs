@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to ArikaJS</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.4);
+            --secondary: #ec4899;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(15, 23, 42, 0.08);
+            --aurora-opacity: 0.3;
+            --btn-secondary-bg: rgba(15, 23, 42, 0.05);
+            --pill-bg: rgba(15, 23, 42, 0.03);
+            --h1-gradient: linear-gradient(135deg, #0f172a 30%, #334155 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --aurora-opacity: 0.5;
+            --btn-secondary-bg: rgba(255, 255, 255, 0.05);
+            --pill-bg: rgba(255, 255, 255, 0.03);
+            --h1-gradient: linear-gradient(135deg, #fff 30%, rgba(255, 255, 255, 0.5) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Header Styles */
+        header {
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo {
+            width: 135px;
+            height: auto;
+            filter: drop-shadow(0 4px 6px rgba(139, 92, 246, 0.2));
+        }
+
+        [data-theme="dark"] .logo {
+            filter: invert(1) drop-shadow(0 4px 6px rgba(139, 92, 246, 0.3));
+        }
+
+        .brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--h1-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Theme Switcher */
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            border-radius: 99px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-main);
+        }
+
+        /* Animated Aurora Background */
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(100px);
+            opacity: var(--aurora-opacity);
+            pointer-events: none;
+        }
+
+        .aurora-blur {
+            position: absolute;
+            border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+
+        .blur-1 {
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            top: -10%;
+            left: -10%;
+        }
+
+        .blur-2 {
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            bottom: -10%;
+            right: -10%;
+            animation-duration: 25s;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(10%, 10%) scale(1.1);
+            }
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 800;
+            line-height: 0.9;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.04em;
+            background: var(--h1-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+            background: #9d71fd;
+        }
+
+        .btn-secondary {
+            background: var(--btn-secondary-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 24px;
+            text-align: left;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            background: var(--card-bg);
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .footer {
+            padding: 3rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Performance Section Improvements */
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--h1-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .perf-dashboard {
+            max-width: 850px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .perf-stats-card {
+            background: var(--card-bg);
+            padding: 3.5rem;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(30px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .perf-stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.5;
+        }
+
+        .stat-item {
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .stat-item.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .framework {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .arika-highlight .dot {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .framework .name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 99px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .value {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .arika-highlight .value {
+            color: var(--primary);
+        }
+
+        .progress-container {
+            height: 14px;
+            background: var(--pill-bg);
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            border-radius: 99px;
+            transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+            position: relative;
+        }
+
+        .stat-item.active .progress-bar {
+            width: var(--width);
+        }
+
+        .arika-glow {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .stat-item:not(.arika-highlight) .progress-bar {
+            background: var(--text-muted);
+            opacity: 0.4;
+        }
+
+        .shimmer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .benchmark-note {
+            margin-top: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            header {
+                padding: 1rem 5%;
+            }
+
+            .perf-stats-card {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="/" class="logo-container">
+            <img src="/assets/img/logo.png" alt="ArikaJS Logo" class="logo">
+        </a>
+
+        <div class="header-right" style="display: flex; align-items: center; gap: 1.5rem;">
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
+                <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+                <svg id="sun-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="aurora">
+        <div class="aurora-blur blur-1"></div>
+        <div class="aurora-blur blur-2"></div>
+    </div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="badge">Version 0.0.4 Now Live</div>
+            <h1>The Next Generation Node.js Framework</h1>
+            <p class="description">
+                Crafted for high-performance applications and exceptional developer
+                experience. ArikaJS gives you the tools to build scalable systems with ease.
+            </p>
+
+            <div class="actions">
+                <a href="https://github.com/arikajs/arikajs#readme" class="btn btn-primary">Documentation</a>
+                <a href="https://github.com/arikajs/arikajs" class="btn btn-secondary">Star on GitHub</a>
+            </div>
+
+            <!-- Performance Section -->
+            <section class="perf-section" id="performance" style="margin-bottom: 8rem; perspective: 1000px;">
+                <div style="margin-bottom: 3.5rem;">
+                    <h2 class="section-title">Performance Without Compromise</h2>
+                    <p class="section-subtitle">ArikaJS is architected for extreme efficiency, outperforming industry
+                        leaders by 2.5x.</p>
+                </div>
+
+                <div class="perf-dashboard">
+                    <div class="perf-stats-card">
+                        <div class="stat-item arika-highlight">
+                            <div class="stat-info">
+                                <div class="framework">
+                                    <span class="dot"></span>
+                                    <span class="name">ArikaJS</span>
+                                    <span class="tag">Next Gen</span>
+                                </div>
+                                <div class="value"><span class="count" data-target="42800">0</span> <small>req/s</small>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar arika-glow" style="--width: 100%">
+                                    <div class="shimmer"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-item">
+                            <div class="stat-info">
+                                <div class="framework">
+                                    <span class="dot"></span>
+                                    <span class="name">Fastify</span>
+                                </div>
+                                <div class="value"><span class="count" data-target="40400">0</span> <small>req/s</small>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="--width: 94%"></div>
+                            </div>
+                        </div>
+
+                        <div class="stat-item">
+                            <div class="stat-info">
+                                <div class="framework">
+                                    <span class="dot"></span>
+                                    <span class="name">Express</span>
+                                </div>
+                                <div class="value"><span class="count" data-target="16500">0</span> <small>req/s</small>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="--width: 38%"></div>
+                            </div>
+                        </div>
+
+                        <div class="benchmark-note">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            Standard JSON hello-world benchmark (v0.0.4)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <h3>Type-Safe from Core</h3>
+                    <p>Leverage the full power of TypeScript with deep type safety throughout the entire framework
+                        pipeline.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3>Modular Architecture</h3>
+                    <p>Driver-based system for Cache, Database, and Storage. Built for scalability from day one.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Developer Experience</h3>
+                    <p>Powerful CLI, intuitive Routing, and Dependency Injection container to keep your code clean and
+                        testable.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h3>Authentication Ready</h3>
+                    <p>Secure your app with built-in support for multiple guards, providers, and session management
+                        strategies.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                        </svg>
+                    </div>
+                    <h3>Modern ORM</h3>
+                    <p>Fluent and intuitive database interactions with built-in relationship handling and automated
+                        transformations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                        </svg>
+                    </div>
+                    <h3>Blazing Performance</h3>
+                    <p>Optimized for minimal overhead and lightning-fast response times, making it ideal for modern web
+                        apps.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>Middleware Pipeline</h3>
+                    <p>Highly customizable middleware stack using an onion-style execution model for robust request
+                        processing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                        </svg>
+                    </div>
+                    <h3>Global Cache System</h3>
+                    <p>Boost performance with multiple drivers for Redis, Filesystem, or in-memory caching out of the
+                        box.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Real-time Ready</h3>
+                    <p>Built-in support for events, broadcasting, and real-time updates to keep your users engaged.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        Crafted with passion for <span>api-checker</span>. <br>
+        ArikaJS &copy; 2026. Empowering the next generation of developers.
+    </footer>
+
+    <script>
+        const html = document.documentElement;
+        const toggle = document.getElementById('theme-toggle');
+        const sun = document.getElementById('sun-icon');
+        const moon = document.getElementById('moon-icon');
+
+        const savedTheme = localStorage.getItem('arika_theme') || 'light';
+        setTheme(savedTheme);
+
+        toggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('arika_theme', theme);
+
+            if (theme === 'dark') {
+                sun.style.display = 'block';
+                moon.style.display = 'none';
+            } else {
+                sun.style.display = 'none';
+                moon.style.display = 'block';
+            }
+        }
+
+        /* Performance Counter & Scroll Animation */
+        const observerOptions = {
+            threshold: 0.2
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const items = entry.target.querySelectorAll('.stat-item');
+                    items.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.classList.add('active');
+                            const counter = item.querySelector('.count');
+                            const target = parseInt(counter.getAttribute('data-target'));
+                            animateCounter(counter, target);
+                        }, index * 200);
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const perfDashboard = document.querySelector('.perf-stats-card');
+        if (perfDashboard) {
+            observer.observe(perfDashboard);
+        }
+
+        function animateCounter(el, target) {
+            let start = 0;
+            const duration = 1500;
+            const stepTime = 20;
+            const steps = duration / stepTime;
+            const increment = target / steps;
+
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    el.innerText = Math.floor(start).toLocaleString();
+                }
+            }, stepTime);
+        }
+    </script>
+</body>
+
+</html>
