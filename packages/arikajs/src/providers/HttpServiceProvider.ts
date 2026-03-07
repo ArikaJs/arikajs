@@ -15,10 +15,12 @@ export class HttpServiceProvider extends ServiceProvider<Application> {
             return new Router(this.app.getContainer());
         });
 
-        // Register the Kernel
-        this.app.singleton(Kernel, () => {
-            return new Kernel(this.app);
-        });
+        // Register the Kernel — only if not already registered by the application
+        if (!this.app.has(Kernel)) {
+            this.app.singleton(Kernel, () => {
+                return new Kernel(this.app);
+            });
+        }
 
         // Register the Exception Handler
         this.app.singleton(Handler, () => {

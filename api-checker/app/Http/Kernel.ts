@@ -1,3 +1,4 @@
+import { Authenticate } from './Middleware/Authenticate';
 import { Kernel as BaseKernel } from 'arikajs';
 import { CorsMiddleware } from './Middleware/CorsMiddleware';
 import { SecurityHeadersMiddleware } from './Middleware/SecurityHeadersMiddleware';
@@ -36,9 +37,7 @@ export class Kernel extends BaseKernel {
         // Named route middleware — use with .withMiddleware('name') on individual routes.
         // Use arguments like 'throttle:login' or 'throttle:120,60'.
         (this as any).routeMiddleware = {
-            // Authentication (populated by auth:install commands)
-            // 'auth': Authenticate,
-
+            'auth': Authenticate,
             'throttle': ThrottleMiddleware,
         };
     }

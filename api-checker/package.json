@@ -1,0 +1,21 @@
+{
+  "name": "api-checker",
+  "version": "1.0.0",
+  "description": "ArikaJS API Project",
+  "private": true,
+  "scripts": {
+    "dev": "arika serve --dev",
+    "start": "arika serve",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "arikajs": "file:../packages/arikajs"
+  },
+  "devDependencies": {
+    "@arikajs/cli": "file:../packages/cli",
+    "typescript": "^5.0.0",
+    "tsx": "^4.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "author": "Prakash Tank"
+}

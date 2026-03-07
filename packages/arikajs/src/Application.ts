@@ -174,6 +174,12 @@ export class Application extends FoundationApplication implements ApplicationCon
                         const response = responsePool.acquire();
                         request.reset(req);
                         request.setParams(matched.params);
+
+                        // Ensure view engine is available if registered
+                        if (this.has('view')) {
+                            (request as any).view = this.make('view');
+                        }
+
                         response.reset(res);
 
                         const release = () => {
@@ -181,40 +187,59 @@ export class Application extends FoundationApplication implements ApplicationCon
                             responsePool.release(response);
                         };
 
-                        try {
-                            const result = plan.handler(request, response, matched.params);
-
-                            if (result instanceof Promise) {
-                                result.then(async (r) => {
-                                    await (dispatcher as any).responseResolver.resolve(r, response, plan.route);
-                                    (response as any).terminate();
-                                    release();
-                                }).catch((e) => {
-                                    if (!res.headersSent) {
-                                        res.writeHead(500, { 'Content-Type': 'application/json' });
-                                        res.end(JSON.stringify({ error: 'Internal Server Error', message: e.message }));
+                        const dispatch = async () => {
+                            try {
+                                // ── ULTRA FAST BODY PARSING ──
+                                const method = req.method;
+                                if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+                                    const contentType = req.headers['content-type'];
+                                    if (contentType) {
+                                        const { BodyParserMiddleware } = require('@arikajs/http');
+                                        const parser = new BodyParserMiddleware();
+                                        // We use the parser directly to avoid full middleware overhead
+                                        try {
+                                            const body = await (parser as any).parseBody(request);
+                                            request.setBody(body);
+                                        } catch (e) { /* ignore parse errors */ }
                                     }
-                                    release();
-                                });
-                            } else {
-                                const resolved = (dispatcher as any).responseResolver.resolve(result, response, plan.route);
-                                if (resolved instanceof Promise) {
-                                    resolved.then(() => {
+                                }
+
+                                const result = plan.handler(request, response, matched.params);
+
+                                if (result instanceof Promise) {
+                                    result.then(async (r) => {
+                                        await (dispatcher as any).responseResolver.resolve(r, response, plan.route);
                                         (response as any).terminate();
+                                        release();
+                                    }).catch((e) => {
+                                        if (!res.headersSent) {
+                                            res.writeHead(500, { 'Content-Type': 'application/json' });
+                                            res.end(JSON.stringify({ error: 'Internal Server Error', message: e.message }));
+                                        }
                                         release();
                                     });
                                 } else {
-                                    (response as any).terminate();
-                                    release();
+                                    const resolved = (dispatcher as any).responseResolver.resolve(result, response, plan.route);
+                                    if (resolved instanceof Promise) {
+                                        resolved.then(() => {
+                                            (response as any).terminate();
+                                            release();
+                                        });
+                                    } else {
+                                        (response as any).terminate();
+                                        release();
+                                    }
                                 }
+                            } catch (e: any) {
+                                if (!res.headersSent) {
+                                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                                    res.end(JSON.stringify({ error: 'Internal Server Error', message: e.message }));
+                                }
+                                release();
                             }
-                        } catch (e: any) {
-                            if (!res.headersSent) {
-                                res.writeHead(500, { 'Content-Type': 'application/json' });
-                                res.end(JSON.stringify({ error: 'Internal Server Error', message: e.message }));
-                            }
-                            release();
-                        }
+                        };
+
+                        dispatch();
                         return;
                     }
                 }

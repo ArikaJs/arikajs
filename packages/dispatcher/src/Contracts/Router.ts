@@ -6,4 +6,5 @@ export interface MatchedRoute {
         [key: string]: any;
     };
     params: Record<string, string>;
+    hasParams: boolean;
 }
