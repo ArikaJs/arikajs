@@ -8,14 +8,18 @@ export abstract class Mailable {
     public fromAddress?: string | { name: string; address: string };
     public replyToAddress?: string | { name: string; address: string };
 
+    public toRecipients: (string | { name: string; address: string })[] = [];
     public ccRecipients: (string | { name: string; address: string })[] = [];
     public bccRecipients: (string | { name: string; address: string })[] = [];
 
     abstract build(): this;
 
     public to(address: string | { name: string; address: string } | (string | { name: string; address: string })[]) {
-        // Mailable doesn't strictly need a 'to' method if handled by Mail.to()
-        // but it's good for self-contained mailables.
+        if (Array.isArray(address)) {
+            this.toRecipients = this.toRecipients.concat(address);
+        } else {
+            this.toRecipients.push(address);
+        }
         return this;
     }
 

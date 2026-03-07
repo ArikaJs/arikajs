@@ -2,15 +2,18 @@ import { Repository } from './Repository';
 import { MemoryDriver } from './Drivers/MemoryDriver';
 import { DatabaseDriver } from './Drivers/DatabaseDriver';
 import { RedisDriver } from './Drivers/RedisDriver';
+import { FileDriver } from './Drivers/FileDriver';
 import { Store } from './Contracts/Store';
 
 export class CacheManager {
     protected stores: Map<string, Repository> = new Map();
     protected customCreators: Map<string, (config: any) => Store> = new Map();
     protected database: any;
+    protected basePath: string;
 
-    constructor(protected config: any, database?: any) {
+    constructor(protected config: any, database?: any, basePath: string = process.cwd()) {
         this.database = database;
+        this.basePath = basePath;
     }
 
     public store(name?: string): Repository {
@@ -49,15 +52,28 @@ export class CacheManager {
 
     protected createDatabaseDriver(config: any): Store {
         return new DatabaseDriver(
-            this.database.connection(config.connection),
+            this.database,
             config.table,
-            this.config.prefix || ''
+            this.config.prefix || '',
+            config.connection
         );
     }
 
     protected createRedisDriver(config: any): Store {
         return new RedisDriver(
             config,
+            this.config.prefix || ''
+        );
+    }
+
+    protected createFileDriver(config: any): Store {
+        const path = require('path');
+        const directory = path.isAbsolute(config.path)
+            ? config.path
+            : path.resolve(this.basePath, config.path);
+
+        return new FileDriver(
+            directory,
             this.config.prefix || ''
         );
     }

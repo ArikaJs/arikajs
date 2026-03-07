@@ -14,27 +14,34 @@ export class QueueTableCommand extends Command {
             fs.mkdirSync(migrationsDir, { recursive: true });
         }
 
-        const timestamp = new Date().toISOString().replace(/[-:T]/g, '').split('.')[0];
+        const date = new Date();
+        const timestamp = date.getFullYear().toString() + '_' +
+            (date.getMonth() + 1).toString().padStart(2, '0') + '_' +
+            date.getDate().toString().padStart(2, '0') + '_' +
+            date.getHours().toString().padStart(2, '0') +
+            date.getMinutes().toString().padStart(2, '0') +
+            date.getSeconds().toString().padStart(2, '0');
+
         const fileName = `${timestamp}_create_jobs_table.ts`;
         const filePath = path.join(migrationsDir, fileName);
 
-        const content = `import { Schema, Blueprint } from '@arikajs/database';
+        const content = `import { Migration, SchemaBuilder } from 'arikajs';
 
-export default class CreateJobsTable {
-    public async up() {
-        await Schema.create('jobs', (table: Blueprint) => {
+export default class CreateJobsTable extends Migration {
+    public async up(schema: SchemaBuilder) {
+        await schema.create('jobs', (table: any) => {
             table.id();
-            table.string('queue').index();
-            table.longText('payload');
-            table.unsignedTinyInteger('attempts');
-            table.unsignedInteger('reserved_at').nullable();
-            table.unsignedInteger('available_at');
-            table.unsignedInteger('created_at');
+            table.string('queue');
+            table.text('payload');
+            table.integer('attempts');
+            table.integer('reserved_at').nullable();
+            table.integer('available_at');
+            table.integer('created_at');
         });
     }
 
-    public async down() {
-        await Schema.dropIfExists('jobs');
+    public async down(schema: SchemaBuilder) {
+        await schema.dropIfExists('jobs');
     }
 }
 `;

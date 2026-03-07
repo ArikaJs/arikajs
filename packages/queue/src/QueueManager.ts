@@ -35,7 +35,7 @@ export class QueueManager {
             case 'sync':
                 return new SyncDriver();
             case 'database':
-                return new DatabaseDriver(this.database.connection(config.connection), config);
+                return new DatabaseDriver(this.database, config);
             case 'redis':
                 return new RedisDriver(config);
             default:
@@ -43,7 +43,22 @@ export class QueueManager {
         }
     }
 
+    public async push(job: Job, options?: { queue?: string; delay?: number | Date }, connection?: string) {
+        return this.driver(connection || job.connection).push(job, options);
+    }
+
+    public async later(delay: number | Date, job: Job, queue?: string, connection?: string) {
+        return this.push(job, { delay, queue }, connection);
+    }
+
     public async dispatch(job: Job, connection?: string) {
-        return this.driver(connection).push(job);
+        return this.push(job, {
+            queue: job.queue,
+            delay: job.delay
+        }, connection || job.connection);
+    }
+
+    public async bulk(jobs: Job[], connection?: string) {
+        return Promise.all(jobs.map(job => this.dispatch(job, connection)));
     }
 }

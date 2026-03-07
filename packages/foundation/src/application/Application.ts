@@ -36,6 +36,7 @@ export class Application {
     this.container.instance(Application, this);
     this.container.instance(Container, this.container);
     this.container.instance(Repository, this.configRepository);
+    this.container.alias(Repository, 'config');
 
     // Load environment variables from .env if it exists
     EnvLoader.load(this.basePath);

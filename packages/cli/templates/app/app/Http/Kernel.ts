@@ -20,7 +20,7 @@ export class Kernel extends BaseKernel {
         // Middleware groups — applied by route file or route group.
         // 'web'  → for browser-facing routes (HTML pages, sessions, CSRF)
         // 'api'  → for stateless API routes (JSON responses)
-        (this as any).middlewareGroups = {
+        Object.assign((this as any).middlewareGroups, {
             web: [
                 // CorsMiddleware and SecurityHeadersMiddleware already run globally above.
                 // Add session / CSRF middleware here when available.
@@ -31,15 +31,17 @@ export class Kernel extends BaseKernel {
                 // Global throttle for the whole API: 120 req / 60s per IP.
                 new ThrottleMiddleware(120, 60),
             ],
-        };
+        });
 
         // Named route middleware — use with .withMiddleware('name') on individual routes.
         // Use arguments like 'throttle:login' or 'throttle:120,60'.
-        (this as any).routeMiddleware = {
-            // Authentication (populated by auth:install commands)
-            // 'auth': Authenticate,
-
+        Object.assign((this as any).routeMiddleware, {
             'throttle': ThrottleMiddleware,
-        };
+        });
+
+        // Ensure router is pointed to our actual middleware maps
+        const router = this.app.getRouter();
+        router.setMiddlewareGroups((this as any).middlewareGroups);
+        router.setRouteMiddleware((this as any).routeMiddleware);
     }
 }

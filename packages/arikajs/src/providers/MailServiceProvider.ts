@@ -21,6 +21,7 @@ export class MailServiceProvider extends ServiceProvider {
         });
 
         this.app.alias('mail.manager', MailManager);
+        this.app.alias('mail.manager', 'mail');
     }
 
     /**

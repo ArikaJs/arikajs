@@ -9,7 +9,7 @@ export class CacheServiceProvider extends ServiceProvider {
         this.app.singleton('cache', () => {
             const config = this.app.config().get('cache');
             const database = this.app.make('db');
-            const manager = new CacheManager(config, database);
+            const manager = new CacheManager(config, database, this.app.getBasePath());
 
             // Set static access
             Cache.setManager(manager);

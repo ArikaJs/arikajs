@@ -27,7 +27,13 @@ export class Bootstrap {
         registry.registerLazy('make:seeder {name}', 'Create a new seeder file', () => import('./Commands/MakeSeederCommand'));
         registry.registerLazy('db:seed {--class=}', 'Seed the database with records', () => import('./Commands/DbSeedCommand'));
         registry.registerLazy('queue:table', 'Create a migration for the queue jobs database table', () => import('./Commands/QueueTableCommand'));
+        registry.registerLazy('queue:failed-table', 'Create a migration for the failed queue jobs database table', () => import('./Commands/QueueFailedTableCommand'));
+        registry.registerLazy('queue:work', 'Start processing jobs on the queue as a background worker', () => import('./Commands/QueueWorkCommand'));
+        registry.registerLazy('queue:failed', 'List all of the failed queue jobs', () => import('./Commands/QueueFailedCommand'));
+        registry.registerLazy('queue:retry', 'Retry a failed queue job', () => import('./Commands/QueueRetryCommand'));
+        registry.registerLazy('queue:flush', 'Flush all of the failed queue jobs', () => import('./Commands/QueueFlushCommand'));
         registry.registerLazy('cache:table', 'Create a migration for the cache database table', () => import('./Commands/CacheTableCommand'));
+        registry.registerLazy('cache:clear {store?}', 'Flush the application cache', () => import('./Commands/CacheClearCommand'));
 
         // Scheduler commands
         registry.registerLazy('schedule:run', 'Run the scheduled tasks', () => import('./Commands/ScheduleRunCommand'));
@@ -56,6 +62,10 @@ export class Bootstrap {
         registry.registerLazy('auth:install:api', 'Scaffold API authentication routes (JWT-based)', () => import('./Commands/AuthApiInstallCommand'));
 
         const app = await ApplicationLoader.load();
+
+        if (app.instance && typeof app.instance.boot === 'function') {
+            await app.instance.boot();
+        }
 
         // In the future, this will discovery commands from @arikajs dependencies
 

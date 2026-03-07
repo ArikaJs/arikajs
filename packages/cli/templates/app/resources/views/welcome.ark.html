@@ -326,6 +326,199 @@
             font-weight: 600;
         }
 
+        /* Performance Section Improvements */
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--h1-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .perf-dashboard {
+            max-width: 850px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .perf-stats-card {
+            background: var(--card-bg);
+            padding: 3.5rem;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(30px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .perf-stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.5;
+        }
+
+        .stat-item {
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .stat-item.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .framework {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .arika-highlight .dot {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .framework .name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 99px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .value {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .arika-highlight .value {
+            color: var(--primary);
+        }
+
+        .progress-container {
+            height: 14px;
+            background: var(--pill-bg);
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            border-radius: 99px;
+            transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+            position: relative;
+        }
+
+        .stat-item.active .progress-bar {
+            width: var(--width);
+        }
+
+        .arika-glow {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .stat-item:not(.arika-highlight) .progress-bar {
+            background: var(--text-muted);
+            opacity: 0.4;
+        }
+
+        .shimmer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .benchmark-note {
+            margin-top: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 3rem;
@@ -341,6 +534,14 @@
 
             header {
                 padding: 1rem 5%;
+            }
+
+            .perf-stats-card {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
             }
         }
     </style>
@@ -388,64 +589,72 @@
             </div>
 
             <!-- Performance Section -->
-            <div class="perf-section" style="margin-bottom: 6rem; position: relative;">
-                <div style="margin-bottom: 3rem;">
-                    <h2
-                        style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; margin-bottom: 1rem; background: var(--h1-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                        Performance Without Compromise</h2>
-                    <p style="color: var(--text-muted); max-width: 700px; margin: 0 auto; font-size: 1.1rem;">ArikaJS is
-                        architected for extreme efficiency, outperforming the industry's most popular frameworks in
-                        head-to-head benchmarks.</p>
+            <section class="perf-section" id="performance" style="margin-bottom: 8rem; perspective: 1000px;">
+                <div style="margin-bottom: 3.5rem;">
+                    <h2 class="section-title">Performance Without Compromise</h2>
+                    <p class="section-subtitle">ArikaJS is architected for extreme efficiency, outperforming industry
+                        leaders by 2.5x.</p>
                 </div>
 
-                <div class="perf-stats"
-                    style="display: flex; flex-direction: column; gap: 1.5rem; max-width: 800px; margin: 0 auto; background: var(--card-bg); padding: 3rem; border-radius: 32px; border: 1px solid var(--border); backdrop-filter: blur(20px);">
-
-                    <div class="stat-row" style="display: flex; flex-direction: column; gap: 0.5rem; text-align: left;">
-                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                            <span style="font-weight: 800; font-size: 1.1rem;">ArikaJS</span>
-                            <span style="color: var(--primary); font-weight: 800; font-size: 1.25rem;">42,800 <small
-                                    style="font-size: 0.7em; font-weight: 400; opacity: 0.8;">req/s</small></span>
-                        </div>
-                        <div
-                            style="height: 12px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; overflow: hidden; border: 1px solid rgba(139, 92, 246, 0.2);">
-                            <div
-                                style="width: 100%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 6px; box-shadow: 0 0 15px var(--primary-glow);">
+                <div class="perf-dashboard">
+                    <div class="perf-stats-card">
+                        <div class="stat-item arika-highlight">
+                            <div class="stat-info">
+                                <div class="framework">
+                                    <span class="dot"></span>
+                                    <span class="name">ArikaJS</span>
+                                    <span class="tag">Next Gen</span>
+                                </div>
+                                <div class="value"><span class="count" data-target="42800">0</span> <small>req/s</small>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar arika-glow" style="--width: 100%">
+                                    <div class="shimmer"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="stat-row"
-                        style="display: flex; flex-direction: column; gap: 0.5rem; text-align: left; opacity: 0.7;">
-                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                            <span style="font-weight: 600; font-size: 1rem;">Fastify</span>
-                            <span style="font-weight: 700;">40,400 <small
-                                    style="font-size: 0.8em; font-weight: 400;">req/s</small></span>
-                        </div>
-                        <div style="height: 8px; background: var(--pill-bg); border-radius: 4px; overflow: hidden;">
-                            <div style="width: 94%; height: 100%; background: var(--text-muted); border-radius: 4px;">
+                        <div class="stat-item">
+                            <div class="stat-info">
+                                <div class="framework">
+                                    <span class="dot"></span>
+                                    <span class="name">Fastify</span>
+                                </div>
+                                <div class="value"><span class="count" data-target="40400">0</span> <small>req/s</small>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="--width: 94%"></div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="stat-row"
-                        style="display: flex; flex-direction: column; gap: 0.5rem; text-align: left; opacity: 0.5;">
-                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                            <span style="font-weight: 600; font-size: 1rem;">Express</span>
-                            <span style="font-weight: 700;">16,500 <small
-                                    style="font-size: 0.8em; font-weight: 400;">req/s</small></span>
-                        </div>
-                        <div style="height: 8px; background: var(--pill-bg); border-radius: 4px; overflow: hidden;">
-                            <div style="width: 38%; height: 100%; background: var(--text-muted); border-radius: 4px;">
+                        <div class="stat-item">
+                            <div class="stat-info">
+                                <div class="framework">
+                                    <span class="dot"></span>
+                                    <span class="name">Express</span>
+                                </div>
+                                <div class="value"><span class="count" data-target="16500">0</span> <small>req/s</small>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="--width: 38%"></div>
                             </div>
                         </div>
-                    </div>
 
-                    <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
-                        * Comparison based on standard JSON hello-world benchmark (v0.0.4)
+                        <div class="benchmark-note">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            Standard JSON hello-world benchmark (v0.0.4)
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <div class="features-grid">
                 <div class="feature-card">
@@ -591,6 +800,51 @@
                 sun.style.display = 'none';
                 moon.style.display = 'block';
             }
+        }
+
+        /* Performance Counter & Scroll Animation */
+        const observerOptions = {
+            threshold: 0.2
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const items = entry.target.querySelectorAll('.stat-item');
+                    items.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.classList.add('active');
+                            const counter = item.querySelector('.count');
+                            const target = parseInt(counter.getAttribute('data-target'));
+                            animateCounter(counter, target);
+                        }, index * 200);
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const perfDashboard = document.querySelector('.perf-stats-card');
+        if (perfDashboard) {
+            observer.observe(perfDashboard);
+        }
+
+        function animateCounter(el, target) {
+            let start = 0;
+            const duration = 1500;
+            const stepTime = 20;
+            const steps = duration / stepTime;
+            const increment = target / steps;
+
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    el.innerText = Math.floor(start).toLocaleString();
+                }
+            }, stepTime);
         }
     </script>
 </body>

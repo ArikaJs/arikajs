@@ -10,6 +10,7 @@ export { SmtpTransport } from './Transport/SmtpTransport';
 export { SesTransport } from './Transport/SesTransport';
 export { MailgunTransport } from './Transport/MailgunTransport';
 export { SendGridTransport } from './Transport/SendGridTransport';
+export { SendQueuedMailable } from './Jobs/SendQueuedMailable';
 
 let mailManager: MailManager;
 

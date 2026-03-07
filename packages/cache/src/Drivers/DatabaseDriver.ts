@@ -5,11 +5,12 @@ export class DatabaseDriver implements Store {
     constructor(
         private database: any,
         private table: string,
-        private prefix: string = ''
+        private prefix: string = '',
+        private connection?: string
     ) { }
 
     public async get(key: string): Promise<any> {
-        const cache = await this.database.table(this.table)
+        const cache = await this.database.table(this.table, this.connection)
             .where('key', this.prefix + key)
             .first();
 
@@ -30,17 +31,17 @@ export class DatabaseDriver implements Store {
         const jsonValue = JSON.stringify(value);
         const prefixedKey = this.prefix + key;
 
-        const exists = await this.database.table(this.table).where('key', prefixedKey).exists();
+        const exists = await this.database.table(this.table, this.connection).where('key', prefixedKey).exists();
 
         if (exists) {
-            await this.database.table(this.table)
+            await this.database.table(this.table, this.connection)
                 .where('key', prefixedKey)
                 .update({
                     value: jsonValue,
                     expiration: expiration
                 });
         } else {
-            await this.database.table(this.table).insert({
+            await this.database.table(this.table, this.connection).insert({
                 key: prefixedKey,
                 value: jsonValue,
                 expiration: expiration
@@ -63,17 +64,17 @@ export class DatabaseDriver implements Store {
         const jsonValue = JSON.stringify(value);
         const prefixedKey = this.prefix + key;
 
-        const exists = await this.database.table(this.table).where('key', prefixedKey).exists();
+        const exists = await this.database.table(this.table, this.connection).where('key', prefixedKey).exists();
 
         if (exists) {
-            await this.database.table(this.table)
+            await this.database.table(this.table, this.connection)
                 .where('key', prefixedKey)
                 .update({
                     value: jsonValue,
                     expiration: null
                 });
         } else {
-            await this.database.table(this.table).insert({
+            await this.database.table(this.table, this.connection).insert({
                 key: prefixedKey,
                 value: jsonValue,
                 expiration: null
@@ -82,13 +83,13 @@ export class DatabaseDriver implements Store {
     }
 
     public async forget(key: string): Promise<void> {
-        await this.database.table(this.table)
+        await this.database.table(this.table, this.connection)
             .where('key', this.prefix + key)
             .delete();
     }
 
     public async flush(): Promise<void> {
-        await this.database.table(this.table).delete();
+        await this.database.table(this.table, this.connection).delete();
     }
 
     public async add(key: string, value: any, seconds: number): Promise<boolean> {
@@ -97,7 +98,7 @@ export class DatabaseDriver implements Store {
         const expiration = Math.floor(Date.now() / 1000) + seconds;
 
         // Try updating an already expired key first
-        const updated = await this.database.table(this.table)
+        const updated = await this.database.table(this.table, this.connection)
             .where('key', prefixedKey)
             .where('expiration', '<=', Math.floor(Date.now() / 1000))
             .update({
@@ -108,7 +109,7 @@ export class DatabaseDriver implements Store {
         if (updated > 0) return true;
 
         try {
-            await this.database.table(this.table).insert({
+            await this.database.table(this.table, this.connection).insert({
                 key: prefixedKey,
                 value: jsonValue,
                 expiration: expiration
@@ -125,7 +126,7 @@ export class DatabaseDriver implements Store {
         if (keys.length === 0) return results;
 
         const prefixedKeys = keys.map(k => this.prefix + k);
-        const rows = await this.database.table(this.table).whereIn('key', prefixedKeys);
+        const rows = await this.database.table(this.table, this.connection).whereIn('key', prefixedKeys);
 
         const now = Math.floor(Date.now() / 1000);
         const expiredKeys: string[] = [];
@@ -155,7 +156,7 @@ export class DatabaseDriver implements Store {
     public async forgetMultiple(keys: string[]): Promise<void> {
         if (keys.length === 0) return;
         const prefixedKeys = keys.map(k => this.prefix + k);
-        await this.database.table(this.table).whereIn('key', prefixedKeys).delete();
+        await this.database.table(this.table, this.connection).whereIn('key', prefixedKeys).delete();
     }
 
     public getPrefix(): string {

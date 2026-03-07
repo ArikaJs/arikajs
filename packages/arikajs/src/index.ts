@@ -25,7 +25,7 @@ export { Model, Database as DB, Schema, Migration, SchemaBuilder } from '@arikaj
 export { Cache } from '@arikajs/cache';
 
 // Re-export Queue items
-export { Queue, BaseJob } from '@arikajs/queue';
+export { Queue, BaseJob, Worker } from '@arikajs/queue';
 
 // Re-export Event items
 export { Event } from '@arikajs/events';

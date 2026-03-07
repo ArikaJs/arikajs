@@ -2,12 +2,17 @@ export default {
     /**
      * Default Cache Store
      */
-    default: process.env.CACHE_STORE || 'database',
+    default: process.env.CACHE_STORE || 'file',
 
     /**
      * Cache Stores
      */
     stores: {
+        file: {
+            driver: 'file',
+            path: 'storage/cache/data',
+        },
+
         memory: {
             driver: 'memory',
         },

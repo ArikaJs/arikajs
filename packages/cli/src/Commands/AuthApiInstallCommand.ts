@@ -422,6 +422,7 @@ export class RegisterController {
         return `import { Request, Response, Validator, Mail, config, Log, lang, DB } from 'arikajs';
 import { User } from '../../../Models/User';
 import { ResetPassword } from '../../../Mail/Auth/ResetPassword';
+import { VerifyEmail } from '../../../Mail/Auth/VerifyEmail';
 import * as crypto from 'crypto';
 
 export class ForgotPasswordController {
@@ -438,27 +439,46 @@ export class ForgotPasswordController {
         }
 
         const { email } = validator.validated();
-        const user = await User.where('email', email).first();
+        const user = await User.where('email', email).first() as any;
 
-        if (user) {
-            const token = crypto.randomBytes(32).toString('hex');
+        if (!user) {
+            return res.json({ error: lang('auth.user_not_found') }, 404);
+        }
 
-            await DB.table('password_resets').where('email', email).delete();
-            await DB.table('password_resets').insert({
-                email,
-                token,
-                created_at: new Date()
-            });
+        const appName = config('app.name', 'ArikaJS App');
+        const appUrl = config('app.url', 'http://localhost:3000');
 
-            const appName = config('app.name', 'ArikaJS App');
-            const appUrl = config('app.url', 'http://localhost:3000');
-            const resetUrl = \`\${appUrl}/api/auth/password/reset?email=\${encodeURIComponent(email)}&token=\${token}\`;
-
+        // Check if user is verified
+        if (user.hasVerifiedEmail && !user.hasVerifiedEmail()) {
+            const verificationUrl = \`\${appUrl}/api/auth/verify?email=\${encodeURIComponent(email)}&token=\${Buffer.from(email).toString('base64')}\`;
+            
             try {
-                await Mail.to(email).send(new ResetPassword(resetUrl, appName));
+                // Send verification link instead
+                await Mail.to(email).send(new VerifyEmail(user.name, verificationUrl, appName));
+                return res.json({ 
+                    message: "Account unverified. A new verification link has been sent to your email." 
+                });
             } catch (e) {
-                Log.error('Failed to send reset email', { error: (e as Error).message, email });
+                Log.error('Failed to send verification email', { error: (e as Error).message, email });
             }
+        }
+
+        // Proceed with Password Reset
+        const token = crypto.randomBytes(32).toString('hex');
+
+        await DB.table('password_resets').where('email', email).delete();
+        await DB.table('password_resets').insert({
+            email,
+            token,
+            created_at: new Date()
+        });
+
+        const resetUrl = \`\${appUrl}/api/auth/password/reset?email=\${encodeURIComponent(email)}&token=\${token}\`;
+
+        try {
+            await Mail.to(email).send(new ResetPassword(resetUrl, appName));
+        } catch (e) {
+            Log.error('Failed to send reset email', { error: (e as Error).message, email });
         }
         
         return res.json({ message: lang('auth.reset_link_sent') });
@@ -712,13 +732,29 @@ Route.get('/user', [LoginController, 'me']).withMiddleware('auth');
         }
 
         // Register in routeMiddleware
-        if (content.includes('protected routeMiddleware = {')) {
-            if (!content.includes("'auth': Authenticate")) {
-                content = content.replace(
-                    'protected routeMiddleware = {',
-                    "protected routeMiddleware = {\n        // Authentication (populated by auth:install commands)\n        'auth': Authenticate,"
-                );
-            }
+        const authRegistration = "'auth': Authenticate,";
+
+        // Case 1: Already registered (uncommented)
+        if (content.includes(authRegistration) && !content.includes(`// ${authRegistration}`)) {
+            // Already there and active
+        }
+        // Case 2: Commented out line
+        else if (content.includes(`// ${authRegistration}`)) {
+            content = content.replace(`// ${authRegistration}`, authRegistration);
+        }
+        // Case 3: Object.assign pattern (new templates)
+        else if (content.includes('Object.assign((this as any).routeMiddleware, {')) {
+            content = content.replace(
+                'Object.assign((this as any).routeMiddleware, {',
+                `Object.assign((this as any).routeMiddleware, {\n            ${authRegistration}`
+            );
+        }
+        // Case 4: Standard property declaration (legacy templates)
+        else if (content.includes('protected routeMiddleware = {')) {
+            content = content.replace(
+                'protected routeMiddleware = {',
+                `protected routeMiddleware = {\n        ${authRegistration}`
+            );
         }
 
         fs.writeFileSync(kernelPath, content);
@@ -761,34 +797,33 @@ Route.get('/user', [LoginController, 'me']).withMiddleware('auth');
 
     private getVerifyEmailViewStub() {
         return `<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
     <style>
-        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
-        .header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #5d5bd4; }
-        .content { padding: 20px 0; }
-        .button { display: inline-block; padding: 12px 24px; background-color: #5d5bd4; color: #ffffff !important; text-decoration: none; border-radius: 5px; font-weight: bold; }
-        .footer { font-size: 12px; color: #888; text-align: center; margin-top: 20px; }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f7; color: #51545e; }
+        .wrapper { width: 100%; margin: 0; padding: 0; -webkit-text-size-adjust: none; background-color: #f4f4f7; }
+        .content { width: 100%; max-width: 570px; margin: 0 auto; padding: 35px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015); }
+        .header { padding: 25px 0; text-align: center; }
+        .header a { font-size: 19px; font-weight: bold; color: #333; text-decoration: none; }
+        .button { display: inline-block; background-color: #22bc66; color: #FFF !important; padding: 12px 25px; text-decoration: none; border-radius: 3px; font-weight: bold; }
+        .footer { text-align: center; padding: 25px; font-size: 12px; color: #b0adc5; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>{{ app_name }}</h2>
-        </div>
+    <div class="wrapper">
+        <div class="header"><a href="#">{{ app_name }}</a></div>
         <div class="content">
-            <h3>Hello {{ name }},</h3>
-            <p>Welcome to {{ app_name }}! Please click the button below to verify your email address and activate your account.</p>
-            <p style="text-align: center;">
-                <a href="{{ verification_url }}" class="button">Verify Email Address</a>
-            </p>
+            <h1>Verify your email address</h1>
+            <p>Hi {{ name }},</p>
+            <p>Thanks for signing up! Please confirm your email address by clicking the button below.</p>
+            <p style="text-align: center;"><a href="{{ verification_url }}" class="button">Verify Email</a></p>
             <p>If you did not create an account, no further action is required.</p>
             <p>Regards,<br>{{ app_name }} Team</p>
         </div>
-        <div class="footer">
-            &copy; {{ year }} {{ app_name }}. All rights reserved.
-        </div>
+        <div class="footer">&copy; {{ year }} {{ app_name }}. All rights reserved.</div>
     </div>
 </body>
 </html>`;
@@ -796,35 +831,33 @@ Route.get('/user', [LoginController, 'me']).withMiddleware('auth');
 
     private getResetPasswordViewStub() {
         return `<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
     <style>
-        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
-        .header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #e53e3e; }
-        .content { padding: 20px 0; }
-        .button { display: inline-block; padding: 12px 24px; background-color: #e53e3e; color: #ffffff !important; text-decoration: none; border-radius: 5px; font-weight: bold; }
-        .footer { font-size: 12px; color: #888; text-align: center; margin-top: 20px; }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f7; color: #51545e; }
+        .wrapper { width: 100%; margin: 0; padding: 0; -webkit-text-size-adjust: none; background-color: #f4f4f7; }
+        .content { width: 100%; max-width: 570px; margin: 0 auto; padding: 35px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015); }
+        .header { padding: 25px 0; text-align: center; }
+        .header a { font-size: 19px; font-weight: bold; color: #333; text-decoration: none; }
+        .button { display: inline-block; background-color: #3869d4; color: #FFF !important; padding: 12px 25px; text-decoration: none; border-radius: 3px; font-weight: bold; }
+        .footer { text-align: center; padding: 25px; font-size: 12px; color: #b0adc5; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>{{ app_name }}</h2>
-        </div>
+    <div class="wrapper">
+        <div class="header"><a href="#">{{ app_name }}</a></div>
         <div class="content">
-            <h3>Hello,</h3>
+            <h1>Reset your password</h1>
             <p>You are receiving this email because we received a password reset request for your account.</p>
-            <p style="text-align: center;">
-                <a href="{{ reset_url }}" class="button">Reset Password</a>
-            </p>
+            <p style="text-align: center;"><a href="{{ reset_url }}" class="button">Reset Password</a></p>
             <p>This password reset link will expire in 60 minutes.</p>
             <p>If you did not request a password reset, no further action is required.</p>
             <p>Regards,<br>{{ app_name }} Team</p>
         </div>
-        <div class="footer">
-            &copy; {{ year }} {{ app_name }}. All rights reserved.
-        </div>
+        <div class="footer">&copy; {{ year }} {{ app_name }}. All rights reserved.</div>
     </div>
 </body>
 </html>`;

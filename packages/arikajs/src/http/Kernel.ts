@@ -44,6 +44,14 @@ export class Kernel {
         } catch (e) {
             this.handler = new Handler();
         }
+
+        const router = this.app.getRouter();
+        if ((router as any).setMiddlewareGroups) {
+            (router as any).setMiddlewareGroups(this.middlewareGroups);
+        }
+        if ((router as any).setRouteMiddleware) {
+            (router as any).setRouteMiddleware(this.routeMiddleware);
+        }
     }
 
     /**
@@ -70,14 +78,6 @@ export class Kernel {
      */
     protected async dispatchToRouter(request: Request, response: Response): Promise<Response> {
         const router = this.app.getRouter();
-
-        // Ensure router's dispatcher has kernel's middleware configuration
-        if ((router as any).setMiddlewareGroups) {
-            (router as any).setMiddlewareGroups(this.middlewareGroups);
-        }
-        if ((router as any).setRouteMiddleware) {
-            (router as any).setRouteMiddleware(this.routeMiddleware);
-        }
 
         const result = await router.dispatch(request, response);
 

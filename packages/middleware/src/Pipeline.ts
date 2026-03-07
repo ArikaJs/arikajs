@@ -13,6 +13,8 @@ export class Pipeline<TRequest = any, TResponse = any> {
     private middlewareGroups: Record<string, any[]> = {};
     private aliases: Record<string, any> = {};
 
+    private static isClassCache = new WeakMap<Function, boolean>();
+
     /**
      * Create a new Pipeline instance.
      */
@@ -95,8 +97,14 @@ export class Pipeline<TRequest = any, TResponse = any> {
 
         // If it's a class/constructor (has handle on prototype), instantiate it
         if (typeof handler === 'function') {
-            const isClass = /^\s*class\s+/.test(handler.toString()) ||
-                (handler.prototype && typeof handler.prototype.handle === 'function');
+            let isClass = Pipeline.isClassCache.get(handler);
+
+            if (isClass === undefined) {
+                const check = /^\s*class\s+/.test(handler.toString()) ||
+                    (handler.prototype && typeof handler.prototype.handle === 'function');
+                isClass = !!check;
+                Pipeline.isClassCache.set(handler, isClass);
+            }
 
             if (isClass) {
                 if (this.container) {

@@ -117,8 +117,15 @@ export class PendingMail {
     }
 
     async send(mailable?: Mailable) {
+        if (mailable && typeof (mailable as any).build === 'function') {
+            try {
+                (mailable as any).build();
+            } catch (e) {
+                // Ignore build errors if already built or not a builder
+            }
+        }
+
         if (mailable) {
-            mailable.build();
 
             if (mailable.subjectLine) this.message.subject(mailable.subjectLine);
             if (mailable.fromAddress) this.message.from(mailable.fromAddress);
@@ -161,12 +168,55 @@ export class PendingMail {
             throw new Error('Queue not configured. Please use Mail.setQueue() to enable queued emails.');
         }
 
-        // We'll use a special "MailableWrapper" or just serialize the data.
-        // For simplicity, we'll implement a basic job dispatch.
-        // Importing the job here to avoid circular dependencies if any.
+        if (mailable && typeof (mailable as any).build === 'function') {
+            try {
+                (mailable as any).build();
+            } catch (e) { }
+        }
+
+        if (mailable && mailable.constructor && mailable.constructor.name !== 'Object') {
+            const payload = this.message.getPayload();
+            if (payload.to && payload.to.length > 0) {
+                mailable.toRecipients = (mailable.toRecipients || []).concat(payload.to);
+            }
+            if (payload.cc && payload.cc.length > 0) {
+                mailable.ccRecipients = (mailable.ccRecipients || []).concat(payload.cc);
+            }
+            if (payload.bcc && payload.bcc.length > 0) {
+                mailable.bccRecipients = (mailable.bccRecipients || []).concat(payload.bcc);
+            }
+        }
+
         const { SendQueuedMailable } = require('./Jobs/SendQueuedMailable');
 
         return queue.dispatch(new SendQueuedMailable(mailable || this.prepareMessage(), this.mailer['name']));
+    }
+
+    async later(delay: number | Date, mailable?: Mailable) {
+        const queue = this.mailer.getQueue();
+
+        if (!queue) {
+            throw new Error('Queue not configured. Please use Mail.setQueue() to enable queued emails.');
+        }
+
+        if (mailable && typeof (mailable as any).build === 'function') {
+            try {
+                (mailable as any).build();
+            } catch (e) { }
+        }
+
+        if (mailable && mailable.constructor && mailable.constructor.name !== 'Object') {
+            const payload = this.message.getPayload();
+            if (payload.to && payload.to.length > 0) {
+                mailable.toRecipients = (mailable.toRecipients || []).concat(payload.to);
+            }
+        }
+
+        const { SendQueuedMailable } = require('./Jobs/SendQueuedMailable');
+        const job = new SendQueuedMailable(mailable || this.prepareMessage(), this.mailer['name']);
+        job.onDelay(delay);
+
+        return queue.dispatch(job);
     }
 
     protected prepareMessage(): any {

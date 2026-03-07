@@ -45,9 +45,10 @@
     "@arikajs/database": "*",
     "@arikajs/docs": "*",
     "@arikajs/scheduler": "*",
-    "inquirer": "^8.2.7",
     "dotenv": "^16.4.5",
+    "inquirer": "^8.2.7",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.3.3"
   },
   "devDependencies": {

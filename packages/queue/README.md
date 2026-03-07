@@ -37,18 +37,59 @@ pnpm add @arikajs/queue
 
 ```ts
 import { Queue } from '@arikajs/queue';
+import { SendEmailJob } from './Jobs/SendEmailJob';
 
+// Basic dispatch
 await Queue.dispatch(new SendEmailJob(user));
+
+// Dispatch to specific connection & queue
+await Queue.connection('redis')
+  .push(new SendEmailJob(user).onQueue('high'));
+
+// Delayed dispatching (10 seconds)
+await Queue.later(10, new SendEmailJob(user));
+
+// Or using chaining on the job
+await Queue.dispatch(
+  new SendEmailJob(user)
+    .onDelay(60)
+    .onQueue('emails')
+);
 ```
 
 ### Defining a Job
 
+Jobs should extend `BaseJob` to support method chaining.
+
 ```ts
-export class SendEmailJob {
+import { BaseJob } from '@arikajs/queue';
+
+export class SendEmailJob extends BaseJob {
+  constructor(public user: any) {
+    super();
+  }
+
   async handle() {
-    // job logic
+    // job logic using this.user
   }
 }
+```
+
+---
+
+## 🏗 Running Workers
+
+To start processing jobs, use the `queue:work` command:
+
+```bash
+# Process default queue on default connection
+arika queue:work
+
+# Process specific connection and queue
+arika queue:work --connection=redis --queue=high
+
+# Control sleep time when no jobs are found
+arika queue:work --sleep=5
 ```
 
 ---

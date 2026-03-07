@@ -3,9 +3,9 @@ import { Command } from '@arikajs/console';
 import fs from 'fs';
 import path from 'path';
 
-export class CacheTableCommand extends Command {
-    public signature = 'cache:table';
-    public description = 'Create a migration for the cache database table';
+export class QueueFailedTableCommand extends Command {
+    public signature = 'queue:failed-table';
+    public description = 'Create a migration for the failed queue jobs database table';
 
     public async handle() {
         const migrationsDir = path.join(process.cwd(), 'database/migrations');
@@ -22,33 +22,31 @@ export class CacheTableCommand extends Command {
             date.getMinutes().toString().padStart(2, '0') +
             date.getSeconds().toString().padStart(2, '0');
 
-        const fileName = `${timestamp}_create_cache_table.ts`;
+        const fileName = `${timestamp}_create_failed_jobs_table.ts`;
         const filePath = path.join(migrationsDir, fileName);
 
         const content = `import { Migration, SchemaBuilder } from 'arikajs';
 
-export default class CreateCacheTable extends Migration {
-    /**
-     * Run the migrations.
-     */
-    public async up(schema: SchemaBuilder): Promise<void> {
-        await schema.create('cache', (table: any) => {
-            table.string('key').unique();
-            table.text('value');
-            table.integer('expiration').nullable();
+export default class CreateFailedJobsTable extends Migration {
+    public async up(schema: SchemaBuilder) {
+        await schema.create('failed_jobs', (table: any) => {
+            table.id();
+            table.string('uuid').unique();
+            table.string('connection');
+            table.string('queue');
+            table.text('payload');
+            table.text('exception');
+            table.timestamp('failed_at').useCurrent();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public async down(schema: SchemaBuilder): Promise<void> {
-        await schema.dropIfExists('cache');
+    public async down(schema: SchemaBuilder) {
+        await schema.dropIfExists('failed_jobs');
     }
 }
 `;
 
         fs.writeFileSync(filePath, content);
-        this.info(`Migration created: ${filePath} `);
+        this.info(`Migration created: ${filePath}`);
     }
 }

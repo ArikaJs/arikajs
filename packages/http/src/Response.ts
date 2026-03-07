@@ -181,4 +181,11 @@ export class Response {
     getOriginalResponse(): ServerResponse {
         return this.res;
     }
+
+    /**
+     * Get the underlying Node response (alias for getOriginalResponse)
+     */
+    get raw(): ServerResponse {
+        return this.res;
+    }
 }

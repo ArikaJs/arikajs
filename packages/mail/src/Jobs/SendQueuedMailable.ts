@@ -1,26 +1,32 @@
+import { BaseJob } from '@arikajs/queue';
 
-export class SendQueuedMailable {
+export class SendQueuedMailable extends BaseJob {
     constructor(
         public mailable: any,
         public mailerName?: string
-    ) { }
+    ) {
+        super();
+    }
 
-    async handle(container: any) {
+    async handle() {
         // Resolve mail manager from container
-        const mailManager = container.make('mail');
+        const { app } = require('arikajs');
+        const mailManager = app().make('mail');
         const mailer = mailManager.mailer(this.mailerName);
 
-        // If mailable is a raw payload (from PendingMail.prepareMessage())
-        if (this.mailable && !this.mailable.build) {
-            return mailer.sendRaw(this.mailable);
+        // If it's a mailable instance/payload
+        if (this.mailable && (this.mailable.toRecipients || this.mailable.viewPath)) {
+            let pending = mailer.to(this.mailable.toRecipients || []);
+            if (this.mailable.ccRecipients && this.mailable.ccRecipients.length > 0) {
+                pending = pending.cc(this.mailable.ccRecipients);
+            }
+            if (this.mailable.bccRecipients && this.mailable.bccRecipients.length > 0) {
+                pending = pending.bcc(this.mailable.bccRecipients);
+            }
+            return pending.send(this.mailable);
         }
 
-        // If it's a mailable instance
-        // NOTE: In a real distributed system, we'd need to re-instantiate 
-        // the class and restore properties. For simple local/redis queue, 
-        // it depends on how the job is serialized.
-
-        // Ensure to recipients are handled if they were set on the PendingMail before queue()
+        // Ensure recipients are handled if they were set on the PendingMail before queue()
         return mailer.sendMailable(this.mailable);
     }
 }

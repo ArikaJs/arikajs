@@ -518,20 +518,30 @@ Route.get('/dashboard', [LoginController, 'showDashboard']).withMiddleware('auth
         const kernelPath = path.join(cwd, 'app', 'Http', 'Kernel.ts');
         if (fs.existsSync(kernelPath)) {
             let content = fs.readFileSync(kernelPath, 'utf8');
+            const authRegistration = "'auth': Authenticate,";
 
             if (!content.includes("import { Authenticate } from './Middleware/Authenticate'")) {
                 content = "import { Authenticate } from './Middleware/Authenticate';\n" + content;
             }
 
-            if (content.includes('protected routeMiddleware = {')) {
-                if (!content.includes("'auth': Authenticate")) {
-                    content = content.replace(
-                        'protected routeMiddleware = {',
-                        "protected routeMiddleware = {\n        'auth': Authenticate,"
-                    );
-                }
-            } else if (content.includes('routeMiddleware = {') && !content.includes("'auth'")) {
-                content = content.replace('routeMiddleware = {', "routeMiddleware = {\n        'auth': Authenticate,");
+            // Case 1: Already registered (uncommented)
+            if (content.includes(authRegistration) && !content.includes(`// ${authRegistration}`)) {
+                // Already there and active
+            }
+            // Case 2: Commented out line
+            else if (content.includes(`// ${authRegistration}`)) {
+                content = content.replace(`// ${authRegistration}`, authRegistration);
+            }
+            // Case 3: Standard property declaration (legacy templates)
+            else if (content.includes('protected routeMiddleware = {')) {
+                content = content.replace(
+                    'protected routeMiddleware = {',
+                    `protected routeMiddleware = {\n        ${authRegistration}`
+                );
+            }
+            // Case 4: General object assignment or declaration
+            else if (content.includes('routeMiddleware = {') && !content.includes("'auth'")) {
+                content = content.replace('routeMiddleware = {', `routeMiddleware = {\n        ${authRegistration}`);
             }
             fs.writeFileSync(kernelPath, content);
         }
