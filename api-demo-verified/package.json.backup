@@ -1,0 +1,22 @@
+{
+  "name": "rest-api-demo",
+  "version": "1.0.0",
+  "description": "ArikaJS API Project",
+  "private": true,
+  "scripts": {
+    "dev": "arika serve --dev",
+    "start": "node -r tsconfig-paths/register dist/server.js",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "arikajs": "file:../arikajs",
+    "tsconfig-paths": "^4.0.0"
+  },
+  "devDependencies": {
+    "@arikajs/cli": "file:../cli",
+    "typescript": "^5.0.0",
+    "tsx": "^4.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "author": "Prakash Tank"
+}

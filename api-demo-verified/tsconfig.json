@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["app/*"],
+            "@Models/*": ["app/Models/*"],
+            "@Mail/*": ["app/Mail/*"],
+            "@Controllers/*": ["app/Http/Controllers/*"],
+            "@Middleware/*": ["app/Http/Middleware/*"],
+            "@Http/*": ["app/Http/*"],
+            "@Exceptions/*": ["app/Exceptions/*"],
+            "@Providers/*": ["app/Providers/*"],
+            "@Config/*": ["config/*"]
+        },
+        "outDir": "./dist",
+        "rootDir": "./",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    }
+}

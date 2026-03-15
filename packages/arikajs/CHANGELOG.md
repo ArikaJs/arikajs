@@ -1,5 +1,34 @@
 # arikajs
 
+## 0.0.7
+
+### Patch Changes
+
+- fix: removed workspace: versioning from http package and ensured CLI templates use semantic versions by default
+- Updated dependencies
+  - @arikajs/cli@0.0.7
+  - @arikajs/http@0.0.7
+  - @arikajs/auth@0.0.7
+  - @arikajs/authorization@0.0.7
+  - @arikajs/cache@0.0.7
+  - @arikajs/console@0.0.7
+  - @arikajs/database@0.0.7
+  - @arikajs/dispatcher@0.0.7
+  - @arikajs/encryption@0.0.7
+  - @arikajs/events@0.0.7
+  - @arikajs/foundation@0.0.7
+  - @arikajs/localization@0.0.7
+  - @arikajs/logging@0.0.7
+  - @arikajs/mail@0.0.7
+  - @arikajs/middleware@0.0.7
+  - @arikajs/queue@0.0.7
+  - @arikajs/router@0.0.7
+  - @arikajs/scheduler@0.0.7
+  - @arikajs/session@0.0.7
+  - @arikajs/storage@0.0.7
+  - @arikajs/validation@0.0.7
+  - @arikajs/view@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes

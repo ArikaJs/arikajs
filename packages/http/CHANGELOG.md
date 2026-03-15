@@ -1,5 +1,12 @@
 # @arikajs/http
 
+## 0.0.7
+
+### Patch Changes
+
+- fix: removed workspace: versioning from http package and ensured CLI templates use semantic versions by default
+  - @arikajs/validation@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes

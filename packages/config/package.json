@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/config",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Premium configuration management for ArikaJS.",
   "type": "module",
   "license": "MIT",

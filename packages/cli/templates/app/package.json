@@ -9,11 +9,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "arikajs": "file:../arikajs",
+    "arikajs": "^0.0.6",
     "tsconfig-paths": "^4.0.0"
   },
   "devDependencies": {
-    "@arikajs/cli": "file:../cli",
+    "@arikajs/cli": "^0.0.6",
     "typescript": "^5.0.0",
     "tsx": "^4.0.0",
     "@types/node": "^20.0.0"

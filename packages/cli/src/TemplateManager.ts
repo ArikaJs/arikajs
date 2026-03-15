@@ -145,7 +145,7 @@ export class TemplateManager {
                         depName = 'arikajs';
                     }
 
-                    if (depName) {
+                    if (depName && process.env.DEV_MODE === 'true') {
                         let localPath = path.join(devWorkspaceRoot, depName);
                         if (!fs.existsSync(localPath)) {
                             localPath = path.join(devWorkspaceRoot, 'packages', depName);

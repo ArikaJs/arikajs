@@ -1,5 +1,15 @@
 # @arikajs/cli
 
+## 0.0.7
+
+### Patch Changes
+
+- fix: removed workspace: versioning from http package and ensured CLI templates use semantic versions by default
+  - @arikajs/console@0.0.7
+  - @arikajs/database@0.0.7
+  - @arikajs/docs@0.0.7
+  - @arikajs/scheduler@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes

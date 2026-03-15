@@ -1,5 +1,13 @@
 # @arikajs/router
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @arikajs/http@0.0.7
+  - @arikajs/dispatcher@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes
