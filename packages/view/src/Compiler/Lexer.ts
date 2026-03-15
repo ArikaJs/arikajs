@@ -134,7 +134,14 @@ export class Lexer {
         let value = this.input.substring(start, this.position);
 
         // Check for expression @directive(...)
-        if (this.input[this.position] === '(') {
+        // Allow optional whitespace before the parenthesis
+        let tempPos = this.position;
+        while (tempPos < this.input.length && (this.input[tempPos] === ' ' || this.input[tempPos] === '\t')) {
+            tempPos++;
+        }
+
+        if (this.input[tempPos] === '(') {
+            this.position = tempPos;
             let parenCount = 1;
             this.position++;
             const exprStart = this.position;

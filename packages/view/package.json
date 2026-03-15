@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/view",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Server-side rendering and template engine for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
