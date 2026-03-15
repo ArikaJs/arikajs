@@ -15,8 +15,8 @@ const app = createApp(
 |
 */
 
-import { AppServiceProvider } from '../app/Providers/AppServiceProvider';
-import { RouteServiceProvider } from '../app/Providers/RouteServiceProvider';
+import { AppServiceProvider } from '@Providers/AppServiceProvider';
+import { RouteServiceProvider } from '@Providers/RouteServiceProvider';
 
 app.register(AppServiceProvider);
 app.register(RouteServiceProvider);
@@ -31,9 +31,11 @@ app.register(RouteServiceProvider);
 |
 */
 
-import { Kernel } from '../app/Http/Kernel';
-import { Kernel as BaseKernel } from 'arikajs';
+import { Kernel } from '@Http/Kernel';
+import { Handler } from '@Exceptions/Handler';
+import { Kernel as BaseKernel, Handler as BaseHandler } from 'arikajs';
 
 app.singleton(BaseKernel, () => new Kernel(app));
+app.singleton(BaseHandler, () => new Handler());
 
 export default app;

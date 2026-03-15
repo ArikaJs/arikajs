@@ -11,13 +11,14 @@ import { SchedulerServiceProvider } from './SchedulerServiceProvider';
 import { TranslationServiceProvider } from './TranslationServiceProvider';
 import { CacheServiceProvider } from './CacheServiceProvider';
 import { QueueServiceProvider } from './QueueServiceProvider';
-
+import { SessionServiceProvider } from './SessionServiceProvider';
 import { HttpServiceProvider } from './HttpServiceProvider';
 
 export class FrameworkServiceProvider extends ServiceProvider {
     public async register() {
         // Register Core Services
         await this.app.register(LoggingServiceProvider);
+        await this.app.register(SessionServiceProvider);
         await this.app.register(HttpServiceProvider);
         await this.app.register(AuthServiceProvider);
         await this.app.register(ValidationServiceProvider);

@@ -8,6 +8,8 @@ export * from './Middleware/BodyParserMiddleware';
 export * from './Middleware/CorsMiddleware';
 export * from './Middleware/TrimStrings';
 export * from './Middleware/ConvertEmptyStringsToNull';
+export * from './Middleware/SecurityHeaders';
+export * from './Middleware/Throttle';
 export * from './Exceptions/HttpException';
 export * from './Contracts/Application';
 export * from './HttpServiceProvider';

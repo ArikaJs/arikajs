@@ -17,7 +17,6 @@ export class AuthApiInstallCommand extends Command {
         const configPath = path.join(cwd, 'config', 'auth.ts');
         const modelPath = path.join(cwd, 'app', 'Models', 'User.ts');
         const authControllerDir = path.join(cwd, 'app', 'Http', 'Controllers', 'Auth');
-        const middlewarePath = path.join(cwd, 'app', 'Http', 'Middleware', 'Authenticate.ts');
         const langEnDir = path.join(cwd, 'resources', 'lang', 'en');
         const authLangPath = path.join(langEnDir, 'auth.json');
         const validationLangPath = path.join(langEnDir, 'validation.json');
@@ -38,7 +37,7 @@ export class AuthApiInstallCommand extends Command {
 
         // Check if any file exists unless --force is used
         if (!force) {
-            const existingFiles = [configPath, modelPath, middlewarePath]
+            const existingFiles = [configPath, modelPath]
                 .filter(p => fs.existsSync(p));
 
             if (existingFiles.length > 0) {
@@ -54,7 +53,6 @@ export class AuthApiInstallCommand extends Command {
             path.dirname(configPath),
             path.dirname(modelPath),
             authControllerDir,
-            path.dirname(middlewarePath),
             migrationDir,
             langEnDir
         ].forEach(dir => {
@@ -64,7 +62,6 @@ export class AuthApiInstallCommand extends Command {
         // Publish configuration and core files
         fs.writeFileSync(configPath, this.getConfigStub());
         fs.writeFileSync(modelPath, this.getModelStub());
-        fs.writeFileSync(middlewarePath, this.getMiddlewareStub());
 
         // Publish Controllers
         fs.writeFileSync(path.join(authControllerDir, 'LoginController.ts'), this.getLoginControllerStub());
@@ -112,7 +109,6 @@ export class AuthApiInstallCommand extends Command {
 
         // Update Routes
         this.appendRoutes();
-        this.registerMiddleware();
         this.updateEnv();
 
         this.writeln('');
@@ -137,7 +133,7 @@ export class AuthApiInstallCommand extends Command {
     }
 
     private getConfigStub() {
-        return `import { User } from '../app/Models/User';
+        return `import { User } from '@Models/User';
 
 export default {
     /*
@@ -282,23 +278,19 @@ export default class CreatePasswordResetsTable extends Migration {
 
     private getLoginControllerStub() {
         return `import { Request, Response, Log, lang, app } from 'arikajs';
+import { User } from '@Models/User';
 
 export class LoginController {
     /**
      * Handle an incoming authentication request.
      */
     public async login(req: Request, res: Response) {
-        const credentials = req.only(['email', 'password']);
+        const credentials = await req.validate({
+            email: 'required|email',
+            password: 'required|string',
+        });
 
-        if (!credentials.email || !credentials.password) {
-            return res.json({ error: lang('auth.failed_required') }, 400);
-        }
-
-        if (!(req as any).auth) {
-            (app().make('auth') as any).createContext(req);
-        }
-        // Use the 'api' (JWT) guard for API login so a token is issued
-        const guard = (req as any).auth.guard('api');
+        const guard = req.auth.guard('api');
         const result = await guard.attempt(credentials);
 
         if (!result) {
@@ -324,7 +316,7 @@ export class LoginController {
      * Get the authenticated user.
      */
     public async me(req: Request, res: Response) {
-        const user = await (req as any).auth.guard('api').user();
+        const user = await req.auth.guard('api').user() as User | null;
         if (!user) {
             return res.json({ error: lang('auth.unauthenticated') }, 401);
         }
@@ -336,7 +328,7 @@ export class LoginController {
      */
     public async logout(req: Request, res: Response) {
         try {
-            await (req as any).auth.guard('api').logout();
+            await req.auth.guard('api').logout();
         } catch (e) {
             Log.error('Logout error', { error: (e as Error).message });
         }
@@ -348,29 +340,20 @@ export class LoginController {
     }
 
     private getRegisterControllerStub() {
-        return `import { Request, Response, Validator, Mail, Hasher, config, Log, lang, app } from 'arikajs';
-import { User } from '../../../Models/User';
-import { VerifyEmail } from '../../../Mail/Auth/VerifyEmail';
+        return `import { Request, Response, Mail, Hasher, config, Log, lang, app } from 'arikajs';
+import { User } from '@Models/User';
+import { VerifyEmail } from '@Mail/Auth/VerifyEmail';
 
 export class RegisterController {
     /**
      * Handle a registration request for the application.
      */
     public async register(req: Request, res: Response) {
-        const validator = new Validator(req.all(), {
+        const { name, email, password } = await req.validate({
             name: 'required|string|min:2',
             email: 'required|email',
             password: 'required|string|min:8|confirmed',
         });
-
-        if (await validator.fails()) {
-            return res.json({ 
-                error: lang('validation.failed'), 
-                messages: validator.errors() 
-            }, 422);
-        }
-
-        const { name, email, password } = validator.validated();
 
         const existingUser = await User.where('email', email).first();
         if (existingUser) {
@@ -379,7 +362,7 @@ export class RegisterController {
 
         const hashedPassword = await Hasher.make(password);
 
-        const user = await (User as any).create({
+        const user = await User.create({
             name,
             email,
             password: hashedPassword,
@@ -399,11 +382,8 @@ export class RegisterController {
 
         // Return response (JWT logic)
         let token = undefined;
-        if (!(req as any).auth) {
-            (app().make('auth') as any).createContext(req);
-        }
-        const guard = (req as any).auth.guard('api');
-        if (guard && (guard.constructor.name === 'JwtGuard' || guard.issueTokens)) {
+        const guard = req.auth.guard('api');
+        if (guard && (guard.constructor.name === 'JwtGuard' || (guard as any).issueTokens)) {
             const result = await (guard as any).issueTokens(user);
             token = result.access_token;
         }
@@ -419,10 +399,10 @@ export class RegisterController {
     }
 
     private getForgotPasswordControllerStub() {
-        return `import { Request, Response, Validator, Mail, config, Log, lang, DB } from 'arikajs';
-import { User } from '../../../Models/User';
-import { ResetPassword } from '../../../Mail/Auth/ResetPassword';
-import { VerifyEmail } from '../../../Mail/Auth/VerifyEmail';
+        return `import { Request, Response, Mail, config, Log, lang, DB } from 'arikajs';
+import { User } from '@Models/User';
+import { ResetPassword } from '@Mail/Auth/ResetPassword';
+import { VerifyEmail } from '@Mail/Auth/VerifyEmail';
 import * as crypto from 'crypto';
 
 export class ForgotPasswordController {
@@ -430,16 +410,10 @@ export class ForgotPasswordController {
      * Send a reset link to the given user.
      */
     public async sendResetLinkEmail(req: Request, res: Response) {
-        const validator = new Validator(req.all(), {
+        const { email } = await req.validate({
             email: 'required|email',
         });
-
-        if (await validator.fails()) {
-            return res.json({ error: lang('validation.email'), messages: validator.errors() }, 422);
-        }
-
-        const { email } = validator.validated();
-        const user = await User.where('email', email).first() as any;
+        const user = await User.where('email', email).first() as User | null;
 
         if (!user) {
             return res.json({ error: lang('auth.user_not_found') }, 404);
@@ -488,25 +462,19 @@ export class ForgotPasswordController {
     }
 
     private getResetPasswordControllerStub() {
-        return `import { Request, Response, Validator, Hasher, lang, DB } from 'arikajs';
-import { User } from '../../../Models/User';
+        return `import { Request, Response, Hasher, lang, DB } from 'arikajs';
+import { User } from '@Models/User';
 
 export class ResetPasswordController {
     /**
      * Reset the given user's password.
      */
     public async reset(req: Request, res: Response) {
-        const validator = new Validator(req.all(), {
-            token: 'required',
+        const { token, email, password } = await req.validate({
+            token: 'required|string',
             email: 'required|email',
-            password: 'required|string|min:8|confirmed',
+            password: 'required|string|min:8|confirmed'
         });
-
-        if (await validator.fails()) {
-            return res.json({ error: lang('validation.failed'), messages: validator.errors() }, 422);
-        }
-
-        const { token, email, password } = validator.validated();
         
         // Verify token against database
         const resetRecord = await DB.table('password_resets').where('email', email).where('token', token).first();
@@ -514,7 +482,7 @@ export class ResetPasswordController {
             return res.json({ error: lang('auth.invalid_reset_token') }, 403);
         }
 
-        const user = await User.where('email', email).first() as any;
+        const user = await User.where('email', email).first() as User | null;
         if (!user) {
             return res.json({ error: lang('auth.user_not_found') }, 404);
         }
@@ -534,8 +502,8 @@ export class ResetPasswordController {
 
     private getVerifyEmailControllerStub() {
         return `import { Request, Response, Mail, config, Log, lang } from 'arikajs';
-import { User } from '../../../Models/User';
-import { VerifyEmail } from '../../../Mail/Auth/VerifyEmail';
+import { User } from '@Models/User';
+import { VerifyEmail } from '@Mail/Auth/VerifyEmail';
 
 export class VerifyEmailController {
     /**
@@ -554,7 +522,7 @@ export class VerifyEmailController {
             return res.json({ error: lang('auth.invalid_verification_token') }, 403);
         }
 
-        const user = await User.where('email', email).first() as any;
+        const user = await User.where('email', email).first() as User | null;
         if (!user) {
             return res.json({ error: lang('auth.user_not_found') }, 404);
         }
@@ -581,7 +549,7 @@ export class VerifyEmailController {
      */
     public async resend(req: Request, res: Response) {
         // Get the authenticated user directly from the JWT guard
-        const user = await (req as any).auth.guard('api').user() as any;
+        const user = await req.auth.guard('api').user() as User | null;
 
         if (!user) {
             return res.json({ error: lang('auth.unauthenticated') }, 401);
@@ -656,20 +624,6 @@ export class ResetPassword extends Mailable {
 `;
     }
 
-    private getMiddlewareStub() {
-        return `import { Authenticate as Middleware } from 'arikajs';
-
-export class Authenticate extends Middleware {
-    /**
-     * Handle an unauthenticated user.
-     */
-    protected unauthenticated(request: any, guards: string[], response: any): any {
-        return response.json({ error: 'Unauthenticated.' }, 401);
-    }
-}
-`;
-    }
-
     private appendRoutes() {
         const cwd = process.cwd();
         const apiRoutesPath = path.join(cwd, 'routes', 'api.ts');
@@ -679,11 +633,11 @@ export class Authenticate extends Middleware {
 
         // Add imports if they don't exist
         const imports = [
-            "import { LoginController } from '../app/Http/Controllers/Auth/LoginController';",
-            "import { RegisterController } from '../app/Http/Controllers/Auth/RegisterController';",
-            "import { ForgotPasswordController } from '../app/Http/Controllers/Auth/ForgotPasswordController';",
-            "import { ResetPasswordController } from '../app/Http/Controllers/Auth/ResetPasswordController';",
-            "import { VerifyEmailController } from '../app/Http/Controllers/Auth/VerifyEmailController';"
+            "import { LoginController } from '@Controllers/Auth/LoginController';",
+            "import { RegisterController } from '@Controllers/Auth/RegisterController';",
+            "import { ForgotPasswordController } from '@Controllers/Auth/ForgotPasswordController';",
+            "import { ResetPasswordController } from '@Controllers/Auth/ResetPasswordController';",
+            "import { VerifyEmailController } from '@Controllers/Auth/VerifyEmailController';"
         ];
 
         imports.forEach(imp => {
@@ -698,66 +652,23 @@ export class Authenticate extends Middleware {
 Route.group({ prefix: 'auth' }, () => {
     Route.post('/register', [RegisterController, 'register']);
     Route.post('/login', [LoginController, 'login']);
-    Route.post('/logout', [LoginController, 'logout']).withMiddleware('auth');
+    Route.post('/logout', [LoginController, 'logout']).withMiddleware('auth:api');
 
     // Email Verification
     Route.get('/verify', [VerifyEmailController, 'verify']);
-    Route.post('/verification-notification', [VerifyEmailController, 'resend']).withMiddleware('auth');
+    Route.post('/verification-notification', [VerifyEmailController, 'resend']).withMiddleware('auth:api');
 
     // Password Reset
     Route.post('/password/email', [ForgotPasswordController, 'sendResetLinkEmail']);
     Route.post('/password/reset', [ResetPasswordController, 'reset']);
 });
 
-Route.get('/user', [LoginController, 'me']).withMiddleware('auth');
+Route.get('/user', [LoginController, 'me']).withMiddleware('auth:api');
 `;
             content += routeDefinitions;
         }
 
         fs.writeFileSync(apiRoutesPath, content);
-    }
-
-
-
-    private registerMiddleware() {
-        const cwd = process.cwd();
-        const kernelPath = path.join(cwd, 'app', 'Http', 'Kernel.ts');
-        if (!fs.existsSync(kernelPath)) return;
-
-        let content = fs.readFileSync(kernelPath, 'utf8');
-
-        // Add Authenticate import if not exists
-        if (!content.includes("import { Authenticate } from './Middleware/Authenticate'")) {
-            content = "import { Authenticate } from './Middleware/Authenticate';\n" + content;
-        }
-
-        // Register in routeMiddleware
-        const authRegistration = "'auth': Authenticate,";
-
-        // Case 1: Already registered (uncommented)
-        if (content.includes(authRegistration) && !content.includes(`// ${authRegistration}`)) {
-            // Already there and active
-        }
-        // Case 2: Commented out line
-        else if (content.includes(`// ${authRegistration}`)) {
-            content = content.replace(`// ${authRegistration}`, authRegistration);
-        }
-        // Case 3: Object.assign pattern (new templates)
-        else if (content.includes('Object.assign((this as any).routeMiddleware, {')) {
-            content = content.replace(
-                'Object.assign((this as any).routeMiddleware, {',
-                `Object.assign((this as any).routeMiddleware, {\n            ${authRegistration}`
-            );
-        }
-        // Case 4: Standard property declaration (legacy templates)
-        else if (content.includes('protected routeMiddleware = {')) {
-            content = content.replace(
-                'protected routeMiddleware = {',
-                `protected routeMiddleware = {\n        ${authRegistration}`
-            );
-        }
-
-        fs.writeFileSync(kernelPath, content);
     }
 
     private getAuthLangStub() {
@@ -779,7 +690,8 @@ Route.get('/user', [LoginController, 'me']).withMiddleware('auth');
             "user_not_found": "We could not find a user with that email address.",
             "reset_link_sent": "If that email is registered, a password reset link has been sent.",
             "invalid_reset_token": "The password reset token is invalid.",
-            "password_reset_success": "Your password has been reset successfully. You can now log in."
+            "password_reset_success": "Your password has been reset successfully. You can now log in.",
+            "email_not_verified": "Your email address is not verified. Please verify your email before attempting to reset your password."
         }, null, 4);
     }
 
@@ -801,7 +713,7 @@ Route.get('/user', [LoginController, 'me']).withMiddleware('auth');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email</title>
+    <title>Verify Your Email - {{ config('app.name', 'ArikaJS') }}</title>
     <style>
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f7; color: #51545e; }
         .wrapper { width: 100%; margin: 0; padding: 0; -webkit-text-size-adjust: none; background-color: #f4f4f7; }
@@ -835,7 +747,7 @@ Route.get('/user', [LoginController, 'me']).withMiddleware('auth');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password</title>
+    <title>Reset Password - {{ config('app.name', 'ArikaJS') }}</title>
     <style>
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f7; color: #51545e; }
         .wrapper { width: 100%; margin: 0; padding: 0; -webkit-text-size-adjust: none; background-color: #f4f4f7; }

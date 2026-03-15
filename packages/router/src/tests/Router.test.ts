@@ -92,7 +92,7 @@ test('Router supports fluent chaining', async (t) => {
     RouteRegistry.getInstance().clear();
 
     const route = Route.get('/fluent', () => 'ok')
-        .as('fluent.route')
+        .name('fluent.route')
         .withMiddleware('some-middleware');
 
     assert.strictEqual(route.name, 'fluent.route');

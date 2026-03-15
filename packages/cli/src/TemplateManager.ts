@@ -78,7 +78,7 @@ export class TemplateManager {
 
         if (fs.existsSync(examplePath) && !fs.existsSync(envPath)) {
             let content = fs.readFileSync(examplePath, 'utf8');
-            content = content.replace(/APP_NAME=.*/, `APP_NAME=${appName}`);
+            content = content.replace(/APP_NAME=.*/, `APP_NAME=ArikaJs`);
 
             // Automatically generate app key
             const appKey = 'base64:' + randomBytes(32).toString('base64');

@@ -3,10 +3,13 @@ import { Request, Response, NotFoundHttpException } from '@arikajs/http';
 import { Pipeline } from '@arikajs/middleware';
 import { Dispatcher } from '@arikajs/dispatcher';
 import { RequestLoggingMiddleware } from './Middleware/RequestLoggingMiddleware';
-import { BodyParserMiddleware, CorsMiddleware, TrimStrings, ConvertEmptyStringsToNull } from '@arikajs/http';
+import { BodyParserMiddleware, CorsMiddleware, TrimStrings, ConvertEmptyStringsToNull, SecurityHeaders, Throttle } from '@arikajs/http';
 import { Handler } from './Handler';
 import { ViewMiddleware } from './Middleware/ViewMiddleware';
+import { VerifyCsrfToken } from './Middleware/VerifyCsrfToken';
 import { ServeStaticMiddleware } from './Middleware/ServeStaticMiddleware';
+import { StartSession } from '@arikajs/session';
+import { Authenticate, EnsureEmailIsVerified } from '@arikajs/auth';
 
 
 export class Kernel {
@@ -15,26 +18,34 @@ export class Kernel {
      */
     protected middleware: any[] = [
         new CorsMiddleware(),
+        new SecurityHeaders(),
         new RequestLoggingMiddleware(),
         new BodyParserMiddleware(),
         new TrimStrings(),
         new ConvertEmptyStringsToNull(),
         new ServeStaticMiddleware(),
-        ViewMiddleware,
     ];
 
     /**
      * The application's route middleware groups.
      */
     protected middlewareGroups: Record<string, any[]> = {
-        web: [],
+        web: [
+            StartSession,
+            ViewMiddleware,
+            VerifyCsrfToken,
+        ],
         api: [],
     };
 
     /**
      * The application's route middleware.
      */
-    protected routeMiddleware: Record<string, any> = {};
+    protected routeMiddleware: Record<string, any> = {
+        'auth': Authenticate,
+        'verified': EnsureEmailIsVerified,
+        'throttle': Throttle,
+    };
 
     protected handler: Handler;
 
@@ -69,7 +80,7 @@ export class Kernel {
                 }, response);
         } catch (error: any) {
             this.handler.report(error);
-            return this.handler.render(request, error, response);
+            return await this.handler.render(request, error, response);
         }
     }
 

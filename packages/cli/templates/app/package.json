@@ -5,11 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "arika serve --dev",
-    "start": "arika serve",
+    "start": "node -r tsconfig-paths/register dist/server.js",
     "build": "tsc"
   },
   "dependencies": {
-    "arikajs": "file:../arikajs"
+    "arikajs": "file:../arikajs",
+    "tsconfig-paths": "^4.0.0"
   },
   "devDependencies": {
     "@arikajs/cli": "file:../cli",

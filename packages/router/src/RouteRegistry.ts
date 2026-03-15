@@ -65,7 +65,7 @@ export class RouteRegistry {
     }
 
     public getRouteByName(name: string): RouteEntry | undefined {
-        return this.routes.find(r => r.name === name);
+        return this.routes.find(r => r._name === name);
     }
 
     public clear(): void {

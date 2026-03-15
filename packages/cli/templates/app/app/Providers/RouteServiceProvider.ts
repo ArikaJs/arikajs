@@ -22,13 +22,13 @@ export class RouteServiceProvider extends ServiceProvider {
     protected loadRoutes(): void {
         const basePath = (this.app as any).getBasePath();
 
-        // 1. Load web routes (default, no prefix)
-        Route.group({}, () => {
+        // 1. Load web routes (with session, CSRF, etc.)
+        Route.middleware('web').group(() => {
             require(path.join(basePath, 'routes/web'));
         });
 
-        // 2. Load API routes with /api prefix
-        Route.group({ prefix: 'api' }, () => {
+        // 2. Load API routes with /api prefix (stateless, auth via JWT)
+        Route.middleware('api').prefix('api').group(() => {
             require(path.join(basePath, 'routes/api'));
         });
     }

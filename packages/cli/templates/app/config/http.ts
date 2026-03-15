@@ -1,5 +1,6 @@
+import { env } from 'arikajs';
 
 export default {
-    port: parseInt(process.env.APP_PORT || '3000', 10),
-    host: process.env.APP_HOST || '0.0.0.0',
+    port: env('APP_PORT', 3000),
+    host: env('APP_HOST', '0.0.0.0'),
 };

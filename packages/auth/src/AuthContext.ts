@@ -77,4 +77,8 @@ export class AuthContext {
     public getRequest(): any {
         return this.request;
     }
+
+    public resolve(token: any): any {
+        return this.guard(token as string);
+    }
 }

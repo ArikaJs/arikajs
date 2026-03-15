@@ -29,6 +29,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
+    "@arikajs/validation": "workspace:*",
     "@types/serve-static": "^2.2.0",
     "busboy": "^1.6.0",
     "cookie": "^1.1.1",

@@ -1,10 +1,10 @@
-import { Authenticate as Middleware } from 'arikajs';
+import { Authenticate as Middleware, Request } from 'arikajs';
 
 export class Authenticate extends Middleware {
     /**
-     * Handle an unauthenticated user.
+     * Get the path the user should be redirected to when they are not authenticated.
      */
-    protected unauthenticated(request: any, guards: string[], response: any): any {
-        return response.json({ error: 'Unauthenticated.' }, 401);
+    protected redirectTo(request: Request): string | null {
+        return request.expectsJson() ? null : '/auth/login';
     }
 }

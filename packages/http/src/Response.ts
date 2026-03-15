@@ -119,6 +119,14 @@ export class Response {
     }
 
     /**
+     * Redirect to the previous URL.
+     */
+    public back(request: any, fallback: string = '/', status: number = 302): this {
+        const url = request.header('referer') || request.header('referrer') || fallback;
+        return this.redirect(url, status);
+    }
+
+    /**
      * Set the response content.
      */
     setContent(content: string | Buffer): this {

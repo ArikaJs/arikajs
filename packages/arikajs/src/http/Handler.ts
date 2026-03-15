@@ -29,7 +29,7 @@ export class Handler {
     /**
      * Render an exception into an HTTP response.
      */
-    public render(request: Request, error: any, response: Response): Response {
+    public async render(request: Request, error: any, response: Response): Promise<Response> {
         // 1. Check if the error has a custom renderer
         for (const [type, renderer] of this.renderers.entries()) {
             if (error instanceof type) {
@@ -44,7 +44,14 @@ export class Handler {
 
         // 3. Handle HttpException specifically
         if (error instanceof HttpException) {
-            return response.status(error.getStatusCode()).json({
+            const status = error.getStatusCode();
+            const isBrowserRequest = this.isBrowserRequest(request);
+
+            if (isBrowserRequest) {
+                return this.renderForBrowser(request, status, error, response);
+            }
+
+            return response.status(status).json({
                 error: true,
                 message: error.message,
                 ...(this.shouldDisplayStackTrace() ? { trace: error.stack } : {})
@@ -56,6 +63,11 @@ export class Handler {
         const message = status === 500 && !this.shouldDisplayStackTrace()
             ? 'Internal Server Error'
             : error.message || 'Unknown Error';
+
+        const isBrowserRequest = this.isBrowserRequest(request);
+        if (isBrowserRequest) {
+            return this.renderForBrowser(request, status, error, response);
+        }
 
         return response.status(status).json({
             error: true,
@@ -80,6 +92,62 @@ export class Handler {
     protected shouldDisplayStackTrace(): boolean {
         return process.env.NODE_ENV === 'development' || process.env.APP_DEBUG === 'true';
     }
+
+    /**
+     * Determine if the incoming request is a browser (non-API, non-JSON) request.
+     */
+    protected isBrowserRequest(request: Request): boolean {
+        if (!request || typeof request.path !== 'function') return false;
+        if (request.path().startsWith('/api')) return false;
+        const accept = (request.header('accept') as string) || '';
+        if (accept.includes('application/json') && !accept.includes('text/html')) return false;
+        return true;
+    }
+
+    /**
+     * Render an error response for browser (HTML) clients.
+     * Override in the application Handler to show custom error views.
+     */
+    protected async renderForBrowser(request: Request, status: number, error: any, response: Response): Promise<Response> {
+        const supportedErrors = [401, 403, 404, 419, 429, 500, 503];
+
+        if (supportedErrors.includes(status)) {
+            const fs = await import('fs');
+            const path = await import('path');
+            const appName = process.env.APP_NAME || 'ArikaJS';
+
+            const renderFile = async (filePath: string): Promise<string | null> => {
+                try {
+                    let html = await fs.promises.readFile(filePath, 'utf8');
+                    html = html.replace(/\{\{app_name\}\}/g, appName);
+                    // Also replace ArkJS template config() calls
+                    html = html.replace(/\{\{\s*config\('app\.name'[^)]*\)\s*\}\}/g, appName);
+                    return html;
+                } catch { return null; }
+            };
+
+            // 1. App override: resources/views/errors/{status}.ark.html
+            const root = process.env.PROJECT_ROOT || process.cwd();
+            const appView = path.join(root, 'resources', 'views', 'errors', `${status}.ark.html`);
+            const appHtml = await renderFile(appView);
+            if (appHtml) return response.status(status).send(appHtml);
+
+            // 2. Framework bundled views (packages/arikajs/src/http/views/errors/)
+            const frameworkView = path.join(__dirname, 'views', 'errors', `${status}.ark.html`);
+            const frameworkHtml = await renderFile(frameworkView);
+            if (frameworkHtml) return response.status(status).send(frameworkHtml);
+
+            // 3. Also try dist path (when running from compiled JS)
+            const frameworkViewDist = path.join(__dirname, '..', '..', 'src', 'http', 'views', 'errors', `${status}.ark.html`);
+            const frameworkHtmlDist = await renderFile(frameworkViewDist);
+            if (frameworkHtmlDist) return response.status(status).send(frameworkHtmlDist);
+        }
+
+        return response.status(status).send(
+            `<!DOCTYPE html><html><head><title>${status} Error</title></head><body style="font-family:sans-serif;text-align:center;padding:4rem"><h1 style="font-size:4rem;color:#8b5cf6">${status}</h1><p style="color:#64748b">${error.message || 'An error occurred'}</p><a href="/" style="color:#8b5cf6">Return Home</a></body></html>`
+        );
+    }
+
 
     /**
      * Set the exceptions that should not be reported.

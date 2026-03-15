@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>429 - Too Many Requests | {{app_name}}</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
+        .aurora { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; filter: blur(100px); opacity: 0.25; pointer-events: none; }
+        .aurora-blur { position: absolute; border-radius: 50%; animation: move 20s infinite alternate; }
+        .blur-1 { width: 50vw; height: 50vw; background: radial-gradient(circle, #f97316 0%, transparent 70%); top: -10%; left: -10%; }
+        .blur-2 { width: 40vw; height: 40vw; background: radial-gradient(circle, #ef4444 0%, transparent 70%); bottom: -10%; right: -10%; animation-duration: 25s; }
+        @keyframes move { from { transform: translate(0, 0) scale(1); } to { transform: translate(10%, 10%) scale(1.1); } }
+        header { width: 100%; padding: 1.5rem 5%; display: flex; align-items: center; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(15, 23, 42, 0.08); }
+        .logo { width: 120px; height: auto; filter: drop-shadow(0 4px 6px rgba(139, 92, 246, 0.2)); }
+        .main-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 6rem 2rem 4rem; }
+        .container { position: relative; z-index: 10; max-width: 700px; width: 100%; text-align: center; animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .badge { display: inline-block; padding: 0.45rem 1.1rem; background: rgba(249, 115, 22, 0.08); border: 1px solid #f97316; color: #ea580c; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        h1 { font-family: 'Outfit', sans-serif; font-size: clamp(3rem, 10vw, 5.5rem); font-weight: 800; line-height: 1; margin-bottom: 1.5rem; letter-spacing: -0.04em; background: linear-gradient(135deg, #0f172a 30%, #334155 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .description { font-size: 1.15rem; color: #64748b; max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.7; }
+        .actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 0.875rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; transition: all 0.25s ease; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: #8b5cf6; color: white; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139, 92, 246, 0.45); background: #7c3aed; }
+        .code-display { font-family: 'Outfit', sans-serif; font-size: clamp(6rem, 20vw, 12rem); font-weight: 800; line-height: 1; margin-bottom: 0.5rem; background: linear-gradient(135deg, rgba(249, 115, 22, 0.25) 0%, rgba(239, 68, 68, 0.1) 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.04em; }
+        .footer { padding: 2rem 0; color: #94a3b8; font-size: 0.8rem; text-align: center; border-top: 1px solid rgba(15, 23, 42, 0.06); }
+        .footer a { color: #8b5cf6; text-decoration: none; font-weight: 600; }
+        @media (max-width: 640px) { .actions { flex-direction: column; align-items: center; } }
+    </style>
+</head>
+<body>
+    <div class="aurora"><div class="aurora-blur blur-1"></div><div class="aurora-blur blur-2"></div></div>
+    <header><a href="/"><img src="/assets/img/logo.png" alt="{{app_name}} Logo" class="logo"></a></header>
+    <main class="main-content">
+        <div class="container">
+            <div class="code-display">429</div>
+            <div class="badge">Too Many Requests</div>
+            <h1>Slow Down!</h1>
+            <p class="description">You're sending too many requests too quickly. Please take a small break and try again in a few moments.</p>
+            <div class="actions">
+                <a href="/" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>
+                    Return Home
+                </a>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">&copy; {{app_name}} &mdash; Powered by <a href="https://github.com/arikajs/arikajs">ArikaJS Framework</a></footer>
+</body>
+</html>

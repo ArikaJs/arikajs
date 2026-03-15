@@ -25,6 +25,12 @@ export class ApplicationLoader {
             require('ts-node/register');
 
             try {
+                require(path.join(root, 'node_modules', 'tsconfig-paths', 'register'));
+            } catch (e) {
+                // Ignore if tsconfig-paths is not installed
+            }
+
+            try {
                 // Require the app file, which should call createApp() and set the instance
                 const appModule = require(bootstrapPath);
                 const app = appModule.default || appModule;

@@ -1,14 +1,16 @@
+import { env } from 'arikajs';
+
 export default {
-    default: process.env.MAIL_MAILER || 'log',
+    default: env('MAIL_MAILER', 'log'),
 
     mailers: {
         smtp: {
             transport: 'smtp',
-            host: process.env.MAIL_HOST || '127.0.0.1',
-            port: Number(process.env.MAIL_PORT || 2525),
-            encryption: process.env.MAIL_ENCRYPTION || 'tls',
-            username: process.env.MAIL_USERNAME,
-            password: process.env.MAIL_PASSWORD,
+            host: env('MAIL_HOST', '127.0.0.1'),
+            port: env('MAIL_PORT', 2525),
+            encryption: env('MAIL_ENCRYPTION', 'tls'),
+            username: env('MAIL_USERNAME'),
+            password: env('MAIL_PASSWORD'),
         },
 
         log: {
@@ -21,7 +23,7 @@ export default {
     },
 
     from: {
-        address: process.env.MAIL_FROM_ADDRESS || 'hello@example.com',
-        name: process.env.MAIL_FROM_NAME || 'Example',
+        address: env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        name: env('MAIL_FROM_NAME', 'Example'),
     },
 };

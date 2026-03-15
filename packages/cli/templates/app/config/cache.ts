@@ -1,8 +1,10 @@
+import { env } from 'arikajs';
+
 export default {
     /**
      * Default Cache Store
      */
-    default: process.env.CACHE_STORE || 'file',
+    default: env('CACHE_STORE', 'file'),
 
     /**
      * Cache Stores
@@ -27,16 +29,16 @@ export default {
         redis: {
             driver: 'redis',
             connection: 'default',
-            mode: process.env.REDIS_MODE || 'standalone', // standalone, sentinel, cluster
-            host: process.env.REDIS_HOST || '127.0.0.1',
-            password: process.env.REDIS_PASSWORD || null,
-            port: process.env.REDIS_PORT || 6379,
-            database: process.env.REDIS_DB || 0,
+            mode: env('REDIS_MODE', 'standalone'), // standalone, sentinel, cluster
+            host: env('REDIS_HOST', '127.0.0.1'),
+            password: env('REDIS_PASSWORD', null),
+            port: env('REDIS_PORT', 6379),
+            database: env('REDIS_DB', 0),
         },
     },
 
     /**
      * Cache Key Prefix
      */
-    prefix: process.env.CACHE_PREFIX || 'arika_cache',
+    prefix: env('CACHE_PREFIX', 'arika_cache'),
 };

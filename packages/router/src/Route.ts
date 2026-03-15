@@ -64,14 +64,14 @@ export class Route {
     }
 
     public static resource(name: string, controller: any): void {
-        Route.get(`/${name}`, [controller, 'index']).as(`${name}.index`);
-        Route.get(`/${name}/create`, [controller, 'create']).as(`${name}.create`);
-        Route.post(`/${name}`, [controller, 'store']).as(`${name}.store`);
-        Route.get(`/${name}/:id`, [controller, 'show']).as(`${name}.show`);
-        Route.get(`/${name}/:id/edit`, [controller, 'edit']).as(`${name}.edit`);
-        Route.put(`/${name}/:id`, [controller, 'update']).as(`${name}.update`);
-        Route.patch(`/${name}/:id`, [controller, 'update']).as(`${name}.update`);
-        Route.delete(`/${name}/:id`, [controller, 'destroy']).as(`${name}.destroy`);
+        Route.get(`/${name}`, [controller, 'index']).name(`${name}.index`);
+        Route.get(`/${name}/create`, [controller, 'create']).name(`${name}.create`);
+        Route.post(`/${name}`, [controller, 'store']).name(`${name}.store`);
+        Route.get(`/${name}/:id`, [controller, 'show']).name(`${name}.show`);
+        Route.get(`/${name}/:id/edit`, [controller, 'edit']).name(`${name}.edit`);
+        Route.put(`/${name}/:id`, [controller, 'update']).name(`${name}.update`);
+        Route.patch(`/${name}/:id`, [controller, 'update']).name(`${name}.update`);
+        Route.delete(`/${name}/:id`, [controller, 'destroy']).name(`${name}.destroy`);
     }
 
     public static group(options: string | { prefix?: string; middleware?: any | any[] }, callback: () => void): void {

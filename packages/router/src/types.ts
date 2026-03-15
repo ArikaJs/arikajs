@@ -4,7 +4,7 @@ export interface RouteDefinition {
     method: string;
     path: string;
     handler: RouteHandler;
-    name?: string;
+    _name?: string;
     prefix?: string;
     middleware: any[];
     regex?: RegExp;

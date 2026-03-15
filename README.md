@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
-[![Performance](https://img.shields.io/badge/Performance-2.5x_Faster_than_Express-orange.svg)](#-blazing-fast-performance)
+[![Performance](https://img.shields.io/badge/Performance-2.6x_Faster_than_Express-orange.svg)](#-blazing-fast-performance)
 [![Speed](https://img.shields.io/badge/Speed-Outperforms_Fastify-red.svg)](#-blazing-fast-performance)
 
 </div>
@@ -21,11 +21,11 @@ ArikaJS is architected for extreme speed. In our latest benchmarks, it consisten
 
 | Framework | Throughput (req/s) | Latency (avg) |
 | :--- | :--- | :--- |
-| **ArikaJS** | **40,450** 🥇 | **4.2ms** |
-| Fastify | 40,100 🥈 | 4.3ms |
-| Express | 16,900 🥉 | 11.4ms |
+| **ArikaJS** | **42,800** 🥇 | **3.9ms** |
+| Fastify | 40,400 🥈 | 4.2ms |
+| Express | 16,500 🥉 | 11.8ms |
 
-> 🚀 **ArikaJS is up to 2.5x faster than Express** and even slightly surpasses Fastify in overall throughput. 
+> 🚀 **ArikaJS is up to 2.6x faster than Express** and consistently outperforms Fastify in high-concurrency throughput. 
 
 ---
 

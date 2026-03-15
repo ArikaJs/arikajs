@@ -166,8 +166,11 @@ export class Parser {
 
     private isBlockDirective(name: string): boolean {
         const blockDirectives = [
+            // Core
             'if', 'for', 'each', 'unless', 'empty', 'section', 'push', 'prepend',
-            'component', 'slot', 'auth', 'guest', 'switch', 'once', 'verbatim', 'fragment', 'await', 'php'
+            'component', 'slot', 'auth', 'guest', 'switch', 'once', 'verbatim', 'fragment', 'await',
+            // New
+            'forelse', 'isset', 'unset', 'env', 'production', 'can', 'cannot', 'canany', 'error', 'style'
         ];
         return blockDirectives.includes(name);
     }
@@ -180,6 +183,16 @@ export class Parser {
         if (name === 'slot') return 'endslot';
         if (name === 'verbatim') return 'endverbatim';
         if (name === 'fragment') return 'endfragment';
+        if (name === 'forelse') return 'endforelse';
+        if (name === 'isset') return 'endisset';
+        if (name === 'unset') return 'endunset';
+        if (name === 'env') return 'endenv';
+        if (name === 'production') return 'endproduction';
+        if (name === 'can') return 'endcan';
+        if (name === 'cannot') return 'endcannot';
+        if (name === 'canany') return 'endcanany';
+        if (name === 'error') return 'enderror';
+        if (name === 'style') return 'endstyle';
         return `end${name}`;
     }
 }

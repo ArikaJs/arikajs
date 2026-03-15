@@ -134,11 +134,6 @@ export class Lexer {
         let value = this.input.substring(start, this.position);
 
         // Check for expression @directive(...)
-        // Skip whitespace
-        while (this.position < this.input.length && /[ \t]/.test(this.input[this.position])) {
-            this.position++;
-        }
-
         if (this.input[this.position] === '(') {
             let parenCount = 1;
             this.position++;

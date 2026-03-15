@@ -1,5 +1,5 @@
-import { Route, app } from 'arikajs';
-import { UserController } from '../app/Http/Controllers/UserController';
+import { Route, Request, Response, app } from 'arikajs';
+import { UserController } from '@Controllers/UserController';
 
 Route.get('/', () => {
     return {
@@ -32,3 +32,8 @@ Route.get('/users/:id', userController.show);
 Route.post('/users', userController.store);
 Route.put('/users/:id', userController.update);
 Route.delete('/users/:id', userController.destroy);
+
+// Example of a protected API route
+// Route.get('/me', (req: Request, res: Response) => {
+//     return req.auth.user();
+// }).withMiddleware('auth:api');

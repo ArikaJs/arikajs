@@ -1,8 +1,10 @@
+import { env } from 'arikajs';
+
 export default {
     /**
      * Default Queue Connection Name
      */
-    default: process.env.QUEUE_CONNECTION || 'sync',
+    default: env('QUEUE_CONNECTION', 'sync'),
 
     /**
      * Queue Connections
@@ -25,7 +27,7 @@ export default {
      * Job Batching
      */
     batching: {
-        database: process.env.DB_CONNECTION || 'mysql',
+        database: env('DB_CONNECTION', 'mysql'),
         table: 'job_batches',
     },
 
@@ -33,8 +35,8 @@ export default {
      * Failed Queue Jobs
      */
     failed: {
-        driver: process.env.QUEUE_FAILED_DRIVER || 'database-uuids',
-        database: process.env.DB_CONNECTION || 'mysql',
+        driver: env('QUEUE_FAILED_DRIVER', 'database-uuids'),
+        database: env('DB_CONNECTION', 'mysql'),
         table: 'failed_jobs',
     },
 };

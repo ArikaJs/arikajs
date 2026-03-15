@@ -2,6 +2,7 @@ import { Application } from './Contracts/Application';
 import { IncomingMessage } from 'node:http';
 import { URL } from 'node:url';
 import * as cookie from 'cookie';
+import { Validator, ValidationError } from '@arikajs/validation';
 
 export class Request {
     private app: Application;
@@ -11,6 +12,8 @@ export class Request {
     private _cookies: Record<string, string | undefined> | null = null;
     private _body: any = null;
     private _params: Record<string, string> = {};
+    private _auth: any = null;
+    private _view: any = null;
 
     constructor(app: Application, req: IncomingMessage) {
         this.app = app;
@@ -33,6 +36,46 @@ export class Request {
         this._params = {};
         this._baseUrl = null;
         this._session = null;
+        this._auth = null;
+        this._view = null;
+    }
+
+    /**
+     * Get the view engine instance.
+     */
+    get view(): any {
+        if (!this._view) {
+            try {
+                this._view = this.app.make('view');
+            } catch (e) {
+                return null;
+            }
+        }
+        return this._view;
+    }
+
+    set view(value: any) {
+        this._view = value;
+    }
+
+    /**
+     * Get the authentication context for the request.
+     */
+    get auth(): any {
+        if (!this._auth) {
+            try {
+                const authManager = this.app.make('auth');
+                this._auth = authManager.createContext(this);
+            } catch (e) {
+                // Auth manager not registered
+                return null;
+            }
+        }
+        return this._auth;
+    }
+
+    set auth(value: any) {
+        this._auth = value;
     }
 
     private ensureSearchParams() {
@@ -101,6 +144,20 @@ export class Request {
      */
     headers(): Record<string, string | string[] | undefined> {
         return this.req.headers;
+    }
+
+    /**
+     * Get the client IP address.
+     */
+    ip(): string | undefined {
+        const trustProxy = this.app.config().get('http.trustProxy', false);
+        if (trustProxy) {
+            const forwardedFor = this.header('x-forwarded-for');
+            if (typeof forwardedFor === 'string') {
+                return forwardedFor.split(',')[0].trim();
+            }
+        }
+        return this.req.socket.remoteAddress;
     }
 
     /**
@@ -252,5 +309,41 @@ export class Request {
      */
     getIncomingMessage(): IncomingMessage {
         return this.req;
+    }
+
+    /**
+     * Determine if the current request is asking for JSON.
+     */
+    wantsJson(): boolean {
+        const acceptable = this.header('accept');
+        return typeof acceptable === 'string' &&
+            (acceptable.includes('application/json') || acceptable.includes('+json'));
+    }
+
+    /**
+     * Determine if the current request is an AJAX request.
+     */
+    ajax(): boolean {
+        return this.header('x-requested-with') === 'XMLHttpRequest';
+    }
+
+    /**
+     * Determine if the current request expects a JSON response.
+     */
+    expectsJson(): boolean {
+        return this.ajax() || this.wantsJson();
+    }
+
+    /**
+     * Validate the request with the given rules.
+     */
+    async validate(rules: Record<string, any>, messages: Record<string, any> = {}): Promise<any> {
+        const validator = new Validator(this.all(), rules, messages);
+
+        if (await validator.fails()) {
+            throw new ValidationError(validator.errors());
+        }
+
+        return validator.validated();
     }
 }

@@ -44,7 +44,7 @@ export class ServeCommand extends Command {
         this.writeln('');
 
         const command = isTypeScript ? 'npx' : 'node';
-        const args = isTypeScript ? ['--yes', 'tsx', 'watch', serverFile] : [serverFile];
+        const args = isTypeScript ? ['--yes', 'tsx', 'watch', '--clear-screen=false', '-r', 'tsconfig-paths/register', serverFile] : [serverFile];
 
         let watcher: fs.FSWatcher | null = null;
         let server: ReturnType<typeof spawn> | null = null;

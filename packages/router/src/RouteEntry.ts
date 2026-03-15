@@ -4,7 +4,7 @@ export class RouteEntry implements RouteDefinition {
     public method: string;
     public path: string;
     public handler: RouteHandler;
-    public name?: string;
+    public _name?: string;
     public prefix?: string;
     public middleware: any[] = [];
     public regex: RegExp;
@@ -43,9 +43,16 @@ export class RouteEntry implements RouteDefinition {
     /**
      * Set a name for the route.
      */
-    public as(name: string): this {
-        this.name = name;
+    public name(name: string): this {
+        this._name = name;
         return this;
+    }
+
+    /**
+     * Set an alias name for the route.
+     */
+    public as(name: string): this {
+        return this.name(name);
     }
 
     /**

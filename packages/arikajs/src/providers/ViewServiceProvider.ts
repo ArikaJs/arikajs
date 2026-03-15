@@ -19,11 +19,15 @@ export class ViewServiceProvider extends ServiceProvider {
                 path.join((this.app as any).getBasePath(), 'storage/framework/views')
             ) as string;
 
-            return new View({
+            const view = new View({
                 viewsPath,
                 cachePath,
                 cache: config.get('app.env') === 'production'
             });
+
+            view.helper('config', (key: string, defaultValue?: any) => config.get(key, defaultValue));
+
+            return view;
         });
 
         this.app.singleton('view', () => this.app.make(View));

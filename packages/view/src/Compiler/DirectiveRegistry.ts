@@ -96,18 +96,148 @@ export class DirectiveRegistry {
         this.register('auth', (exp, children) => `if (_data.user) {\n${children}\n}`);
         this.register('guest', (exp, children) => `if (!_data.user) {\n${children}\n}`);
 
+        // Authorization (@can / @cannot / @canany)
+        this.register('can', (exp, children) => `if (_data.__can && await _data.__can(${exp})) {\n${children}\n}`);
+        this.register('cannot', (exp, children) => `if (!_data.__can || !(await _data.__can(${exp}))) {\n${children}\n}`);
+        this.register('canany', (exp, children) => {
+            return `{
+                const __perms = Array.isArray(${exp}) ? ${exp} : [${exp}];
+                const __canAny = _data.__can ? (await Promise.all(__perms.map(p => _data.__can(p)))).some(Boolean) : false;
+                if (__canAny) {\n${children}\n}
+            }`;
+        });
+
         // Async
         this.register('await', (exp, children) => {
             return `_output += await (${exp});`;
         });
 
-        // Utils
-        this.register('php', (exp, children) => children || '');
         this.register('json', (exp) => `_output += JSON.stringify(${exp});`);
 
         // HTMX / Fragments
         this.register('fragment', (exp, children) => {
             return `if (!_engine.isFragmentMode() || _engine.getFragment() === ${exp}) {\n${children}\n}`;
         });
+
+        // --- FORM HELPERS ---
+
+        // @csrf -> hidden input with CSRF token from _data._csrf
+        this.register('csrf', () => '_output += `<input type="hidden" name="_token" value="${(_data._csrf || "")}">`;');
+
+        // @method('PUT') -> hidden method spoofing input
+        this.register('method', (exp) => `_output += \`<input type="hidden" name="_method" value="\${${exp}}">\`;`);
+
+        // @error('field') ... @enderror
+        this.register('error', (exp, children) => {
+            return `{
+                const __fieldErrors = _data.errors && _data.errors[${exp}];
+                if (__fieldErrors) {
+                    const message = Array.isArray(__fieldErrors) ? __fieldErrors[0] : __fieldErrors;
+                    ${children}
+                }
+            }`;
+        });
+
+        // --- CONDITIONAL ATTRIBUTES ---
+
+        this.register('checked', (exp) => `_output += (${exp}) ? ' checked' : '';`);
+        this.register('selected', (exp) => `_output += (${exp}) ? ' selected' : '';`);
+        this.register('disabled', (exp) => `_output += (${exp}) ? ' disabled' : '';`);
+        this.register('required', (exp) => `_output += (${exp}) ? ' required' : '';`);
+        this.register('readonly', (exp) => `_output += (${exp}) ? ' readonly' : '';`);
+
+        // @class({'cls-a': condition, 'cls-b': true})
+        this.register('class', (exp) => {
+            return `{
+                const __classMap = ${exp};
+                const __classes = Object.entries(__classMap).filter(([, v]) => Boolean(v)).map(([c]) => c).join(' ');
+                _output += __classes ? \` class="\${__classes}"\` : '';
+            }`;
+        });
+
+        // @style({'color:red': condition})
+        this.register('style', (exp) => {
+            return `{
+                const __styleMap = ${exp};
+                const __styles = Object.entries(__styleMap).filter(([, v]) => Boolean(v)).map(([s]) => s).join('; ');
+                _output += __styles ? \` style="\${__styles}"\` : '';
+            }`;
+        });
+
+
+
+        // --- EXISTENCE CHECKS ---
+
+        this.register('isset', (exp, children) => `if (typeof ${exp} !== 'undefined' && ${exp} !== null) {\n${children}\n}`);
+        this.register('unset', (exp, children) => `if (typeof ${exp} === 'undefined' || ${exp} === null) {\n${children}\n}`);
+
+        // --- ENVIRONMENT ---
+
+        this.register('env', (exp, children) => {
+            return `{
+                const __envs = Array.isArray(${exp}) ? ${exp} : [${exp}];
+                const __currentEnv = (_data.__env || process.env.NODE_ENV || 'production');
+                if (__envs.includes(__currentEnv)) {\n${children}\n}
+            }`;
+        });
+        this.register('production', (exp, children) => {
+            return `if ((_data.__env || process.env.NODE_ENV) === 'production') {\n${children}\n}`;
+        });
+
+        // --- FORELSE ---
+
+        // @forelse(collection as item) ... @empty ... @endforelse
+        this.register('forelse', (exp, children) => {
+            const emptyMarker = '/* __FORELSE_EMPTY__ */';
+            const parts = (children || '').split(emptyMarker);
+            const loopBody = parts[0] || '';
+            const emptyBody = parts[1] || '';
+
+            const match = (exp || '').match(/(.+?)\s+as\s+(\S+)(?:\s*,\s*(\S+))?/);
+            if (!match) return `/* @forelse: invalid expression */`;
+
+            const collection = match[1].replace(/^\$/, '');
+            const value = match[2].replace(/^\$/, '');
+            const key = match[3]?.replace(/^\$/, '');
+
+            const loopHead = key
+                ? `for (const [${key}, ${value}] of Object.entries(__fc)) {`
+                : `for (const ${value} of __fc) {`;
+
+            return `{
+                const __fc = ${collection} || [];
+                const __fcHas = Array.isArray(__fc) ? __fc.length > 0 : Object.keys(__fc).length > 0;
+                if (__fcHas) {
+                    ${loopHead}
+                        ${loopBody}
+                    }
+                } else {
+                    ${emptyBody}
+                }
+            }`;
+        });
+
+        // @empty inside @forelse - inserts split marker; standalone @empty(collection) as before
+        this.register('empty', (exp, children) => {
+            if (!exp && children === undefined) {
+                return '/* __FORELSE_EMPTY__ */';
+            }
+            if (exp) {
+                return `if (!(${exp}) || (Array.isArray(${exp}) && ${exp}.length === 0)) {\n${children}\n}`;
+            }
+            return `/* __FORELSE_EMPTY__ */ ${children || ''}`;
+        });
+
+        // --- TRANSLATION ---
+
+        this.register('lang', (exp) => `_output += _escape((_data.__t && _data.__t(${exp})) || ${exp});`);
+        this.register('t', (exp) => `_output += _escape((_data.__t && _data.__t(${exp})) || ${exp});`);
+        this.register('choice', (exp) => {
+            const args = exp?.split(',').map(a => a.trim()) || [];
+            const key = args[0];
+            const count = args[1] || '1';
+            return `_output += _escape((_data.__choice && _data.__choice(${key}, ${count})) || ${key});`;
+        });
+
     }
 }

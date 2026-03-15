@@ -1,9 +1,10 @@
+import { env } from 'arikajs';
 
 export default {
-    name: process.env.APP_NAME || 'ArikaJS',
-    env: process.env.APP_ENV || 'production',
-    debug: process.env.APP_DEBUG === 'true',
-    url: process.env.APP_URL || 'http://localhost',
-    timezone: process.env.APP_TIMEZONE || 'UTC',
-    key: process.env.APP_KEY,
+    name: env('APP_NAME', 'ArikaJS'),
+    env: env('APP_ENV', 'production'),
+    debug: env('APP_DEBUG', false), // env() handles boolean strings if we want, but let's check.
+    url: env('APP_URL', 'http://localhost'),
+    timezone: env('APP_TIMEZONE', 'UTC'),
+    key: env('APP_KEY'),
 };

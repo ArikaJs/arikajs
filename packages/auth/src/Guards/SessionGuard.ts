@@ -9,8 +9,9 @@ export class SessionGuard implements Guard {
 
     constructor(provider: UserProvider, session: any) {
         this.provider = provider;
-        // If no session is provided, create a lightweight in-memory fallback
-        // so the guard doesn't crash when there's no session middleware
+        // Accept any session-like object (sync or async API).
+        // The @arikajs/session Session class has async get/put;
+        // the legacy fallback below is sync — both work because we await all calls.
         if (session && (typeof session.get === 'function' || typeof session.put === 'function')) {
             this.session = session;
         } else {
@@ -36,7 +37,8 @@ export class SessionGuard implements Guard {
             return this.loggedUser;
         }
 
-        const id = this.session.get ? this.session.get('auth_user_id') : null;
+        // Await to support both sync (legacy) and async (Session class) APIs
+        const id = this.session.get ? await Promise.resolve(this.session.get('auth_user_id')) : null;
 
         if (id) {
             this.loggedUser = await this.provider.retrieveById(id);
@@ -84,7 +86,8 @@ export class SessionGuard implements Guard {
     public async login(user: any, remember: boolean = false): Promise<void> {
         this.loggedUser = user;
         if (this.session.put) {
-            this.session.put('auth_user_id', user.id);
+            // Await to support both sync and async session APIs
+            await Promise.resolve(this.session.put('auth_user_id', user.id));
         }
 
         if (remember) {
@@ -98,12 +101,12 @@ export class SessionGuard implements Guard {
         }
     }
 
-    public logout(): void {
+    public async logout(): Promise<void> {
         const userId = this.loggedUser?.id;
         this.loggedUser = null;
 
         if (this.session.forget) {
-            this.session.forget('auth_user_id');
+            await Promise.resolve(this.session.forget('auth_user_id'));
         }
 
         this.clearRememberCookie();

@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && cp -R src/http/views dist/http/",
     "clean": "rm -rf dist",
     "test": "npx tsx tests/Framework.test.ts",
     "dev": "tsc -p tsconfig.json --watch"
@@ -30,6 +30,7 @@
     "@arikajs/queue": "*",
     "@arikajs/router": "*",
     "@arikajs/scheduler": "*",
+    "@arikajs/session": "*",
     "@arikajs/storage": "*",
     "@arikajs/validation": "*",
     "@arikajs/view": "*",

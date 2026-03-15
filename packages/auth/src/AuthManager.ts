@@ -138,6 +138,14 @@ export class AuthManager {
     }
 
     // Proxy methods to the context
+    public guard(name?: string): Guard {
+        return this.getContext().guard(name);
+    }
+
+    public resolve(token: any): any {
+        return this.getContext().resolve(token);
+    }
+
     public async check(): Promise<boolean> {
         return await this.getContext().check();
     }
