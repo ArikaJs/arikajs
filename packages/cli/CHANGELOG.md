@@ -1,5 +1,15 @@
 # @arikajs/cli
 
+## 0.0.8
+
+### Patch Changes
+
+- fix: ensure newly created projects automatically sync their framework version with the CLI version
+  - @arikajs/console@0.0.8
+  - @arikajs/database@0.0.8
+  - @arikajs/docs@0.0.8
+  - @arikajs/scheduler@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes

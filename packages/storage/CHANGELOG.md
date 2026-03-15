@@ -1,5 +1,11 @@
 # @arikajs/storage
 
+## 0.0.8
+
+### Patch Changes
+
+- @arikajs/middleware@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @arikajs/router
 
+## 0.0.8
+
+### Patch Changes
+
+- @arikajs/dispatcher@0.0.8
+- @arikajs/http@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes

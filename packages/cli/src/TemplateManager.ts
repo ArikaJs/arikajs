@@ -122,6 +122,20 @@ export class TemplateManager {
             // Replace app name
             pkg.name = appName;
 
+            // Sync framework version with CLI version
+            const cliPkgPath = path.resolve(__dirname, '../../package.json');
+            if (fs.existsSync(cliPkgPath)) {
+                const cliPkg = JSON.parse(fs.readFileSync(cliPkgPath, 'utf8'));
+                const targetVersion = `^${cliPkg.version}`;
+                
+                if (pkg.dependencies && pkg.dependencies['arikajs']) {
+                    pkg.dependencies['arikajs'] = targetVersion;
+                }
+                if (pkg.devDependencies && pkg.devDependencies['@arikajs/cli']) {
+                    pkg.devDependencies['@arikajs/cli'] = targetVersion;
+                }
+            }
+
             // Handle local @arikajs dependencies for development
             // templatesDir is /path/to/cli/dist/templates
             // ArikaJs root is /path/to/

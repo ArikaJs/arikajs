@@ -1,5 +1,12 @@
 # @arikajs/middleware
 
+## 0.0.8
+
+### Patch Changes
+
+- @arikajs/http@0.0.8
+- @arikajs/logging@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes

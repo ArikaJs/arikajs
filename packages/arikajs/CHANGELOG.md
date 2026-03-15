@@ -1,5 +1,34 @@
 # arikajs
 
+## 0.0.8
+
+### Patch Changes
+
+- fix: ensure newly created projects automatically sync their framework version with the CLI version
+- Updated dependencies
+  - @arikajs/cli@0.0.8
+  - @arikajs/auth@0.0.8
+  - @arikajs/authorization@0.0.8
+  - @arikajs/cache@0.0.8
+  - @arikajs/console@0.0.8
+  - @arikajs/database@0.0.8
+  - @arikajs/dispatcher@0.0.8
+  - @arikajs/encryption@0.0.8
+  - @arikajs/events@0.0.8
+  - @arikajs/foundation@0.0.8
+  - @arikajs/http@0.0.8
+  - @arikajs/localization@0.0.8
+  - @arikajs/logging@0.0.8
+  - @arikajs/mail@0.0.8
+  - @arikajs/middleware@0.0.8
+  - @arikajs/queue@0.0.8
+  - @arikajs/router@0.0.8
+  - @arikajs/scheduler@0.0.8
+  - @arikajs/session@0.0.8
+  - @arikajs/storage@0.0.8
+  - @arikajs/validation@0.0.8
+  - @arikajs/view@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes
