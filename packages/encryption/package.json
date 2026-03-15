@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/encryption",
-  "version": "0.0.8",
+  "version": "0.2.0",
   "description": "Secure, application-level encryption for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",

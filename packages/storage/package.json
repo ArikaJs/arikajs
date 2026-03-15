@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/storage",
-  "version": "0.0.8",
+  "version": "0.2.0",
   "description": "Filesystem abstraction layer for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -46,7 +46,7 @@
   },
   "author": "Prakash Tank",
   "dependencies": {
-    "@arikajs/middleware": "*",
+    "@arikajs/middleware": "workspace:*",
     "@aws-sdk/client-s3": "^3.986.0",
     "@aws-sdk/s3-request-presigner": "^3.992.0",
     "@azure/storage-blob": "^12.31.0",

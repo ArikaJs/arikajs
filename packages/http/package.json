@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/http",
-  "version": "0.0.8",
+  "version": "0.2.0",
   "description": "Native HTTP layer for the ArikaJS framework.",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@arikajs/validation": "*",
+    "@arikajs/validation": "workspace:*",
     "@types/serve-static": "^2.2.0",
     "busboy": "^1.6.0",
     "cookie": "^1.1.1",

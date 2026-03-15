@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/scheduler",
-  "version": "0.0.8",
+  "version": "0.2.0",
   "description": "Task scheduling for ArikaJS.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -12,12 +12,12 @@
     "dev": "tsc -p tsconfig.json --watch"
   },
   "dependencies": {
-    "@arikajs/foundation": "*",
-    "@arikajs/logging": "*",
-    "@arikajs/queue": "*",
-    "@arikajs/console": "*",
-    "@arikajs/cache": "*",
-    "@arikajs/events": "*",
+    "@arikajs/foundation": "workspace:*",
+    "@arikajs/logging": "workspace:*",
+    "@arikajs/queue": "workspace:*",
+    "@arikajs/console": "workspace:*",
+    "@arikajs/cache": "workspace:*",
+    "@arikajs/events": "workspace:*",
     "cron-parser": "^4.9.0"
   },
   "devDependencies": {

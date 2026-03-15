@@ -2,17 +2,21 @@
     "name": "arikajs-monorepo",
     "private": true,
     "description": "A Modern, Elegant Web Framework for Node.js",
-    "packageManager": "npm@10.9.2",
+    "packageManager": "pnpm@10.5.2",
     "scripts": {
-        "build": "npx turbo build",
-        "dev": "npx turbo dev --parallel",
-        "test": "npx turbo test",
+        "build": "turbo build",
+        "dev": "turbo dev --parallel",
+        "test": "turbo test",
         "lint": "turbo lint",
-        "clean": "turbo clean && rm -rf packages/*/dist packages/*/node_modules node_modules",
-        "test:all": "./scripts/test-all.sh",
+        "clean": "turbo clean && rm -rf packages/*/dist packages/*/node_modules node_modules pnpm-lock.yaml",
         "change": "changeset",
         "version-packages": "changeset version",
-        "release": "./scripts/prepare-for-publish.sh && npm run build && changeset publish && ./scripts/restore-dev-dependencies.sh"
+        "release": "pnpm build && changeset publish"
+    },
+    "pnpm": {
+        "overrides": {
+            "typescript": "^5.9.3"
+        }
     },
     "workspaces": [
         "packages/*"

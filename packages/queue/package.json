@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/queue",
-  "version": "0.0.8",
+  "version": "0.2.0",
   "description": "Asynchronous job processing for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",

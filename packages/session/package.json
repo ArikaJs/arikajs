@@ -1,47 +1,47 @@
 {
-    "name": "@arikajs/session",
-    "version": "0.0.8",
-    "description": "Powerful, secure, driver-based session management for the ArikaJS framework.",
-    "license": "MIT",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "scripts": {
-        "build": "tsc -p tsconfig.json",
-        "clean": "rm -rf dist",
-        "prepare": "echo skip",
-        "dev": "tsc -p tsconfig.json --watch"
-    },
-    "files": [
-        "dist"
-    ],
-    "keywords": [
-        "arika",
-        "arika-js",
-        "session",
-        "middleware",
-        "cookies",
-        "web"
-    ],
-    "engines": {
-        "node": ">=20.0.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/ArikaJs/arikajs.git",
-        "directory": "packages/session"
-    },
-    "bugs": {
-        "url": "https://github.com/ArikaJs/arikajs/issues"
-    },
-    "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/session#readme",
-    "dependencies": {
-        "cookie": "^0.6.0",
-        "ioredis": "^5.3.2"
-    },
-    "devDependencies": {
-        "@types/cookie": "^0.6.0",
-        "@types/node": "^20.11.24",
-        "typescript": "^5.3.3"
-    },
-    "author": "Prakash Tank"
+  "name": "@arikajs/session",
+  "version": "0.2.0",
+  "description": "Powerful, secure, driver-based session management for the ArikaJS framework.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "prepare": "echo skip",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "arika",
+    "arika-js",
+    "session",
+    "middleware",
+    "cookies",
+    "web"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/session"
+  },
+  "bugs": {
+    "url": "https://github.com/ArikaJs/arikajs/issues"
+  },
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/session#readme",
+  "dependencies": {
+    "cookie": "^0.6.0",
+    "ioredis": "^5.3.2"
+  },
+  "devDependencies": {
+    "@types/cookie": "^0.6.0",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank"
 }

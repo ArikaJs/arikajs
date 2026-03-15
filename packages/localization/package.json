@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/localization",
-  "version": "0.0.8",
+  "version": "0.2.0",
   "description": "Flexible and powerful localization system for ArikaJS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,7 +32,7 @@
     "url": "https://github.com/ArikaJs/arikajs/issues"
   },
   "dependencies": {
-    "@arikajs/foundation": "*"
+    "@arikajs/foundation": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
