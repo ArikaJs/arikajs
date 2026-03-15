@@ -1,0 +1,108 @@
+{
+	"publishedPackages": [
+		{
+			"name": "@arikajs/auth",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/authorization",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/cache",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/config",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/console",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/database",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/encryption",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/events",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/logging",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/mail",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/queue",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/session",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/validation",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/view",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/http",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/foundation",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/middleware",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/dispatcher",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/localization",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/scheduler",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/storage",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/router",
+			"version": "0.10.0"
+		},
+		{
+			"name": "arikajs",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/docs",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/benchmark",
+			"version": "0.10.0"
+		},
+		{
+			"name": "@arikajs/cli",
+			"version": "0.10.0"
+		}
+	]
+}

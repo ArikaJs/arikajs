@@ -6,7 +6,17 @@ import { Application as ApplicationContract } from './Contracts/Application';
 import { setApp } from './helpers';
 
 export class Application extends FoundationApplication implements ApplicationContract {
-    public static readonly VERSION = '0.0.5';
+    public static get VERSION(): string {
+        try {
+            return require('../../package.json').version;
+        } catch (e) {
+            try {
+                return require('../package.json').version;
+            } catch (e) {
+                return 'unknown';
+            }
+        }
+    }
 
     protected router: Router;
     protected server?: any;

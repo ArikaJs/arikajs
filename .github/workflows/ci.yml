@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 10
+        run_install: false
+        
+    - name: Get pnpm store directory
+      id: pnpm-cache
+      run: |
+        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+        
+    - uses: actions/cache@v3
+      name: Setup pnpm cache
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+          
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+      
+    - name: Build
+      run: pnpm build
+
+    - name: Test
+      run: pnpm test
+
+    - name: Lint
+      run: pnpm lint

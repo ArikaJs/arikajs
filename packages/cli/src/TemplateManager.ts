@@ -193,6 +193,14 @@ export class TemplateManager {
                     const filePath = path.join(viewsDir, file);
                     let content = fs.readFileSync(filePath, 'utf8');
                     content = content.replace(/{{name}}/g, appName);
+                    
+                    // Replace version
+                    const cliPkgPath = path.resolve(__dirname, '../../package.json');
+                    if (fs.existsSync(cliPkgPath)) {
+                        const cliPkg = JSON.parse(fs.readFileSync(cliPkgPath, 'utf8'));
+                        content = content.replace(/{{version}}/g, cliPkg.version);
+                    }
+                    
                     fs.writeFileSync(filePath, content);
                 }
             });
