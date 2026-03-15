@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>419 - Page Expired | {{ config('app.name', 'ArikaJS') }}</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #14b8a6;
+            --primary-glow: rgba(20, 184, 166, 0.4);
+            --secondary: #0ea5e9;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(15, 23, 42, 0.08);
+            --aurora-opacity: 0.3;
+            --btn-secondary-bg: rgba(15, 23, 42, 0.05);
+            --pill-bg: rgba(15, 23, 42, 0.03);
+            --h1-gradient: linear-gradient(135deg, #0f172a 30%, #334155 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --aurora-opacity: 0.5;
+            --btn-secondary-bg: rgba(255, 255, 255, 0.05);
+            --pill-bg: rgba(255, 255, 255, 0.03);
+            --h1-gradient: linear-gradient(135deg, #fff 30%, rgba(255, 255, 255, 0.5) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        header {
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo {
+            width: 135px;
+            height: auto;
+            filter: drop-shadow(0 4px 6px rgba(20, 184, 166, 0.2));
+        }
+
+        [data-theme="dark"] .logo {
+            filter: invert(1) drop-shadow(0 4px 6px rgba(20, 184, 166, 0.3));
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            border-radius: 99px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-main);
+        }
+
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(100px);
+            opacity: var(--aurora-opacity);
+            pointer-events: none;
+        }
+
+        .aurora-blur {
+            position: absolute;
+            border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+
+        .blur-1 {
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            top: -10%;
+            left: -10%;
+        }
+
+        .blur-2 {
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            bottom: -10%;
+            right: -10%;
+            animation-duration: 25s;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(10%, 10%) scale(1.1);
+            }
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.04em;
+            background: var(--h1-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .footer {
+            padding: 3rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 4rem;
+            }
+
+            header {
+                padding: 1rem 5%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="/" class="logo-container">
+            <img src="/assets/img/logo.png" alt="{{ config('app.name', 'ArikaJS') }} Logo" class="logo">
+        </a>
+        <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
+            <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg id="sun-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+        </button>
+    </header>
+    <div class="aurora">
+        <div class="aurora-blur blur-1"></div>
+        <div class="aurora-blur blur-2"></div>
+    </div>
+    <main class="main-content">
+        <div class="container">
+            <div class="badge">Error 419</div>
+            <h1>Page Expired</h1>
+            <p class="description">Your session has expired due to inactivity. Please refresh the page and try your
+                request again.</p>
+            <div class="actions">
+                <a href="javascript:location.reload()" class="btn btn-primary">Refresh Page</a>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        &copy; 2026 <span>{{ config('app.name', 'ArikaJS') }}</span>. Premium Web Framework.
+    </footer>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const moonIcon = document.getElementById('moon-icon');
+        const sunIcon = document.getElementById('sun-icon');
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        updateIcons(savedTheme);
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcons(newTheme);
+        });
+        function updateIcons(theme) {
+            if (theme === 'dark') { moonIcon.style.display = 'none'; sunIcon.style.display = 'block'; }
+            else { moonIcon.style.display = 'block'; sunIcon.style.display = 'none'; }
+        }
+    </script>
+</body>
+
+</html>

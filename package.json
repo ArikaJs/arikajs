@@ -2,7 +2,7 @@
     "name": "arikajs-monorepo",
     "private": true,
     "description": "A Modern, Elegant Web Framework for Node.js",
-    "packageManager": "npm@10.9.2",
+
     "scripts": {
         "build": "npx turbo build",
         "dev": "npx turbo dev --parallel",

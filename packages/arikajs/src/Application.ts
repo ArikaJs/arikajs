@@ -6,7 +6,7 @@ import { Application as ApplicationContract } from './Contracts/Application';
 import { setApp } from './helpers';
 
 export class Application extends FoundationApplication implements ApplicationContract {
-    public static readonly VERSION = '0.0.4';
+    public static readonly VERSION = '0.0.5';
 
     protected router: Router;
     protected server?: any;

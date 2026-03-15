@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - {{ config('app.name', 'ArikaJS') }}</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f7; color: #51545e; }
+        .wrapper { width: 100%; margin: 0; padding: 0; -webkit-text-size-adjust: none; background-color: #f4f4f7; }
+        .content { width: 100%; max-width: 570px; margin: 0 auto; padding: 35px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015); }
+        .header { padding: 25px 0; text-align: center; }
+        .header a { font-size: 19px; font-weight: bold; color: #333; text-decoration: none; }
+        .button { display: inline-block; background-color: #22bc66; color: #FFF !important; padding: 12px 25px; text-decoration: none; border-radius: 3px; font-weight: bold; }
+        .footer { text-align: center; padding: 25px; font-size: 12px; color: #b0adc5; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header"><a href="#">{{ app_name }}</a></div>
+        <div class="content">
+            <h1>Verify your email address</h1>
+            <p>Hi {{ name }},</p>
+            <p>Thanks for signing up! Please confirm your email address by clicking the button below.</p>
+            <p style="text-align: center;"><a href="{{ verification_url }}" class="button">Verify Email</a></p>
+            <p>If you did not create an account, no further action is required.</p>
+            <p>Regards,<br>{{ app_name }} Team</p>
+        </div>
+        <div class="footer">&copy; {{ year }} {{ app_name }}. All rights reserved.</div>
+    </div>
+</body>
+</html>

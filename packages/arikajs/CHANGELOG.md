@@ -1,5 +1,34 @@
 # arikajs
 
+## 0.0.6
+
+### Patch Changes
+
+- fix: ensure CLI templates use semantic version dependencies instead of local file paths when published to npm
+- Updated dependencies
+  - @arikajs/cli@0.0.6
+  - @arikajs/auth@0.0.6
+  - @arikajs/authorization@0.0.6
+  - @arikajs/cache@0.0.6
+  - @arikajs/console@0.0.6
+  - @arikajs/database@0.0.6
+  - @arikajs/dispatcher@0.0.6
+  - @arikajs/encryption@0.0.6
+  - @arikajs/events@0.0.6
+  - @arikajs/foundation@0.0.6
+  - @arikajs/http@0.0.6
+  - @arikajs/localization@0.0.6
+  - @arikajs/logging@0.0.6
+  - @arikajs/mail@0.0.6
+  - @arikajs/middleware@0.0.6
+  - @arikajs/queue@0.0.6
+  - @arikajs/router@0.0.6
+  - @arikajs/scheduler@0.0.6
+  - @arikajs/session@0.0.6
+  - @arikajs/storage@0.0.6
+  - @arikajs/validation@0.0.6
+  - @arikajs/view@0.0.6
+
 ## 0.0.5
 
 ### Patch Changes

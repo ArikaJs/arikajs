@@ -1,5 +1,16 @@
 # @arikajs/scheduler
 
+## 0.0.6
+
+### Patch Changes
+
+- @arikajs/cache@0.0.6
+- @arikajs/console@0.0.6
+- @arikajs/events@0.0.6
+- @arikajs/foundation@0.0.6
+- @arikajs/logging@0.0.6
+- @arikajs/queue@0.0.6
+
 ## 0.0.5
 
 ### Patch Changes
