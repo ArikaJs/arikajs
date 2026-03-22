@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/storage",
-  "version": "0.10.2",
+  "version": "0.10.4",
   "description": "Filesystem abstraction layer for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",

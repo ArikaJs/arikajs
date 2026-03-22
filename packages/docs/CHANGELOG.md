@@ -1,5 +1,19 @@
 # @arikajs/docs
 
+## 0.10.4
+
+### Patch Changes
+
+- fix: strip workspace:\* protocol using pure pnpm publish
+- Updated dependencies
+  - @arikajs/router@0.10.4
+
+## 0.10.3
+
+### Patch Changes
+
+- @arikajs/router@0.10.3
+
 ## 0.0.8
 
 ### Patch Changes

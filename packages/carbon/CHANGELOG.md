@@ -1,10 +1,19 @@
 # @arikajs/carbon Changelog
 
+## 0.10.4
+
+### Patch Changes
+
+- fix: strip workspace:\* protocol using pure pnpm publish
+
+## 0.10.3
+
 All notable changes to this project will be documented in this file.
 
 ## [0.10.2] - 2026-03-22
 
 ### Added
+
 - Initial release of `@arikajs/carbon`
 - `Carbon` class — immutable, chainable, timezone-aware date/time library
 - `carbon()` convenience function helper

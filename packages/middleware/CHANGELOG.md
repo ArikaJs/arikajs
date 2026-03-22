@@ -1,5 +1,21 @@
 # @arikajs/middleware
 
+## 0.10.4
+
+### Patch Changes
+
+- fix: strip workspace:\* protocol using pure pnpm publish
+- Updated dependencies
+  - @arikajs/http@0.10.4
+  - @arikajs/logging@0.10.4
+
+## 0.10.3
+
+### Patch Changes
+
+- @arikajs/http@0.10.3
+- @arikajs/logging@0.10.3
+
 ## 0.0.8
 
 ### Patch Changes

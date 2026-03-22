@@ -1,10 +1,14 @@
 {
   "name": "arikajs",
-  "version": "0.10.2",
+  "version": "0.10.4",
   "description": "The ArikaJS Framework.",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json && cp -R src/http/views dist/http/",
     "clean": "rm -rf dist",

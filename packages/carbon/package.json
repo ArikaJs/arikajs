@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/carbon",
-  "version": "0.10.2",
+  "version": "0.10.4",
   "description": "Fluent, immutable, and timezone-aware Date & Time library for ArikaJS — inspired by PHP's Carbon.",
   "license": "MIT",
   "main": "dist/index.js",

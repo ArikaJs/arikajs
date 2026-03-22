@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/database",
-  "version": "0.10.2",
+  "version": "0.10.4",
   "description": "Database layer for the ArikaJS framework with MySQL & PostgreSQL support.",
   "license": "MIT",
   "main": "dist/index.js",

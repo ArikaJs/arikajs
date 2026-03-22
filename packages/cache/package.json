@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/cache",
-  "version": "0.10.2",
+  "version": "0.10.4",
   "description": "Simple, fast, and driver-based caching system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",

@@ -1,5 +1,27 @@
 # @arikajs/cli
 
+## 0.10.4
+
+### Patch Changes
+
+- fix: strip workspace:\* protocol using pure pnpm publish
+- Updated dependencies
+  - @arikajs/benchmark@0.10.4
+  - @arikajs/console@0.10.4
+  - @arikajs/database@0.10.4
+  - @arikajs/docs@0.10.4
+  - @arikajs/scheduler@0.10.4
+
+## 0.10.3
+
+### Patch Changes
+
+- @arikajs/benchmark@0.10.3
+- @arikajs/console@0.10.3
+- @arikajs/database@0.10.3
+- @arikajs/docs@0.10.3
+- @arikajs/scheduler@0.10.3
+
 ## 0.0.8
 
 ### Patch Changes

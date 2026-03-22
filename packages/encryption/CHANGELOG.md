@@ -1,5 +1,13 @@
 # @arikajs/encryption
 
+## 0.10.4
+
+### Patch Changes
+
+- fix: strip workspace:\* protocol using pure pnpm publish
+
+## 0.10.3
+
 ## 0.0.8
 
 ## 0.0.7
