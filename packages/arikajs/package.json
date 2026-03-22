@@ -15,6 +15,7 @@
     "@arikajs/auth": "workspace:*",
     "@arikajs/authorization": "workspace:*",
     "@arikajs/cache": "workspace:*",
+    "@arikajs/carbon": "workspace:^",
     "@arikajs/console": "workspace:*",
     "@arikajs/database": "workspace:*",
     "@arikajs/dispatcher": "workspace:*",

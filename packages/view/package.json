@@ -38,7 +38,9 @@
     "url": "https://github.com/ArikaJs/arikajs/issues"
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/view#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@arikajs/carbon": "workspace:^"
+  },
   "devDependencies": {
     "@types/node": "^20.11.24",
     "typescript": "^5.3.3"

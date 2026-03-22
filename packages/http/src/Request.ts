@@ -3,6 +3,7 @@ import { IncomingMessage } from 'node:http';
 import { URL } from 'node:url';
 import * as cookie from 'cookie';
 import { Validator, ValidationError } from '@arikajs/validation';
+import { UploadedFile } from './UploadedFile';
 
 export class Request {
     private app: Application;
@@ -11,9 +12,11 @@ export class Request {
     public searchParams!: URLSearchParams;
     private _cookies: Record<string, string | undefined> | null = null;
     private _body: any = null;
+    private _files: Record<string, UploadedFile> = {};
     private _params: Record<string, string> = {};
     private _auth: any = null;
     private _view: any = null;
+    private _route: any = null;
 
     constructor(app: Application, req: IncomingMessage) {
         this.app = app;
@@ -140,6 +143,51 @@ export class Request {
     }
 
     /**
+     * Determine if the current request path matches a pattern.
+     * Supports * as a wildcard.
+     */
+    is(...patterns: string[]): boolean {
+        const path = this.path();
+        return patterns.some(pattern => {
+            const regex = new RegExp('^' + pattern.split('*').map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*') + '$');
+            return regex.test(path);
+        });
+    }
+
+    /**
+     * Get the full URL (including scheme, host, path, and query).
+     */
+    fullUrl(): string {
+        return this.baseUrl() + (this.req.url || '/');
+    }
+
+    /**
+     * Get the URL (including scheme, host, and path) without the query string.
+     */
+    url(): string {
+        return this.baseUrl() + this.path();
+    }
+
+    /**
+     * Set the current route instance.
+     */
+    setRoute(route: any): void {
+        this._route = route;
+    }
+
+    /**
+     * Determine if the current route matches a given name or pattern.
+     */
+    routeIs(...patterns: string[]): boolean {
+        if (!this._route || !this._route._name) return false;
+        const name = this._route._name;
+        return patterns.some(pattern => {
+            const regex = new RegExp('^' + pattern.split('*').map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*') + '$');
+            return regex.test(name);
+        });
+    }
+
+    /**
      * Get all headers.
      */
     headers(): Record<string, string | string[] | undefined> {
@@ -219,6 +267,37 @@ export class Request {
      */
     setBody(body: any): void {
         this._body = body;
+    }
+
+    /**
+     * Set the uploaded files (usually set by middleware).
+     */
+    setFiles(files: Record<string, any>): void {
+        this._files = {};
+        Object.entries(files).forEach(([key, val]) => {
+            this._files[key] = new UploadedFile(this.app, val as any);
+        });
+    }
+
+    /**
+     * Get an uploaded file by name.
+     */
+    public file(key: string): UploadedFile | null {
+        return this._files[key] ?? null;
+    }
+
+    /**
+     * Get all uploaded files.
+     */
+    public files(): Record<string, UploadedFile> {
+        return this._files;
+    }
+
+    /**
+     * Determine if a file exists on the request.
+     */
+    public hasFile(key: string): boolean {
+        return key in this._files;
     }
 
     /**

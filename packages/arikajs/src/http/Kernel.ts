@@ -69,19 +69,21 @@ export class Kernel {
      * Handle an incoming HTTP request.
      */
     public async handle(request: Request, response: Response): Promise<Response> {
-        try {
-            const pipeline = new Pipeline<Request, Response>(this.app.getContainer());
-            pipeline.setMiddlewareGroups(this.middlewareGroups);
-            pipeline.setAliases(this.routeMiddleware);
+        return await (this.app as any).runWithRequest(request, async () => {
+            try {
+                const pipeline = new Pipeline<Request, Response>(this.app.getContainer());
+                pipeline.setMiddlewareGroups(this.middlewareGroups);
+                pipeline.setAliases(this.routeMiddleware);
 
-            return await pipeline.pipe(this.middleware)
-                .handle(request, async (req: Request) => {
-                    return this.dispatchToRouter(req, response);
-                }, response);
-        } catch (error: any) {
-            this.handler.report(error);
-            return await this.handler.render(request, error, response);
-        }
+                return await pipeline.pipe(this.middleware)
+                    .handle(request, async (req: Request) => {
+                        return this.dispatchToRouter(req, response);
+                    }, response);
+            } catch (error: any) {
+                this.handler.report(error);
+                return await this.handler.render(request, error, response);
+            }
+        });
     }
 
     /**

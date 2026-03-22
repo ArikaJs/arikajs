@@ -33,6 +33,44 @@ export class DirectiveRegistry {
 
         // Loops
         this.register('for', (exp, children) => `for (${exp}) {\n${children}\n}`);
+        this.register('while', (exp, children) => `while (${exp}) {\n${children}\n}`);
+
+        // Custom $loop tracking for foreach
+        this.register('foreach', (exp, children) => {
+            const match = (exp || '').match(/(.+?)\s+as\s+(\S+)(?:\s*,\s*(\S+))?/);
+            if (!match) return `for (${exp}) {\n${children}\n}`;
+
+            const collection = match[1].replace(/^\$/, '');
+            const value = match[2].replace(/^\$/, '');
+            const key = match[3]?.replace(/^\$/, '');
+
+            return `{
+                const __fc = ${collection} || [];
+                const __items = Array.isArray(__fc) ? __fc : Object.entries(__fc);
+                const __count = __items.length;
+                let __iteration = 0;
+                
+                for (const __item of __items) {
+                    __iteration++;
+                    const ${key || '__k'} = Array.isArray(__fc) ? (__iteration - 1) : __item[0];
+                    const ${value} = Array.isArray(__fc) ? __item : __item[1];
+                    
+                    const $loop = {
+                        index: __iteration - 1,
+                        iteration: __iteration,
+                        remaining: __count - __iteration,
+                        count: __count,
+                        first: __iteration === 1,
+                        last: __iteration === __count,
+                        even: __iteration % 2 === 0,
+                        odd: __iteration % 2 !== 0
+                    };
+                    
+                    ${children}
+                }
+            }`;
+        });
+
         this.register('each', (exp, children) => {
             // @each('view', data, 'item', 'empty')
             const args = exp?.split(',').map(a => a.trim()) || [];
@@ -62,8 +100,49 @@ export class DirectiveRegistry {
 
         // Layouts & Includes
         this.register('extends', (exp) => `_engine.extend(${exp});`);
+        this.register('extend', (exp) => `_engine.extend(${exp});`);
         this.register('include', (exp) => `_output += await _engine.render(${exp}, _data, true);`);
+        this.register('includeIf', (exp) => {
+            const args = exp?.split(',').map(a => a.trim()) || [];
+            const view = args[0];
+            const data = args[1] || '_data';
+            return `if (_engine.exists(${view})) { _output += await _engine.render(${view}, ${data}, true); }`;
+        });
+        this.register('includeWhen', (exp) => {
+            const args = exp?.split(',').map(a => a.trim()) || [];
+            const condition = args[0];
+            const view = args[1];
+            const data = args[2] || '_data';
+            return `if (${condition}) { _output += await _engine.render(${view}, ${data}, true); }`;
+        });
+        this.register('includeUnless', (exp) => {
+            const args = exp?.split(',').map(a => a.trim()) || [];
+            const condition = args[0];
+            const view = args[1];
+            const data = args[2] || '_data';
+            return `if (!(${condition})) { _output += await _engine.render(${view}, ${data}, true); }`;
+        });
         this.register('yield', (exp) => `_output += _engine.yield(${exp});`);
+
+        // Assets
+        this.register('vite', (exp) => {
+            return `{
+                const __scripts = Array.isArray(${exp}) ? ${exp} : [${exp}];
+                const __isDev = !!(_data.env && (_data.env.APP_ENV === 'development' || _data.env.APP_ENV === 'local') || (typeof process !== 'undefined' && process.env.NODE_ENV === 'development'));
+                const __url = (_data.env && _data.env.APP_URL) || 'http://localhost:3000';
+                
+                if (__isDev) {
+                    _output += \`<script type="module" src="http://localhost:5173/@vite/client"></script>\`;
+                    for (const s of __scripts) {
+                        _output += \`<script type="module" src="http://localhost:5173/\${s}"></script>\`;
+                    }
+                } else {
+                    for (const s of __scripts) {
+                        _output += \`<script type="module" src="\${__url}/build/\${s}"></script>\`;
+                    }
+                }
+            }`;
+        });
         this.register('section', (exp, children) => {
             return `_engine.startSection(${exp}, _output); _output = "";\n${children}\n _output = _engine.popSection(_output);`;
         });
@@ -95,6 +174,7 @@ export class DirectiveRegistry {
         // Auth Integration
         this.register('auth', (exp, children) => `if (_data.user) {\n${children}\n}`);
         this.register('guest', (exp, children) => `if (!_data.user) {\n${children}\n}`);
+        this.register('role', (exp, children) => `if (_data.user && _data.user.role === ${exp}) {\n${children}\n}`);
 
         // Authorization (@can / @cannot / @canany)
         this.register('can', (exp, children) => `if (_data.__can && await _data.__can(${exp})) {\n${children}\n}`);
@@ -113,6 +193,9 @@ export class DirectiveRegistry {
         });
 
         this.register('json', (exp) => `_output += JSON.stringify(${exp});`);
+        this.register('js', (exp) => `_output += ${exp};`);
+        this.register('dump', (exp) => `_output += \`<pre>\${JSON.stringify(${exp}, null, 2)}</pre>\`;`);
+        this.register('dd', (exp) => `_output += \`<pre>\${JSON.stringify(${exp}, null, 2)}</pre>\`; return _output;`);
 
         // HTMX / Fragments
         this.register('fragment', (exp, children) => {
@@ -200,15 +283,28 @@ export class DirectiveRegistry {
             const value = match[2].replace(/^\$/, '');
             const key = match[3]?.replace(/^\$/, '');
 
-            const loopHead = key
-                ? `for (const [${key}, ${value}] of Object.entries(__fc)) {`
-                : `for (const ${value} of __fc) {`;
-
             return `{
                 const __fc = ${collection} || [];
-                const __fcHas = Array.isArray(__fc) ? __fc.length > 0 : Object.keys(__fc).length > 0;
-                if (__fcHas) {
-                    ${loopHead}
+                const __items = Array.isArray(__fc) ? __fc : Object.entries(__fc);
+                const __count = __items.length;
+                if (__count > 0) {
+                    let __iteration = 0;
+                    for (const __item of __items) {
+                        __iteration++;
+                        const ${key || '__k'} = Array.isArray(__fc) ? (__iteration - 1) : __item[0];
+                        const ${value} = Array.isArray(__fc) ? __item : __item[1];
+                        
+                        const $loop = {
+                            index: __iteration - 1,
+                            iteration: __iteration,
+                            remaining: __count - __iteration,
+                            count: __count,
+                            first: __iteration === 1,
+                            last: __iteration === __count,
+                            even: __iteration % 2 === 0,
+                            odd: __iteration % 2 !== 0
+                        };
+                        
                         ${loopBody}
                     }
                 } else {

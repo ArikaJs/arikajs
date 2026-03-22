@@ -60,6 +60,7 @@ export class Bootstrap {
         registry.registerLazy('auth:install', 'Interactive menu to scaffold authentication system', () => import('./Commands/AuthInstallCommand'));
         registry.registerLazy('auth:install:web', 'Scaffold web authentication views and routes (Session-based)', () => import('./Commands/AuthWebInstallCommand'));
         registry.registerLazy('auth:install:api', 'Scaffold API authentication routes (JWT-based)', () => import('./Commands/AuthApiInstallCommand'));
+        registry.registerLazy('storage:link', 'Create a symbolic link from "storage/app/public" to "public/storage"', () => import('./Commands/StorageLinkCommand'));
 
         const app = await ApplicationLoader.load();
 

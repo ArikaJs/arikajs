@@ -136,6 +136,30 @@ export class Dispatcher {
             request.setParams(params);
         }
 
+        if (typeof (request as any).setRoute === 'function') {
+            (request as any).setRoute(route);
+        }
+
+        // NEW: FormRequest Handling
+        if ((route as any)._formRequest) {
+            const FormRequestClass = (route as any)._formRequest;
+            const formRequest = new FormRequestClass(request.getApplication(), request.getRaw());
+
+            // Transfer existing state
+            formRequest.setParams(params);
+            formRequest.setRoute(route);
+            formRequest.setBody((request as any).body());
+            formRequest.session = request.session;
+            formRequest.auth = request.auth;
+            formRequest.view = (request as any).view;
+
+            // Trigger validation
+            await formRequest.validateForm();
+
+            // Replace original request with our specialized FormRequest
+            request = formRequest;
+        }
+
         // 0. Resolve Route Parameters (Model Binding) - only if we have binders
         const resolvedParams = this.parameterBinders.size > 0 ? await this.resolveParameters(params) : params;
 

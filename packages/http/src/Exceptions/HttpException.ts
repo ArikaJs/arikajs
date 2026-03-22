@@ -34,3 +34,9 @@ export class UnauthorizedHttpException extends HttpException {
         this.name = 'UnauthorizedHttpException';
     }
 }
+export class TokenMismatchHttpException extends HttpException {
+    constructor(message: string = 'CSRF token mismatch.', originalError: any = null) {
+        super(419, message, originalError);
+        this.name = 'TokenMismatchHttpException';
+    }
+}

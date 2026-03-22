@@ -9,6 +9,11 @@ import { ObserverRegistry, ModelObserver } from './Observer';
 import { GlobalScopeRegistry, GlobalScope, CallbackGlobalScope } from './GlobalScope';
 
 /**
+ * Model interface for dynamic attribute access
+ */
+export interface Model extends Record<string, any> {}
+
+/**
  * Base Model class for Active Record pattern
  */
 export class Model {
@@ -46,6 +51,11 @@ export class Model {
      * Indicates if the model should use timestamps
      */
     protected static timestamps: boolean = true;
+
+    /**
+     * Indicates if the model should use soft deletes
+     */
+    protected static softDeletes: boolean = false;
 
     /**
      * Indicates if dates should be serialized to UTC (ISO string) or Local string
@@ -125,6 +135,12 @@ export class Model {
     static query<T extends Model>(this: typeof Model): ModelQueryBuilder<T> {
         const queryBuilder = Database.table(this.getTableName(), this.getConnectionName());
         const mqb = new ModelQueryBuilder<T>(queryBuilder, this as any);
+
+        // Apply soft delete if enabled
+        if (this.softDeletes) {
+            mqb.whereNull(`${this.getTableName()}.deleted_at`);
+        }
+
         // Apply all registered global scopes
         GlobalScopeRegistry.applyAll(this.name, mqb, this);
         return mqb;
@@ -582,6 +598,55 @@ export class Model {
 
         if (!id) {
             throw new Error('Cannot delete model without primary key value');
+        }
+
+        // Fire deleting event
+        if (await ObserverRegistry.fire(modelName, 'deleting', this) === false) return false;
+
+        if ((this.constructor as typeof Model).softDeletes) {
+            const deletedAtColumn = (this.constructor as any).deletedAtColumn || 'deleted_at';
+            this.setAttribute(deletedAtColumn, new Date());
+            await this.save();
+        } else {
+            const query = Database.table(this.getTable(), this.getConnection());
+            await query.where(primaryKey, id).delete();
+            this.exists = false;
+        }
+
+        // Fire deleted event
+        await ObserverRegistry.fire(modelName, 'deleted', this);
+        return true;
+    }
+
+    /**
+     * Restore a soft-deleted model
+     */
+    async restore(): Promise<boolean> {
+        if (!(this.constructor as typeof Model).softDeletes) {
+            return false;
+        }
+
+        this.setAttribute('deleted_at', null);
+
+        // Fire saving/updating events via save()
+        return await this.save();
+    }
+
+    /**
+     * Force delete the model from the database
+     */
+    async forceDelete(): Promise<boolean> {
+        const modelName = (this.constructor as typeof Model).name;
+
+        if (!this.exists) {
+            return false;
+        }
+
+        const primaryKey = this.getPrimaryKey();
+        const id = this.attributes[primaryKey];
+
+        if (!id) {
+            throw new Error('Cannot force delete model without primary key value');
         }
 
         // Fire deleting event
@@ -1117,6 +1182,41 @@ export class ModelQueryBuilder<T extends Model> {
      */
     async count(column?: string): Promise<number> {
         return await this.queryBuilder.count(column);
+    }
+
+    /**
+     * Include soft deleted records in the query
+     */
+    withTrashed(): this {
+        const dummy = new this.modelClass();
+        const table = (dummy as any).getTable();
+        (this.queryBuilder as any).removeWhere(`${table}.deleted_at`, 'null');
+        return this;
+    }
+
+    /**
+     * Only include soft deleted records
+     */
+    onlyTrashed(): this {
+        const dummy = new this.modelClass();
+        const table = (dummy as any).getTable();
+        (this.queryBuilder as any).removeWhere(`${table}.deleted_at`, 'null');
+        this.queryBuilder.whereNotNull(`${table}.deleted_at`);
+        return this;
+    }
+
+    /**
+     * Restore the models in the query
+     */
+    async restore(): Promise<number> {
+        return await this.update({ deleted_at: null });
+    }
+
+    /**
+     * Force delete the models in the query
+     */
+    async forceDelete(): Promise<number> {
+        return await this.queryBuilder.delete();
     }
 
     /**

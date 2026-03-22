@@ -59,10 +59,16 @@ export class Validator {
             const ruleSet = this.parseRules(rules);
             const value = this.getValue(attribute);
 
-            const isNullable = ruleSet.some(r => (r as any).name === 'nullable');
-            const shouldBail = ruleSet.some(r => (r as any).name === 'bail');
+            const isNullable = ruleSet.some(r => r.name === 'nullable');
+            const shouldBail = ruleSet.some(r => r.name === 'bail');
+            const isSometimes = ruleSet.some(r => r.name === 'sometimes');
 
-            // Handle nullable
+            // Handle sometimes: skip if not present in data
+            if (isSometimes && !this.hasValue(attribute)) {
+                continue;
+            }
+
+            // Handle nullable: skip if null/undefined
             if (isNullable && (value === null || value === undefined)) {
                 this.setValidatedValue(attribute, value);
                 continue;
@@ -172,6 +178,7 @@ export class Validator {
             case 'required_if':
                 rule = new RequiredIf(parameters[0], parameters[1], this.data);
                 break;
+            case 'sometimes':
             case 'nullable':
             case 'bail':
                 rule = {
@@ -188,6 +195,18 @@ export class Validator {
         }
 
         return { rule, name };
+    }
+
+    private hasValue(key: string): boolean {
+        const parts = key.split('.');
+        let current = this.data;
+        for (const part of parts) {
+            if (current === null || current === undefined || !(part in current)) {
+                return false;
+            }
+            current = current[part];
+        }
+        return true;
     }
 
     private getValue(key: string): any {

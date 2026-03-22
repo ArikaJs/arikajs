@@ -6,6 +6,8 @@ export class AuthContext {
     private request: any;
     private manager: AuthManager;
 
+    private resolvedUsers: Map<string, any> = new Map();
+
     constructor(manager: AuthManager, request: any) {
         this.manager = manager;
         this.request = request;
@@ -19,7 +21,10 @@ export class AuthContext {
         }
 
         if (!this.guards.has(name)) {
-            this.guards.set(name, this.manager.resolveGuard(name, this.request));
+            const guard = this.manager.resolveGuard(name, this.request);
+            const user = this.resolvedUsers.get(name);
+            if (user) guard.setUser(user);
+            this.guards.set(name, guard);
         }
 
         return this.guards.get(name)!;
@@ -27,39 +32,54 @@ export class AuthContext {
 
     // Proxy methods to the default guard
     public async check(): Promise<boolean> {
-        return await this.guard().check();
+        return !!(await this.user());
     }
 
     public async guest(): Promise<boolean> {
-        return await this.guard().guest();
+        return !(await this.check());
     }
 
-    public async user(): Promise<any> {
-        return await this.guard().user();
+    public async user(guardName?: string): Promise<any> {
+        const name = guardName || this.manager.getDefaultGuard();
+        if (this.resolvedUsers.has(name)) {
+            return this.resolvedUsers.get(name);
+        }
+
+        const user = await this.guard(name).user();
+        this.resolvedUsers.set(name, user);
+        return user;
     }
 
-    public async id(): Promise<string | number | null> {
-        return await this.guard().id();
+    public async id(guardName?: string): Promise<string | number | null> {
+        const user = await this.user(guardName);
+        return user ? user.id : null;
     }
 
     public async validate(credentials: Record<string, any>): Promise<boolean> {
         return await this.guard().validate(credentials);
     }
 
-    public setUser(user: any): void {
-        this.guard().setUser(user);
+    public setUser(user: any, guardName?: string): void {
+        const name = guardName || this.manager.getDefaultGuard();
+        this.resolvedUsers.set(name, user);
+        const guard = this.guard(name);
+        if (guard && typeof guard.setUser === 'function') {
+            guard.setUser(user);
+        }
     }
 
-    public async attempt(credentials: Record<string, any>, remember: boolean = false): Promise<boolean | string> {
-        return await this.manager.attemptForContext(this, credentials, remember);
+    public async attempt(credentials: Record<string, any>, remember: boolean = false, guardName?: string): Promise<boolean | string> {
+        return await this.manager.attemptForContext(this, credentials, remember, guardName);
     }
 
-    public async login(user: any, remember: boolean = false): Promise<void> {
-        return await this.manager.loginForContext(this, user, remember);
+    public async login(user: any, remember: boolean = false, guardName?: string): Promise<void> {
+        return await this.manager.loginForContext(this, user, remember, guardName);
     }
 
-    public async logout(): Promise<void> {
-        return await this.manager.logoutForContext(this);
+    public async logout(guardName?: string): Promise<void> {
+        const name = guardName || this.manager.getDefaultGuard();
+        this.resolvedUsers.delete(name);
+        return await this.manager.logoutForContext(this, guardName);
     }
 
     public async sendVerification(user?: any): Promise<void> {

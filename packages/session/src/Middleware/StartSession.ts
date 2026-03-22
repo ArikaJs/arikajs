@@ -25,7 +25,7 @@ export class StartSession {
             request.req?.headers?.cookie ??
             '';
 
-        let sessionId = cookieHelper.read(cookieHeader);
+        let sessionId = request.header('X-Session-Id') || cookieHelper.read(cookieHeader);
         let isNewSession = false;
 
         if (!sessionId) {
@@ -60,6 +60,11 @@ export class StartSession {
 
             // 4. Run pipeline
             const res = await next(request);
+            
+            // NEW: Support API Session Header
+            if (request.header('X-Session-Id') || (request.expectsJson && request.expectsJson())) {
+                res.header('X-Session-Id', session.getId());
+            }
 
             // 5. Persist session
             await session.save();
@@ -103,7 +108,7 @@ export class StartSession {
         }
 
         // Try to write to the underlying Node.js ServerResponse before it is terminated
-        const nodeRes: any = targetRes?.raw ?? null;
+        const nodeRes: any = targetRes?.raw ?? (targetRes?.getRaw ? targetRes.getRaw() : null);
 
         if (nodeRes && typeof nodeRes.setHeader === 'function' && !nodeRes.headersSent) {
             const existing = nodeRes.getHeader('Set-Cookie');

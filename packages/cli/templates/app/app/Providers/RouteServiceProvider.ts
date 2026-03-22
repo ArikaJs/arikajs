@@ -31,5 +31,12 @@ export class RouteServiceProvider extends ServiceProvider {
         Route.middleware('api').prefix('api').group(() => {
             require(path.join(basePath, 'routes/api'));
         });
+
+        // 3. Load Console/scheduled task routes
+        try {
+            require(path.join(basePath, 'routes/console'));
+        } catch (e) {
+            // console routes optional
+        }
     }
 }

@@ -4,6 +4,7 @@ import { Route } from '@arikajs/router';
 import { Log } from '@arikajs/logging';
 import { Translator } from '@arikajs/localization';
 import { env as configEnv } from '@arikajs/config';
+import { carbon as carbonFactory } from '@arikajs/carbon';
 
 /**
  * Get the application instance.
@@ -84,12 +85,55 @@ export const trans = lang;
 export const __ = lang;
 
 /**
+ * Get the current request instance.
+ */
+export function request(): any {
+    return (app() as any).currentRequest;
+}
+
+/**
+ * Get the current auth context or manager.
+ */
+export function auth(): any {
+    const req = request();
+    if (req && req.auth) {
+        return req.auth;
+    }
+    return app().make('auth');
+}
+
+/**
  * Render a view template or get the view engine.
  */
-export function view(template?: string, data: any = {}): any {
+export async function view(template?: string, data: any = {}): Promise<any> {
+    const req = request();
+
+    // 1. If we are in a request context and req.view.render exists, use it!
+    // This is the preferred way as it handles session errors, CSRF, etc. correctly
+    if (req && req.view && typeof req.view.render === 'function') {
+        if (template === undefined) return req.view;
+        return await req.view.render(template, data);
+    }
+
+    // 2. Fallback to global view engine
     const engine = app().make('view') as any;
     if (template === undefined) return engine;
-    return engine.render(template, data);
+
+    return await engine.render(template, data);
+}
+
+/**
+ * Create a new Carbon instance for date manipulation.
+ */
+export function carbon(date?: any): any {
+    return carbonFactory(date);
+}
+
+/**
+ * Format the given date.
+ */
+export function date(date?: any, format = 'Y-m-d'): string {
+    return carbon(date).format(format);
 }
 
 // Add properties to support view.render() and view.share() as seen in the README

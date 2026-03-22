@@ -1,5 +1,6 @@
 export * from './Request';
 export * from './Response';
+export * from './FormRequest';
 export * from './HttpKernel';
 export * from './Router';
 export * from './Pipeline';
@@ -10,6 +11,7 @@ export * from './Middleware/TrimStrings';
 export * from './Middleware/ConvertEmptyStringsToNull';
 export * from './Middleware/SecurityHeaders';
 export * from './Middleware/Throttle';
+export * from './Middleware/VerifyCsrfToken';
 export * from './Exceptions/HttpException';
 export * from './Contracts/Application';
 export * from './HttpServiceProvider';

@@ -24,6 +24,34 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  flowboard:
+    dependencies:
+      '@types/bcryptjs':
+        specifier: ^2.4.6
+        version: 2.4.6
+      arikajs:
+        specifier: workspace:*
+        version: link:../packages/arikajs
+      bcryptjs:
+        specifier: ^3.0.3
+        version: 3.0.3
+    devDependencies:
+      '@arikajs/cli':
+        specifier: workspace:*
+        version: link:../packages/cli
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.37
+      tsconfig-paths:
+        specifier: ^4.2.0
+        version: 4.2.0
+      tsx:
+        specifier: ^4.0.0
+        version: 4.21.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/arikajs:
     dependencies:
       '@arikajs/auth':
@@ -35,9 +63,9 @@ importers:
       '@arikajs/cache':
         specifier: workspace:*
         version: link:../cache
-      '@arikajs/cli':
-        specifier: workspace:*
-        version: link:../cli
+      '@arikajs/carbon':
+        specifier: workspace:^
+        version: link:../carbon
       '@arikajs/console':
         specifier: workspace:*
         version: link:../console
@@ -157,19 +185,19 @@ importers:
       autocannon:
         specifier: ^8.0.0
         version: 8.0.0
+      cli-table3:
+        specifier: ^0.6.5
+        version: 0.6.5
       express:
         specifier: ^4.22.1
         version: 4.22.1
+      fastify:
+        specifier: ^5.8.1
+        version: 5.8.2
     devDependencies:
       '@types/express':
         specifier: ^5.0.6
         version: 5.0.6
-      cli-table3:
-        specifier: ^0.6.5
-        version: 0.6.5
-      fastify:
-        specifier: ^5.8.1
-        version: 5.8.2
 
   packages/cache:
     dependencies:
@@ -180,6 +208,18 @@ importers:
       '@types/node':
         specifier: ^20.11.24
         version: 20.19.37
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/carbon:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.19.37
+      tsx:
+        specifier: ^4.7.1
+        version: 4.21.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -574,6 +614,18 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/sweet:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.19.37
+      tsx:
+        specifier: ^4.7.1
+        version: 4.21.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/validation:
     devDependencies:
       '@types/node':
@@ -584,6 +636,10 @@ importers:
         version: 5.9.3
 
   packages/view:
+    dependencies:
+      '@arikajs/carbon':
+        specifier: workspace:^
+        version: link:../carbon
     devDependencies:
       '@types/node':
         specifier: ^20.11.24
@@ -1907,6 +1963,10 @@ packages:
 
   bcryptjs@2.4.3:
     resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
+
+  bcryptjs@3.0.3:
+    resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
+    hasBin: true
 
   better-path-resolve@1.0.0:
     resolution: {integrity: sha512-pbnl5XzGBdrFU/wT4jqmJVPn2B6UHPBOhzMQkY/SPUPB6QtUXtmBHBIwCbXJol93mOpGMnQyP/+BB19q04xj7g==}
@@ -3948,6 +4008,10 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
+
+  tsconfig-paths@4.2.0:
+    resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
+    engines: {node: '>=6'}
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
@@ -6210,6 +6274,8 @@ snapshots:
 
   bcryptjs@2.4.3: {}
 
+  bcryptjs@3.0.3: {}
+
   better-path-resolve@1.0.0:
     dependencies:
       is-windows: 1.0.2
@@ -8348,6 +8414,12 @@ snapshots:
       typescript: 5.9.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+
+  tsconfig-paths@4.2.0:
+    dependencies:
+      json5: 2.2.3
+      minimist: 1.2.8
+      strip-bom: 3.0.0
 
   tslib@2.8.1: {}
 

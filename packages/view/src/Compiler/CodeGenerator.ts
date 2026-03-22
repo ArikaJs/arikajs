@@ -40,7 +40,8 @@ export class CodeGenerator {
             case NodeType.Directive:
                 const dir = node as DirectiveNode;
                 const childrenCode = dir.children ? this.generateNodes(dir.children) : '';
-                const result = this.registry.handle(dir.name, dir.expression, childrenCode);
+                const cleanedExp = dir.expression ? this.cleanExpression(dir.expression) : null;
+                const result = this.registry.handle(dir.name, cleanedExp, childrenCode);
 
                 if (result === null) {
                     // Fallback for unknown directives (e.g., CSS @media, @keyframes)

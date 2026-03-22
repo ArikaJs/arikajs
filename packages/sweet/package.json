@@ -1,0 +1,42 @@
+{
+  "name": "@arikajs/sweet",
+  "version": "0.10.2",
+  "description": "Premium, advanced alerts and notifications for ArikaJS — with Glassmorphism and fluent API.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "test": "npx tsx --test tests/**/*.test.ts",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "keywords": [
+    "arikajs",
+    "sweet",
+    "alert",
+    "notification",
+    "toast",
+    "ui",
+    "modal"
+  ],
+  "author": "Prakash Tank",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/sweet"
+  },
+  "bugs": {
+    "url": "https://github.com/ArikaJs/arikajs/issues"
+  },
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/sweet#readme",
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.1"
+  }
+}

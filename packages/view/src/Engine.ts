@@ -4,6 +4,18 @@ import * as crypto from 'node:crypto';
 import { Compiler } from './Compiler';
 import { Template } from './Template';
 
+// Lazy-load @arikajs/carbon to avoid circular deps at boot
+let _Carbon: any = null;
+let _carbon: any = null;
+async function loadCarbon() {
+    if (_Carbon) return;
+    try {
+        const mod = await import('@arikajs/carbon');
+        _Carbon = mod.Carbon;
+        _carbon = mod.carbon;
+    } catch { /* @arikajs/carbon is optional */ }
+}
+
 export interface ViewConfig {
     viewsPath: string;
     cachePath?: string;
@@ -50,6 +62,9 @@ export class Engine {
         };
         this.compiler = new Compiler();
         this.templateLoader = new Template(this.config);
+
+        // Pre-load @arikajs/carbon so it's available in every template
+        loadCarbon().catch(() => {}); 
     }
 
     /**
@@ -86,14 +101,15 @@ export class Engine {
     /**
      * Render a template file.
      */
-    public async render<T = Record<string, any>>(template: string, data: T = {} as T, isInternal = false): Promise<string> {
+    public async render<T = Record<string, any>>(template: string, data: T = {} as T, isInternal = false, shouldIsolate = false): Promise<string> {
         if (!isInternal) {
             this.sections = {};
             this.pushes = {};
             this.onceKeys = new Set();
         }
 
-        const mergedData = { ...this.sharedData, ...this.helpers, ...data };
+        const baseData = shouldIsolate ? {} : this.sharedData;
+        const mergedData = { ...this.getBuiltinHelpers(), ...baseData, ...this.helpers, ...data };
 
         // Execute composers
         await this.executeComposers(template, mergedData);
@@ -108,7 +124,7 @@ export class Engine {
         if (this.parentTemplate) {
             const parent = this.parentTemplate;
             this.parentTemplate = null;
-            return this.render(parent, data as any, true);
+            return this.render(parent, data as any, true, shouldIsolate);
         }
 
         return content;
@@ -122,6 +138,212 @@ export class Engine {
         const result = await this.render(template, data);
         this.fragmentMode = null;
         return result;
+    }
+
+    /**
+     * Check if a template file exists without rendering it.
+     */
+    public exists(templateName: string): boolean {
+        return this.templateLoader.exists(templateName.replace(/['"]/g, ''));
+    }
+
+    /**
+     * Built-in helpers available in every template automatically.
+     * Equivalent to PHP's global standard library functions in Blade.
+     * User-registered helpers via view.helper() will override these.
+     */
+    private getBuiltinHelpers(): Record<string, any> {
+        return {
+            // ----------------------------------------------------------------
+            // STRING HELPERS  (PHP equivalents)
+            // ----------------------------------------------------------------
+            strtoupper:      (s: string) => (s ?? '').toUpperCase(),
+            strtolower:      (s: string) => (s ?? '').toLowerCase(),
+            ucfirst:         (s: string) => { const v = s ?? ''; return v.charAt(0).toUpperCase() + v.slice(1); },
+            lcfirst:         (s: string) => { const v = s ?? ''; return v.charAt(0).toLowerCase() + v.slice(1); },
+            ucwords:         (s: string) => (s ?? '').replace(/\b\w/g, (c: string) => c.toUpperCase()),
+            strlen:          (s: string) => (s ?? '').length,
+            substr:          (s: string, start: number, length?: number) => (s ?? '').substring(start, length !== undefined ? start + length : undefined),
+            str_replace:     (search: string | string[], replace: string | string[], subject: string) => {
+                let result = subject ?? '';
+                const searches = Array.isArray(search) ? search : [search];
+                const replaces = Array.isArray(replace) ? replace : [replace];
+                searches.forEach((s, i) => { result = result.split(s).join(replaces[i] ?? replaces[0] ?? ''); });
+                return result;
+            },
+            str_contains:    (haystack: string, needle: string) => (haystack ?? '').includes(needle),
+            str_starts_with: (haystack: string, needle: string) => (haystack ?? '').startsWith(needle),
+            str_ends_with:   (haystack: string, needle: string) => (haystack ?? '').endsWith(needle),
+            str_pad:         (s: string, length: number, pad = ' ', type = 'right') => {
+                const v = String(s ?? '');
+                if (type === 'left')  return v.padStart(length, pad);
+                if (type === 'both')  return v.padStart(Math.ceil((length - v.length) / 2) + v.length, pad).padEnd(length, pad);
+                return v.padEnd(length, pad);
+            },
+            str_repeat:      (s: string, times: number) => (s ?? '').repeat(times),
+            str_split:       (s: string, length = 1) => {
+                const v = s ?? '';
+                if (length === 1) return v.split('');
+                const chunks: string[] = [];
+                for (let i = 0; i < v.length; i += length) chunks.push(v.substr(i, length));
+                return chunks;
+            },
+            str_word_count:  (s: string) => (s ?? '').trim().split(/\s+/).filter(Boolean).length,
+            strpos:          (haystack: string, needle: string, offset = 0) => { const i = (haystack ?? '').indexOf(needle, offset); return i === -1 ? false : i; },
+            strrpos:         (haystack: string, needle: string) => { const i = (haystack ?? '').lastIndexOf(needle); return i === -1 ? false : i; },
+            str_rev:         (s: string) => (s ?? '').split('').reverse().join(''),
+            trim:            (s: string, chars?: string) => chars ? (s ?? '').replace(new RegExp(`^[${chars}]+|[${chars}]+$`, 'g'), '') : (s ?? '').trim(),
+            ltrim:           (s: string) => (s ?? '').trimStart(),
+            rtrim:           (s: string) => (s ?? '').trimEnd(),
+            nl2br:           (s: string) => (s ?? '').replace(/\n/g, '<br>'),
+            strip_tags:      (s: string) => (s ?? '').replace(/<[^>]*>/g, ''),
+            wordwrap:        (s: string, width = 75, breakChar = '\n') => {
+                const words = (s ?? '').split(' ');
+                let line = '', result = '';
+                for (const word of words) {
+                    if ((line + word).length > width) { result += (result ? breakChar : '') + line.trim(); line = ''; }
+                    line += (line ? ' ' : '') + word;
+                }
+                return result + (result && line ? breakChar : '') + line;
+            },
+            sprintf:         (fmt: string, ...args: any[]) => {
+                let i = 0;
+                return fmt.replace(/%[sdfo]/g, (m) => {
+                    const val = args[i++];
+                    if (m === '%d') return Math.floor(Number(val)).toString();
+                    if (m === '%f') return Number(val).toFixed(6);
+                    if (m === '%o') return JSON.stringify(val);
+                    return String(val ?? '');
+                });
+            },
+            // Str facade equivalents (camelCase, snake_case, slug, etc.)
+            slug: (s: string, separator = '-') => (s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, separator).replace(/^-|-$/g, ''),
+            camel_case: (s: string) => (s ?? '').replace(/[-_\s]+(.)/g, (_, c: string) => c.toUpperCase()).replace(/^./, (c: string) => c.toLowerCase()),
+            snake_case: (s: string) => (s ?? '').replace(/([A-Z])/g, '_$1').replace(/[-\s]+/g, '_').toLowerCase().replace(/^_/, ''),
+            studly_case: (s: string) => (s ?? '').replace(/[-_\s]+(.)/g, (_, c: string) => c.toUpperCase()).replace(/^./, (c: string) => c.toUpperCase()),
+            limit: (s: string, length = 100, end = '...') => { const v = s ?? ''; return v.length > length ? v.substring(0, length) + end : v; },
+            words: (s: string, count = 10, end = '...') => { const w = (s ?? '').split(/\s+/); return w.length > count ? w.slice(0, count).join(' ') + end : s; },
+
+            // ----------------------------------------------------------------
+            // NUMBER HELPERS
+            // ----------------------------------------------------------------
+            number_format: (n: number, decimals = 0, decPoint = '.', thousandsSep = ',') => {
+                const fixed = Number(n ?? 0).toFixed(decimals);
+                const [intPart, decPart] = fixed.split('.');
+                const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep);
+                return decPart !== undefined ? formattedInt + decPoint + decPart : formattedInt;
+            },
+            round:   (n: number, precision = 0) => Math.round(Number(n) * Math.pow(10, precision)) / Math.pow(10, precision),
+            floor:   (n: number) => Math.floor(Number(n ?? 0)),
+            ceil:    (n: number) => Math.ceil(Number(n ?? 0)),
+            abs:     (n: number) => Math.abs(Number(n ?? 0)),
+            min:     (...args: any[]) => Math.min(...args.flat().map(Number)),
+            max:     (...args: any[]) => Math.max(...args.flat().map(Number)),
+            rand:    (min = 0, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min,
+            intval:  (v: any) => parseInt(v, 10) || 0,
+            floatval:(v: any) => parseFloat(v) || 0,
+            is_numeric: (v: any) => !isNaN(parseFloat(v)) && isFinite(v),
+
+            // ----------------------------------------------------------------
+            // ARRAY HELPERS
+            // ----------------------------------------------------------------
+            count:         (v: any[] | Record<string, any>) => Array.isArray(v) ? v.length : Object.keys(v ?? {}).length,
+            implode:       (separator: string, arr: any[]) => (arr ?? []).join(separator),
+            explode:       (separator: string, s: string, limit?: number) => {
+                const parts = (s ?? '').split(separator);
+                return limit ? parts.slice(0, limit - 1).concat([parts.slice(limit - 1).join(separator)]) : parts;
+            },
+            join:          (arr: any[], separator = ', ') => (arr ?? []).join(separator),
+            in_array:      (needle: any, haystack: any[]) => (haystack ?? []).includes(needle),
+            array_merge:   (...arrays: any[][]) => ([] as any[]).concat(...arrays.map((a: any[]) => a ?? [])),
+            array_reverse: (arr: any[]) => [...(arr ?? [])].reverse(),
+            array_unique:  (arr: any[]) => [...new Set(arr ?? [])],
+            array_keys:    (obj: Record<string, any>) => Object.keys(obj ?? {}),
+            array_values:  (obj: Record<string, any>) => Object.values(obj ?? {}),
+            array_chunk:   (arr: any[], size: number) => {
+                const result = [];
+                for (let i = 0; i < (arr ?? []).length; i += size) result.push(arr.slice(i, i + size));
+                return result;
+            },
+            array_sum:     (arr: number[]) => (arr ?? []).reduce((s: number, n: number) => s + Number(n), 0),
+            array_map:     (fn: (v: any) => any, arr: any[]) => (arr ?? []).map(fn),
+            array_filter:  (arr: any[], fn?: (v: any) => boolean) => (arr ?? []).filter(fn ?? Boolean),
+            array_slice:   (arr: any[], offset: number, length?: number) => (arr ?? []).slice(offset, length !== undefined ? offset + length : undefined),
+            array_pop:     (arr: any[]) => { const a = [...(arr ?? [])]; a.pop(); return a; },
+            array_shift:   (arr: any[]) => (arr ?? []).slice(1),
+            array_push:    (arr: any[], ...items: any[]) => [...(arr ?? []), ...items],
+            array_combine: (keys: string[], values: any[]) => Object.fromEntries((keys ?? []).map((k, i) => [k, (values ?? [])[i]])),
+            sort:          (arr: any[]) => [...(arr ?? [])].sort(),
+            rsort:         (arr: any[]) => [...(arr ?? [])].sort().reverse(),
+            collect:       (arr: any[]) => arr ?? [],
+
+            // ----------------------------------------------------------------
+            // JSON HELPERS
+            // ----------------------------------------------------------------
+            json_encode: (v: any, pretty = false) => pretty ? JSON.stringify(v, null, 2) : JSON.stringify(v),
+            json_decode: (s: string) => { try { return JSON.parse(s); } catch { return null; } },
+
+            // ----------------------------------------------------------------
+            // DATE / TIME HELPERS
+            // ----------------------------------------------------------------
+            now:  () => new Date(),
+            time: () => Math.floor(Date.now() / 1000),
+            date_format: (date: Date | string | number, format: string) => {
+                const d = date instanceof Date ? date : new Date(date);
+                if (isNaN(d.getTime())) return 'Invalid Date';
+                const months     = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                const fullMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                const days       = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                const pad        = (n: number) => String(n).padStart(2, '0');
+                return format
+                    .replace('Y', String(d.getFullYear()))
+                    .replace('y', String(d.getFullYear()).slice(-2))
+                    .replace('F', fullMonths[d.getMonth()])
+                    .replace('M', months[d.getMonth()])
+                    .replace('m', pad(d.getMonth() + 1))
+                    .replace('n', String(d.getMonth() + 1))
+                    .replace('d', pad(d.getDate()))
+                    .replace('j', String(d.getDate()))
+                    .replace('l', days[d.getDay()])
+                    .replace('D', days[d.getDay()].slice(0, 3))
+                    .replace('H', pad(d.getHours()))
+                    .replace('h', pad(d.getHours() % 12 || 12))
+                    .replace('i', pad(d.getMinutes()))
+                    .replace('s', pad(d.getSeconds()))
+                    .replace('A', d.getHours() < 12 ? 'AM' : 'PM')
+                    .replace('a', d.getHours() < 12 ? 'am' : 'pm');
+            },
+            time_ago: (date: Date | string) => {
+                const d = date instanceof Date ? date : new Date(date);
+                const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
+                if (seconds < 60)    return `${seconds}s ago`;
+                if (seconds < 3600)  return `${Math.floor(seconds / 60)}m ago`;
+                if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+                if (seconds < 604800)return `${Math.floor(seconds / 86400)}d ago`;
+                return `${Math.floor(seconds / 604800)}w ago`;
+            },
+
+            // ----------------------------------------------------------------
+            // TYPE CHECKING 
+            // ----------------------------------------------------------------
+            is_array:  (v: any) => Array.isArray(v),
+            is_object: (v: any) => v !== null && typeof v === 'object' && !Array.isArray(v),
+            is_string: (v: any) => typeof v === 'string',
+            is_int:    (v: any) => Number.isInteger(v),
+            is_null:   (v: any) => v === null || v === undefined,
+            empty:     (v: any) => !v || (Array.isArray(v) ? v.length === 0 : typeof v === 'object' ? Object.keys(v).length === 0 : false),
+            isset:     (...args: any[]) => args.every(v => v !== null && v !== undefined),
+
+            // ----------------------------------------------------------------
+            // CARBON — Date & Time (from @arikajs/carbon)
+            // ----------------------------------------------------------------
+            Carbon: _Carbon,
+            carbon: _carbon ?? ((v?: any, tz?: string) => {
+                // Graceful fallback if @arikajs/carbon isn't loaded yet
+                const d = v ? new Date(v) : new Date();
+                return { format: (fmt: string) => d.toLocaleDateString(), toString: () => d.toString() };
+            }),
+        };
     }
 
     private async executeComposers(template: string, data: any): Promise<void> {
@@ -232,8 +454,8 @@ export class Engine {
         return content;
     }
 
-    public yield(name: string): string {
-        return this.sections[name] || '';
+    public yield(name: string, defaultValue = ''): string {
+        return this.sections[name] || defaultValue;
     }
 
     // --- PUSH, PREPEND & STACK ---
@@ -304,7 +526,7 @@ export class Engine {
                 slot: defaultSlotContent,
                 ...component.slots
             };
-            const rendered = await this.render(component.name, componentData, true);
+            const rendered = await this.render(component.name, componentData, true, true);
             return component.previousOutput + rendered;
         }
         return defaultSlotContent;

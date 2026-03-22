@@ -6,9 +6,10 @@ export { app, config, env, info, error, warning, debug, route, lang, trans, __, 
 export { ServiceProvider } from '@arikajs/foundation';
 export { Container } from '@arikajs/foundation';
 export { Repository as Config } from '@arikajs/foundation';
+export { mix } from '@arikajs/foundation';
 
 // Re-export HTTP items
-export { Request, Response, Middleware, HttpException, NotFoundHttpException } from '@arikajs/http';
+export { Request, Response, FormRequest, Middleware, HttpException, NotFoundHttpException } from '@arikajs/http';
 export { 
     BodyParserMiddleware, 
     CorsMiddleware, 
@@ -33,7 +34,7 @@ export { ViewMiddleware } from './http/Middleware/ViewMiddleware';
 export { VerifyCsrfToken } from './http/Middleware/VerifyCsrfToken';
 
 // Re-export Database items
-export { Model, Database as DB, Schema, Migration, SchemaBuilder } from '@arikajs/database';
+export { Model, Database as DB, Schema, Migration, SchemaBuilder, withSoftDeletes } from '@arikajs/database';
 
 // Re-export Cache items
 export { Cache } from '@arikajs/cache';
@@ -45,7 +46,8 @@ export { Queue, BaseJob, Worker } from '@arikajs/queue';
 export { Event } from '@arikajs/events';
 
 // Re-export Scheduler items
-export { Scheduler, Schedule } from '@arikajs/scheduler';
+export { Scheduler } from '@arikajs/scheduler';
+export { Schedule } from './facades/Schedule';
 
 // Re-export Encryption items
 export { Encrypter } from '@arikajs/encryption';
@@ -71,5 +73,15 @@ export { Mail, Mailable } from '@arikajs/mail';
 // Re-export Auth items
 export { AuthManager, AuthContext, Hasher, EloquentUserProvider, Authenticate } from '@arikajs/auth';
 
+// Re-export Authorization items
+export { Gate, Policy, AuthResponse } from '@arikajs/authorization';
+
+// Re-export Storage items
+export { Storage } from '@arikajs/storage';
+
 // Re-export Session items
 export { Session, SessionManager, StartSession, SessionDriver, MemoryDriver as SessionMemoryDriver, FileDriver as SessionFileDriver } from '@arikajs/session';
+
+// Re-export Carbon (Date & Time) items
+export { Carbon, carbon } from '@arikajs/carbon';
+export type { CarbonInput, DiffUnit, DiffForHumansOptions } from '@arikajs/carbon';

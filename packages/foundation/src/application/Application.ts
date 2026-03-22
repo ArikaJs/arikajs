@@ -3,6 +3,7 @@ import * as path from 'path';
 import { Container, Token, Factory } from '../container/Container';
 import { ServiceProvider } from '../providers/ServiceProvider';
 import { Repository, EnvLoader, setConfigRepository } from '@arikajs/config';
+import { AsyncLocalStorage } from 'async_hooks';
 
 /**
  * Application is the core runtime of ArikaJS.
@@ -21,6 +22,7 @@ export class Application {
   private booted = false;
   private static instance: Application | null = null;
   private terminatingCallbacks: (() => void | Promise<void>)[] = [];
+  private requestLocalStorage = new AsyncLocalStorage<any>();
 
   constructor(basePath: string) {
     this.basePath = path.resolve(basePath);
@@ -267,6 +269,20 @@ export class Application {
    */
   has(token: Token): boolean {
     return this.container.has(token);
+  }
+
+  /**
+   * Run a callback within a request-scoped context.
+   */
+  async runWithRequest<T>(request: any, callback: () => T | Promise<T>): Promise<T> {
+    return this.requestLocalStorage.run(request, callback);
+  }
+
+  /**
+   * Get the current request from the scope.
+   */
+  get currentRequest(): any | null {
+    return this.requestLocalStorage.getStore();
   }
 
   /**

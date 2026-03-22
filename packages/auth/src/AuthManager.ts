@@ -183,8 +183,9 @@ export class AuthManager {
     }
 
     // Called by AuthContext to run attempts
-    public async attemptForContext(context: AuthContext, credentials: Record<string, any>, remember: boolean = false): Promise<boolean | string> {
-        this.fireEvent('Auth.Attempting', { credentials, remember, guard: this.defaultGuard });
+    public async attemptForContext(context: AuthContext, credentials: Record<string, any>, remember: boolean = false, guardName?: string): Promise<boolean | string> {
+        const name = guardName || this.defaultGuard;
+        this.fireEvent('Auth.Attempting', { credentials, remember, guard: name });
 
         const throttleKey = this.getThrottleKey(credentials, context.getRequest());
 
@@ -195,7 +196,7 @@ export class AuthManager {
             }
         }
 
-        const guard = context.guard() as any;
+        const guard = context.guard(name) as any;
         if (typeof guard.attempt === 'function') {
             const successOrToken = await guard.attempt(credentials, remember);
 
@@ -204,7 +205,7 @@ export class AuthManager {
                     await this.rateLimiter.clear(throttleKey);
                 }
                 const user = await guard.user();
-                this.fireEvent('Auth.Login', { user, guard: this.defaultGuard });
+                this.fireEvent('Auth.Login', { user, guard: name });
                 return successOrToken; // Can return boolean true or JWT string
             }
 
@@ -212,35 +213,37 @@ export class AuthManager {
                 await this.rateLimiter.hit(throttleKey, 1); // 1 minute decay
             }
 
-            this.fireEvent('Auth.Failed', { credentials, guard: this.defaultGuard });
+            this.fireEvent('Auth.Failed', { credentials, guard: name });
             return false;
         }
 
-        throw new Error(`Guard [${this.defaultGuard}] does not support login attempts.`);
+        throw new Error(`Guard [${name}] does not support login attempts.`);
     }
 
     // Called by AuthContext to log in
-    public async loginForContext(context: AuthContext, user: any, remember: boolean = false): Promise<void> {
-        const guard = context.guard() as any;
+    public async loginForContext(context: AuthContext, user: any, remember: boolean = false, guardName?: string): Promise<void> {
+        const name = guardName || this.defaultGuard;
+        const guard = context.guard(name) as any;
         if (typeof guard.login === 'function') {
             await guard.login(user, remember);
-            this.fireEvent('Auth.Login', { user, guard: this.defaultGuard });
+            this.fireEvent('Auth.Login', { user, guard: name });
             return;
         }
-        throw new Error(`Guard [${this.defaultGuard}] does not support login.`);
+        throw new Error(`Guard [${name}] does not support login.`);
     }
 
     // Called by AuthContext to log out
-    public async logoutForContext(context: AuthContext): Promise<void> {
-        const guard = context.guard() as any;
+    public async logoutForContext(context: AuthContext, guardName?: string): Promise<void> {
+        const name = guardName || this.defaultGuard;
+        const guard = context.guard(name) as any;
         const user = await guard.user();
 
         if (typeof guard.logout === 'function') {
             guard.logout();
-            this.fireEvent('Auth.Logout', { user, guard: this.defaultGuard });
+            this.fireEvent('Auth.Logout', { user, guard: name });
             return;
         }
-        throw new Error(`Guard [${this.defaultGuard}] does not support logout.`);
+        throw new Error(`Guard [${name}] does not support logout.`);
     }
 
     // ── Email Verification ──────────────────────────────────────────

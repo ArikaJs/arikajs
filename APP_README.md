@@ -55,7 +55,7 @@ We will build FlowBoard iteratively.
 ### Phase 1: Foundation & Auth
 - [ ] Scaffold `flowboard` using `arika new flowboard`
 - [ ] Install the `api` and `web` auth templates (`arika auth:install web` & `api`)
-- [ ] Configure PostgreSQL / MySQL connection.
+- [ ] Configure sqlite connection.
 - [ ] Verify Registration, Login, and Password Reset work perfectly.
 
 ### Phase 2: Core Models & Database

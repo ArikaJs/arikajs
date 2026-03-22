@@ -37,7 +37,9 @@ export class Authenticate {
 
             // 4. Check each guard
             for (const guard of guardsToCheck) {
-                if (await context.guard(guard).check()) {
+                const user = await context.guard(guard).user();
+                if (user) {
+                    context.setUser(user);
                     this.auth.shouldUse(guard);
                     return next(request);
                 }

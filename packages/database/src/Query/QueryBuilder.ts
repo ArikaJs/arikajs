@@ -212,6 +212,14 @@ export class QueryBuilder implements QueryBuilderInterface {
     }
 
     /**
+     * Remove a where clause by column and type
+     */
+    removeWhere(column: string, type: string): this {
+        this.whereClauses = this.whereClauses.filter(w => w.column !== column || w.type !== type);
+        return this;
+    }
+
+    /**
      * Add an order by clause
      */
     orderBy(column: string, direction: 'asc' | 'desc' = 'asc'): this {

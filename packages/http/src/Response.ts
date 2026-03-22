@@ -103,7 +103,7 @@ export class Response {
         }
         this._content = content;
         if (typeof content === 'string' && !this._headers['Content-Type']) {
-            this.header('Content-Type', content.startsWith('<') ? 'text/html' : 'text/plain');
+            this.header('Content-Type', content.trimStart().startsWith('<') ? 'text/html' : 'text/plain');
         }
         return this;
     }

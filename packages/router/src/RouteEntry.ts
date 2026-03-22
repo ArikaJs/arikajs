@@ -10,6 +10,7 @@ export class RouteEntry implements RouteDefinition {
     public regex: RegExp;
     public paramKeys: string[] = [];
     public constraints: Record<string, string> = {};
+    public _formRequest?: any;
 
     constructor(method: string, path: string, handler: RouteHandler, prefix?: string, groupMiddleware: any[] = []) {
         this.method = method.toUpperCase();
@@ -37,6 +38,14 @@ export class RouteEntry implements RouteDefinition {
         const compiled = this.compilePath(this.path);
         this.regex = compiled.regex;
 
+        return this;
+    }
+
+    /**
+     * Set a name for the route.
+     */
+    public validateWith(formRequest: any): this {
+        this._formRequest = formRequest;
         return this;
     }
 

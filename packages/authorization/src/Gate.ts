@@ -29,6 +29,13 @@ export class Gate {
         this.policyResolver.register(model, policy);
     }
 
+    /**
+     * Register a callback for automatic policy discovery.
+     */
+    public static discoverPolicies(callback: (modelName: string) => any): void {
+        this.policyResolver.discoverWith(callback);
+    }
+
     // ── Before / After Hooks ────────────────────────────────────────
 
     /**

@@ -8,10 +8,12 @@ import { setApp } from './helpers';
 export class Application extends FoundationApplication implements ApplicationContract {
     public static get VERSION(): string {
         try {
-            return require('../../package.json').version;
+            // Find the version from the local package.json
+            return require('../package.json').version;
         } catch (e) {
             try {
-                return require('../package.json').version;
+                // Fallback if running in a different environment
+                return require('../../package.json').version;
             } catch (e) {
                 return 'unknown';
             }

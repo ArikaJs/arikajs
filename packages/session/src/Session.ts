@@ -161,6 +161,27 @@ export class Session {
         return this._newId;
     }
 
+    /**
+     * Get the CSRF token from the session.
+     */
+    public async token(): Promise<string> {
+        await this.ensureLoaded();
+        if (!this._data!['_token']) {
+            await this.regenerateToken();
+        }
+        return this._data!['_token'];
+    }
+
+    /**
+     * Regenerate the CSRF token.
+     */
+    public async regenerateToken(): Promise<void> {
+        await this.ensureLoaded();
+        const crypto = await import('node:crypto');
+        this._data!['_token'] = crypto.randomBytes(40).toString('hex');
+        this._dirty = true;
+    }
+
     // ──────────────────────────────────────────────────────────────────────────
     //  Lifecycle (called by StartSession middleware)
     // ──────────────────────────────────────────────────────────────────────────

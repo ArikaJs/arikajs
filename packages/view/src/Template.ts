@@ -17,6 +17,13 @@ export class Template {
     }
 
     /**
+     * Check if a template exists.
+     */
+    public exists(template: string): boolean {
+        return fs.existsSync(this.resolvePath(template));
+    }
+
+    /**
      * Resolve template name to file path.
      */
     private resolvePath(template: string): string {

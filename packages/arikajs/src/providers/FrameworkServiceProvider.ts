@@ -13,6 +13,7 @@ import { CacheServiceProvider } from './CacheServiceProvider';
 import { QueueServiceProvider } from './QueueServiceProvider';
 import { SessionServiceProvider } from './SessionServiceProvider';
 import { HttpServiceProvider } from './HttpServiceProvider';
+import { StorageServiceProvider } from './StorageServiceProvider';
 
 export class FrameworkServiceProvider extends ServiceProvider {
     public async register() {
@@ -20,6 +21,7 @@ export class FrameworkServiceProvider extends ServiceProvider {
         await this.app.register(LoggingServiceProvider);
         await this.app.register(SessionServiceProvider);
         await this.app.register(HttpServiceProvider);
+        await this.app.register(StorageServiceProvider);
         await this.app.register(AuthServiceProvider);
         await this.app.register(ValidationServiceProvider);
         await this.app.register(DatabaseServiceProvider);

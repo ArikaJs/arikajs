@@ -3,7 +3,6 @@ import { RouteRegistry } from './RouteRegistry';
 
 class RadixNode {
     children: Map<string, RadixNode> = new Map();
-    paramName: string | null = null;
     paramNode: RadixNode | null = null;
     routes: any[] = []; // Support multiple methods on same path
 }
@@ -26,11 +25,9 @@ export class RouteMatcher {
         const parts = route.path.split('/').filter(Boolean);
 
         for (const part of parts) {
-            if (part.startsWith(':')) {
-                const paramName = part.slice(1);
+            if (part.startsWith(':') || (part.startsWith('{') && part.endsWith('}'))) {
                 if (!node.paramNode) {
                     node.paramNode = new RadixNode();
-                    node.paramName = paramName;
                 }
                 node = node.paramNode;
             } else {
@@ -49,7 +46,7 @@ export class RouteMatcher {
         let node = this.root;
         const normalizedPath = path.split('?')[0];
         const parts = normalizedPath.split('/').filter(Boolean);
-        const params: Record<string, string> = {};
+        const collectedValues: string[] = [];
         const normalizedMethod = method.toUpperCase();
 
         for (let i = 0; i < parts.length; i++) {
@@ -58,9 +55,7 @@ export class RouteMatcher {
             if (nextNode) {
                 node = nextNode;
             } else if (node.paramNode) {
-                if (node.paramName) {
-                    params[node.paramName] = part;
-                }
+                collectedValues.push(part);
                 node = node.paramNode;
             } else {
                 return null;
@@ -71,7 +66,14 @@ export class RouteMatcher {
             // Find a route that matches the method OR has method 'ANY'
             const route = node.routes.find(r => r.method === normalizedMethod || r.method === 'ANY');
             if (route) {
-                const hasParams = Object.keys(params).length > 0;
+                const params: Record<string, string> = {};
+                const paramKeys = route.paramKeys || [];
+                
+                // Map collected values to the route's specific param keys
+                for (let i = 0; i < Math.min(collectedValues.length, paramKeys.length); i++) {
+                    params[paramKeys[i]] = collectedValues[i];
+                }
+
                 // If there are constraints, verify them
                 if (route.constraints && Object.keys(route.constraints).length > 0) {
                     for (const [key, pattern] of Object.entries(route.constraints)) {
@@ -83,7 +85,8 @@ export class RouteMatcher {
                         }
                     }
                 }
-                return { route, params, hasParams };
+
+                return { route, params, hasParams: Object.keys(params).length > 0 };
             }
         }
 

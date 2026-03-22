@@ -13,7 +13,8 @@
             "@Http/*": ["app/Http/*"],
             "@Exceptions/*": ["app/Exceptions/*"],
             "@Providers/*": ["app/Providers/*"],
-            "@Config/*": ["config/*"]
+            "@Config/*": ["config/*"],
+            "@Console/*": ["app/Console/*"]
         },
         "outDir": "./dist",
         "rootDir": "./",

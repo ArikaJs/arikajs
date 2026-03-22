@@ -1,6 +1,7 @@
 
 import { ServiceProvider } from '@arikajs/foundation';
 import { View } from '@arikajs/view';
+import { carbon } from '@arikajs/carbon';
 import path from 'path';
 import { ViewMiddleware } from '../http/Middleware/ViewMiddleware';
 
@@ -25,7 +26,10 @@ export class ViewServiceProvider extends ServiceProvider {
                 cache: config.get('app.env') === 'production'
             });
 
+            // Register standard view helpers
             view.helper('config', (key: string, defaultValue?: any) => config.get(key, defaultValue));
+            view.helper('carbon', (dateValue: any) => carbon(dateValue));
+            view.helper('date', (dateValue: any, format = 'Y-m-d') => carbon(dateValue).format(format));
 
             return view;
         });

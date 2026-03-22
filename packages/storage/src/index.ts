@@ -20,3 +20,4 @@ const defaultConfig = {
 };
 
 export const Storage = new StorageManager(defaultConfig);
+export * from './StorageServiceProvider';

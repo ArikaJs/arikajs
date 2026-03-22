@@ -1,5 +1,6 @@
 import { ServiceProvider } from '@arikajs/foundation';
 import { QueueManager, Queue, Worker } from '@arikajs/queue';
+import { SendQueuedMailable } from '@arikajs/mail';
 
 export class QueueServiceProvider extends ServiceProvider {
     /**
@@ -7,12 +8,7 @@ export class QueueServiceProvider extends ServiceProvider {
      */
     public async register() {
         // Register framework internal jobs
-        try {
-            const { SendQueuedMailable } = require('@arikajs/mail');
-            Worker.registerJob('SendQueuedMailable', SendQueuedMailable);
-        } catch (e) {
-            // Mail package might not be installed
-        }
+        Worker.registerJob('SendQueuedMailable', SendQueuedMailable);
         this.app.singleton('queue', () => {
             const config = this.app.config().get('queue');
             const database = this.app.make('db');
