@@ -202,6 +202,53 @@ export class DirectiveRegistry {
             return `if (!_engine.isFragmentMode() || _engine.getFragment() === ${exp}) {\n${children}\n}`;
         });
 
+        // SPA Engine Configuration (@spa)
+        this.register('spa', () => {
+            const spaScript = `<script data-spa-ignore>
+document.addEventListener('click', async (e) => {
+    const link = e.target.closest('a');
+    if (!link || link.target || link.origin !== window.location.origin || link.getAttribute('href').startsWith('#') || link.getAttribute('href').startsWith('javascript:')) return;
+    
+    e.preventDefault();
+    const url = link.href;
+
+    try {
+        const response = await fetch(url, { headers: { 'X-Arika-Spa': 'true' } });
+        if (!response.ok) throw new Error('Network error');
+        
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        window.history.pushState({}, '', url);
+        document.title = doc.title;
+
+        const updateBody = () => {
+            document.body.innerHTML = doc.body.innerHTML;
+            document.querySelectorAll('script').forEach(oldScript => {
+                if (oldScript.hasAttribute('data-spa-ignore')) return;
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.textContent = oldScript.textContent;
+                oldScript.replaceWith(newScript);
+            });
+        };
+
+        if (document.startViewTransition) {
+            document.startViewTransition(updateBody);
+        } else {
+            updateBody();
+        }
+    } catch (err) {
+        window.location.href = url;
+    }
+});
+
+window.addEventListener('popstate', () => window.location.reload());
+</script>`;
+            return `_output += ${JSON.stringify(spaScript)};`;
+        });
+
         // --- FORM HELPERS ---
 
         // @csrf -> hidden input with CSRF token from _data._csrf

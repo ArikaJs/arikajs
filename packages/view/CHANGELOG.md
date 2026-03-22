@@ -1,5 +1,12 @@
 # @arikajs/view
 
+## 0.10.3
+
+### Patch Changes
+
+- fix: address SPA directive rendering logic inside Drive-compatible head parsing
+  - @arikajs/carbon@0.10.3
+
 ## 0.0.8
 
 ## 0.0.7

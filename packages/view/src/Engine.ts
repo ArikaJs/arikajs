@@ -22,6 +22,7 @@ export interface ViewConfig {
     extension?: string;
     cache?: boolean;
     dev?: boolean;
+    strict?: boolean;
 }
 
 export type ViewComposer = (data: any) => Promise<void> | void;
@@ -57,6 +58,7 @@ export class Engine {
         this.config = {
             cache: true,
             dev: false,
+            strict: true,
             extension: '.ark.html',
             ...config
         };
@@ -356,19 +358,22 @@ export class Engine {
     }
 
     private async renderTemplate(templateName: string, data: Record<string, any>): Promise<string> {
+        const strictKeys = this.config.strict ? Object.keys(data).sort() : [];
+        const memoryCacheKey = this.config.strict ? `${templateName}_${strictKeys.join(',')}` : templateName;
+
         // 1. Check Memory Cache
-        if (this.config.cache && this.compiledFunctions.has(templateName)) {
-            return await this.runCompiled(this.compiledFunctions.get(templateName)!.func, data, templateName);
+        if (this.config.cache && this.compiledFunctions.has(memoryCacheKey)) {
+            return await this.runCompiled(this.compiledFunctions.get(memoryCacheKey)!.func, data, templateName, strictKeys);
         }
 
         // 2. Check Disk Cache (Primary - bypasses file read for speed)
         if (this.config.cache && this.config.cachePath) {
-            const cachedFunc = this.loadFromDiskCache(templateName);
+            const cachedFunc = this.loadFromDiskCache(templateName, undefined, strictKeys);
             if (cachedFunc) {
                 // If we found it on disk, we can skip reading the source!
                 // But we don't have the current hash... we'll just use the one from disk.
-                this.compiledFunctions.set(templateName, { func: cachedFunc, hash: 'disk-cached' });
-                return await this.runCompiled(cachedFunc, data, templateName);
+                this.compiledFunctions.set(memoryCacheKey, { func: cachedFunc, hash: 'disk-cached' });
+                return await this.runCompiled(cachedFunc, data, templateName, strictKeys);
             }
         }
 
@@ -378,21 +383,26 @@ export class Engine {
         const jsCode = this.compiler.compile(rawContent);
         const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 
-        // Use 'with' only for data provided to function to allow pure JS expressions
-        const wrappedJsCode = `with (_data) {\n${jsCode}\n}`;
-        const renderFunc = new AsyncFunction('_engine', '_data', wrappedJsCode);
+        let renderFunc: Function;
+        if (this.config.strict) {
+            renderFunc = new AsyncFunction(...strictKeys, '_engine', '_data', jsCode);
+        } else {
+            // Use 'with' only for data provided to function to allow pure JS expressions
+            const wrappedJsCode = `with (_data) {\n${jsCode}\n}`;
+            renderFunc = new AsyncFunction('_engine', '_data', wrappedJsCode);
+        }
 
         if (this.config.cache) {
-            this.compiledFunctions.set(templateName, { func: renderFunc, hash: contentHash });
+            this.compiledFunctions.set(memoryCacheKey, { func: renderFunc, hash: contentHash });
             if (this.config.cachePath) {
                 this.saveToDiskCache(templateName, contentHash, jsCode);
             }
         }
 
-        return await this.runCompiled(renderFunc, data, templateName);
+        return await this.runCompiled(renderFunc, data, templateName, strictKeys);
     }
 
-    private loadFromDiskCache(templateName: string, hash?: string): Function | null {
+    private loadFromDiskCache(templateName: string, hash?: string, strictKeys?: string[]): Function | null {
         try {
             const cacheKey = crypto.createHash('md5').update(templateName).digest('hex');
             const cacheFile = path.join(this.config.cachePath!, `${cacheKey}.js`);
@@ -401,7 +411,11 @@ export class Engine {
                 const { hash: cachedHash, code } = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
                 if (!hash || cachedHash === hash) {
                     const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
-                    return new AsyncFunction('_engine', '_data', `with (_data) {\n${code}\n}`);
+                    if (this.config.strict && strictKeys) {
+                        return new AsyncFunction(...strictKeys, '_engine', '_data', code);
+                    } else {
+                        return new AsyncFunction('_engine', '_data', `with (_data) {\n${code}\n}`);
+                    }
                 }
             }
         } catch (e) {
@@ -423,8 +437,12 @@ export class Engine {
         }
     }
 
-    private async runCompiled(func: Function, data: any, templateName: string): Promise<string> {
+    private async runCompiled(func: Function, data: any, templateName: string, strictKeys?: string[]): Promise<string> {
         try {
+            if (this.config.strict && strictKeys) {
+                const args = strictKeys.map((k: string) => data[k]);
+                return await func(...args, this, data);
+            }
             return await func(this, data);
         } catch (e: any) {
             if (this.config.dev) {
