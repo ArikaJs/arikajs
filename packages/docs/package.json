@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/docs",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "description": "API documentation and Postman collection generator for ArikaJS.",
   "license": "MIT",
   "main": "dist/index.js",

@@ -1,5 +1,11 @@
 # @arikajs/authorization
 
+## 0.10.5
+
+### Patch Changes
+
+- Added 'help' command to CLI, fixed missing auth config in app template, and resolved workspace dependency publishing issue.
+
 ## 0.10.4
 
 ### Patch Changes

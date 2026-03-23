@@ -1,5 +1,34 @@
 # arikajs
 
+## 0.10.5
+
+### Patch Changes
+
+- Added 'help' command to CLI, fixed missing auth config in app template, and resolved workspace dependency publishing issue.
+- Updated dependencies
+  - @arikajs/auth@0.10.5
+  - @arikajs/authorization@0.10.5
+  - @arikajs/cache@0.10.5
+  - @arikajs/carbon@0.10.5
+  - @arikajs/console@0.10.5
+  - @arikajs/database@0.10.5
+  - @arikajs/dispatcher@0.10.5
+  - @arikajs/encryption@0.10.5
+  - @arikajs/events@0.10.5
+  - @arikajs/foundation@0.10.5
+  - @arikajs/http@0.10.5
+  - @arikajs/localization@0.10.5
+  - @arikajs/logging@0.10.5
+  - @arikajs/mail@0.10.5
+  - @arikajs/middleware@0.10.5
+  - @arikajs/queue@0.10.5
+  - @arikajs/router@0.10.5
+  - @arikajs/scheduler@0.10.5
+  - @arikajs/session@0.10.5
+  - @arikajs/storage@0.10.5
+  - @arikajs/validation@0.10.5
+  - @arikajs/view@0.10.5
+
 ## 0.10.4
 
 ### Patch Changes

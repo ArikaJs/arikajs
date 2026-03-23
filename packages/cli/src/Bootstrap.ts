@@ -3,6 +3,7 @@ import { ApplicationLoader } from './ApplicationLoader';
 import { NewCommand } from './Commands/NewCommand';
 import { ListCommand } from './Commands/ListCommand';
 import { ServeCommand } from './Commands/ServeCommand';
+import { HelpCommand } from './Commands/HelpCommand';
 import { KeyGenerateCommand } from './Commands/KeyGenerateCommand';
 import { BenchmarkCommand } from './Commands/BenchmarkCommand';
 
@@ -14,6 +15,7 @@ export class Bootstrap {
         registry.register(NewCommand);
         registry.register(ListCommand);
         registry.register(ServeCommand);
+        registry.register(HelpCommand);
         registry.register(KeyGenerateCommand);
         registry.register(BenchmarkCommand);
         registry.registerLazy('docs:generate', 'Generate API documentation, Postman collection, and OpenAPI spec', () => import('./Commands/DocsGenerateCommand'));
