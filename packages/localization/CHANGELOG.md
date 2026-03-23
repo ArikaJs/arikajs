@@ -1,5 +1,11 @@
 # @arikajs/localization
 
+## 0.10.6
+
+### Patch Changes
+
+- @arikajs/foundation@0.10.6
+
 ## 0.10.5
 
 ### Patch Changes

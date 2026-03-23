@@ -1,5 +1,15 @@
 # @arikajs/cli
 
+## 0.10.6
+
+### Patch Changes
+
+- @arikajs/benchmark@0.10.6
+- @arikajs/console@0.10.6
+- @arikajs/database@0.10.6
+- @arikajs/docs@0.10.6
+- @arikajs/scheduler@0.10.6
+
 ## 0.10.5
 
 ### Patch Changes

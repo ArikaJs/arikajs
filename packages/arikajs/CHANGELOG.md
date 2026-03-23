@@ -1,5 +1,33 @@
 # arikajs
 
+## 0.10.6
+
+### Patch Changes
+
+- Fixed syntax highlighting error in Exception Handler that caused raw HTML color codes to appear.
+  - @arikajs/auth@0.10.6
+  - @arikajs/authorization@0.10.6
+  - @arikajs/cache@0.10.6
+  - @arikajs/carbon@0.10.6
+  - @arikajs/console@0.10.6
+  - @arikajs/database@0.10.6
+  - @arikajs/dispatcher@0.10.6
+  - @arikajs/encryption@0.10.6
+  - @arikajs/events@0.10.6
+  - @arikajs/foundation@0.10.6
+  - @arikajs/http@0.10.6
+  - @arikajs/localization@0.10.6
+  - @arikajs/logging@0.10.6
+  - @arikajs/mail@0.10.6
+  - @arikajs/middleware@0.10.6
+  - @arikajs/queue@0.10.6
+  - @arikajs/router@0.10.6
+  - @arikajs/scheduler@0.10.6
+  - @arikajs/session@0.10.6
+  - @arikajs/storage@0.10.6
+  - @arikajs/validation@0.10.6
+  - @arikajs/view@0.10.6
+
 ## 0.10.5
 
 ### Patch Changes

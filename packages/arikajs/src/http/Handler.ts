@@ -232,12 +232,30 @@ export class Handler {
                     let highlighted = code
                         .replace(/&/g, '&amp;')
                         .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/(static|public|protected|private|async|await|class|interface|export|import|from|const|let|var|return|if|else|for|while|await|async|try|catch|new|this|throw|new)/g, '<span style="color:#0ea5e9">$1</span>')
+                        .replace(/>/g, '&gt;');
+
+                    // Process strings first to avoid matching keywords inside them
+                    highlighted = highlighted
                         .replace(/('[^']*')/g, '<span style="color:#d946ef">$1</span>')
                         .replace(/("[^"]*")/g, '<span style="color:#d946ef">$1</span>')
-                        .replace(/(`[^`]*`)/g, '<span style="color:#d946ef">$1</span>')
-                        .replace(/(\/\/.+)/g, '<span style="color:#94a3b8">$1</span>');
+                        .replace(/(`[^`]*`)/g, '<span style="color:#d946ef">$1</span>');
+
+                    // Process keywords next, using word boundaries to avoid matching inside tags or larger words
+                    const keywords = ['static', 'public', 'protected', 'private', 'async', 'await', 'class', 'interface', 'export', 'import', 'from', 'const', 'let', 'var', 'return', 'if', 'else', 'for', 'while', 'try', 'catch', 'new', 'this', 'throw'];
+                    const keywordRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+                    
+                    highlighted = highlighted.replace(keywordRegex, (match, p1, offset, string) => {
+                        // Check if we are inside an HTML tag (very basic check)
+                        const before = string.substring(0, offset);
+                        const openTags = (before.match(/<span/g) || []).length;
+                        const closeTags = (before.match(/<\/span>/g) || []).length;
+                        if (openTags > closeTags) return match; // Skip if inside a span
+                        
+                        return `<span style="color:#0ea5e9">${match}</span>`;
+                    });
+
+                    // Comments last
+                    highlighted = highlighted.replace(/(\/\/.+)/g, '<span style="color:#94a3b8">$1</span>');
 
                     return `
                         <div style="display:flex; background:${isErrorLine ? '#fef2f2' : 'transparent'}; border-left: 3px solid ${isErrorLine ? '#ef4444' : 'transparent'}">
