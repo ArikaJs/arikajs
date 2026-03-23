@@ -15,7 +15,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/arikajs/arikajs.svg?style=flat-square)](https://github.com/arikajs/arikajs/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/arikajs/arikajs/pulls)
 
-[Quick Start](#quick-start) | [Examples](https://github.com/arikajs/examples) | [Community](https://discord.gg/arikajs)
+[Quick Start](#quick-start) | [Core Modules](#-the-arikajs-ecosystem) | [Documentation](https://arikajs.com) | [Discord](https://discord.gg/arikajs)
 
 </div>
 
@@ -23,435 +23,120 @@
 
 ## 🚀 What is ArikaJS?
 
-ArikaJS is a **modern, elegant, and powerful** Node.js framework that brings enterprise-grade features and developer-friendly patterns to the TypeScript/JavaScript ecosystem. Built from the ground up with TypeScript, ArikaJS provides a robust foundation for building scalable web applications and APIs with an intuitive, expressive syntax.
+ArikaJS is a **modern, elegant, and powerful** full-stack framework for Node.js. It is designed to provide an unparalleled developer experience by bringing enterprise-grade architecture patterns (inspired by Laravel and NestJS) into a native, high-performance TypeScript environment.
 
-### ✨ Key Features
-
-- 🎯 **Elegant Syntax** - Clean, expressive code that's a joy to write
-- 🔥 **TypeScript First** - Full TypeScript support with excellent type inference
-- 🛣️ **Powerful Routing** - Intuitive routing with implicit model binding
-- 💉 **Dependency Injection** - Built-in IoC container for clean architecture
-- 🗄️ **Active Record ORM** - Eloquent-inspired database layer
-- 🔐 **Authentication & Authorization** - Built-in auth system with guards and policies
-- ✅ **Validation** - Comprehensive request validation
-- 📧 **Mail & Notifications** - Easy email and notification system
-- 🔄 **Queue System** - Background job processing
-- 📦 **Service Providers** - Modular application architecture
-- 🎨 **Template Engine** - Flexible view rendering
-- ⚡ **Event System** - Decouple your application with powerful events and listeners
-- 🧪 **Testing Ready** - Built with testing in mind
-- 🛠️ **Global Helpers** - Intuitive functions like `app()`, `config()`, and `route()`
+Whether you're building a simple REST API or a complex enterprise monolith, ArikaJS provides the tools you need—from a powerful ORM and background queues to expressive routing and real-time event broadcasting.
 
 ---
 
-## 📦 Installation
+## ✨ Key Features
 
-### Option 1: Quick Start (Using npx)
+- 🎯 **Elegant Syntax** - Expressive, readable code that minimizes boilerplate.
+- 🔥 **TypeScript First** - Deeply integrated type safety with zero-config setup.
+- 🏛️ **Modular Monorepo** - Built as a collection of decoupled, high-quality packages.
+- 🗄️ **Active Record ORM** - An intuitive, Fluent interface for database interactions.
+- 💉 **IoC & Dependency Injection** - Powerful service container for decoupled architecture.
+- 🔐 **Auth & Authorization** - Guards, Policies, and multi-provider authentication.
+- 🔄 **Queue & Scheduler** - Background jobs and Cron-like task scheduling.
+- 🌍 **Localization (i18n)** - Built-in support for multi-language applications.
+- 📅 **Carbon Date API** - Elegant date and time manipulation.
+- 🎨 **Templating** - Lightning-fast Arika View engine with layout support.
+- 🧪 **First-Class Testing** - Built-in testing helpers and assertions.
 
-The fastest way to create a new ArikaJS project is using `npx`. No installation required!
+---
+
+## 📦 The ArikaJS Ecosystem
+
+ArikaJS is composed of specialized modules that can be used together or independently.
+
+| Package | Purpose |
+| :--- | :--- |
+| **`arikajs`** | The core framework wrapper and "glue" |
+| **`@arikajs/cli`** | Scaffolding, migrations, and local development |
+| **`@arikajs/database`** | Database layer, Schema builder, and ORM |
+| **`@arikajs/auth`** | Authentication (Web Session, JWT, API tokens) |
+| **`@arikajs/queue`** | Redis/Database/Sync background job processing |
+| **`@arikajs/scheduler`** | Fluid task scheduling for your application |
+| **`@arikajs/carbon`** | Powerful, fluent date manipulation (Carbon JS) |
+| **`@arikajs/view`** | Expressive template engine (Blade-inspired) |
+| **`@arikajs/cache`** | High-performance multi-driver caching |
+| **`@arikajs/mail`** | Fluent email API with SMTP, Log, and SES support |
+| **`@arikajs/events`** | Event-driven architecture with listeners |
+| **`@arikajs/validation`** | Powerful, schema-based request validation |
+
+---
+
+## 🚦 Quick Start
+
+Create your first ArikaJS project in seconds:
 
 ```bash
-# Create a new project
-npx @arikajs/cli new my-app
+# Scaffold a new application
+npx @arikajs/cli@latest new my-app
 
-# Navigate to your project
+# Navigate into the project
 cd my-app
 
-# Start developing
-npm run dev
-```
-
-### Option 2: Global Installation
-
-If you prefer to have the `arika` command available everywhere, you can install the CLI globally:
-
-```bash
-# Install the CLI globally
-npm install -g @arikajs/cli
-
-# Create a new project
-arika new my-app
-```
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-```
-
-Your application will be running at `http://localhost:8000` 🎉
-
-### Manual Installation
-
-```bash
-# Create a new project directory
-mkdir my-app && cd my-app
-
-# Initialize npm
-npm init -y
-
-# Install ArikaJS
-npm install arikajs
-
-# Install dev dependencies
-npm install -D @arikajs/cli typescript tsx @types/node
+# Install dependencies and start development
+npm install && arika serve --dev
 ```
 
 ---
 
-## 🏗️ Project Structure
+## 📖 Basic Examples
 
-```
-my-app/
-├── app/
-│   ├── Controllers/       # HTTP controllers
-│   ├── Models/           # Database models
-│   ├── Middleware/       # Custom middleware
-│   └── Http/
-│       └── Kernel.ts     # HTTP kernel configuration
-├── bootstrap/
-│   └── app.ts           # Application bootstrap
-├── config/              # Configuration files
-│   ├── app.ts
-│   ├── database.ts
-│   └── logging.ts
-├── database/
-│   └── migrations/      # Database migrations
-├── routes/
-│   └── web.ts          # Route definitions
-├── server.ts           # Application entry point
-├── .env                # Environment variables
-└── package.json
-```
-
----
-
-## 📚 Basic Usage
-
-### Routing
-
-Define routes with an elegant, expressive syntax:
-
+### Expressive Routing
 ```typescript
 import { Route } from 'arikajs';
 
-// Simple route
-Route.get('/', () => {
-    return { message: 'Welcome to ArikaJS!' };
-});
+Route.get('/', () => 'Hello World');
 
-// Route with parameters
-Route.get('/users/{id}', (request, id) => {
-    return { userId: id };
-});
-
-// Route groups with middleware
-Route.group({ middleware: 'auth' }, () => {
-    Route.get('/dashboard', [DashboardController, 'index']);
-    Route.post('/posts', [PostController, 'store']);
+Route.group({ prefix: 'api', middleware: 'auth' }, () => {
+    Route.get('/profile', [ProfileController, 'show']);
 });
 ```
 
-### Implicit Model Binding
-
-Automatically resolve models from route parameters:
-
+### Powerful ORM (Active Record)
 ```typescript
-import { Route } from 'arikajs';
-import User from './app/Models/User';
+const user = await User.where('email', 'prakash@example.com').first();
 
-// Register model binding
-Route.model('user', User);
-
-// The {user} parameter will automatically resolve to a User instance
-Route.get('/users/{user}', (request, user: User) => {
-    return {
-        message: 'User found!',
-        user: user
-    };
-});
+const posts = await user.posts().latest().get();
 ```
 
-### Controllers
-
-Create clean, organized controllers:
-
+### Background Jobs
 ```typescript
-import { Request, Response } from 'arikajs';
-import User from '../Models/User';
+import { dispatch } from '@arikajs/dispatcher';
 
-export class UserController {
-    async index(request: Request, response: Response) {
-        const users = await User.all();
-        return response.json(users);
-    }
-
-    async show(request: Request, response: Response) {
-        const user = await User.findOrFail(request.params.id);
-        return response.json(user);
-    }
-
-    async store(request: Request, response: Response) {
-        const user = await User.create(request.body);
-        return response.status(201).json(user);
-    }
-}
+await dispatch(new ProcessVideoJob(videoPath));
 ```
 
-### Models (Active Record)
-
-Work with databases using an elegant ORM:
-
+### Fluent Date Handling (Carbon)
 ```typescript
-import { Model } from 'arikajs';
+import { Carbon } from '@arikajs/carbon';
 
-export default class User extends Model {
-    protected static tableName = 'users';
-
-    // Define relationships
-    posts() {
-        return this.hasMany(Post);
-    }
-
-    // Custom methods
-    async sendWelcomeEmail() {
-        // Send email logic
-    }
-}
-
-// Usage
-const user = await User.find(1);
-const posts = await user.posts().get();
-
-const newUser = await User.create({
-    name: 'John Doe',
-    email: 'john@example.com'
-});
-```
-
-### Middleware
-
-Create custom middleware for request processing:
-
-```typescript
-import { MiddlewareHandler, Request, Response } from 'arikajs';
-
-export default class AuthMiddleware implements MiddlewareHandler {
-    async handle(request: Request, response: Response, next: Function) {
-        if (!request.headers.authorization) {
-            return response.status(401).json({ error: 'Unauthorized' });
-        }
-
-        return next();
-    }
-}
-```
-
-### Service Providers
-
-Organize your application with service providers:
-
-```typescript
-import { ServiceProvider } from 'arikajs';
-import { PaymentService } from './Services/PaymentService';
-
-export class PaymentServiceProvider extends ServiceProvider {
-    async register() {
-        this.app.singleton('payment', () => {
-            return new PaymentService(this.app.config().get('payment'));
-        });
-    }
-
-    async boot() {
-        // Bootstrap logic
-    }
-}
-```
-
-### 🛠️ Global Helpers
-
-ArikaJS provides several global helper functions to make your code more concise:
-
-```typescript
-import { app, config, route } from 'arikajs';
-
-// Access the application container
-const userService = app().make(UserService);
-
-// Get configuration values with defaults
-const debug = config('app.debug', false);
-
-// Generate URLs for named routes
-const profileUrl = route('users.show', { id: 1 });
-```
-
-### Database Migrations
-
-Manage your database schema with migrations:
-
-```typescript
-import { Migration, SchemaBuilder } from 'arikajs';
-
-export default class CreateUsersTable extends Migration {
-    async up(schema: SchemaBuilder) {
-        await schema.create('users', (table) => {
-            table.increments('id');
-            table.string('name');
-            table.string('email').unique();
-            table.string('password');
-            table.timestamps();
-        });
-    }
-
-    async down(schema: SchemaBuilder) {
-        await schema.dropIfExists('users');
-    }
-}
+const nextWeek = Carbon.now().addWeek().toDateTimeString();
+const diff = Carbon.parse(user.created_at).diffForHumans();
 ```
 
 ---
 
-## 🔧 Configuration
+## 🛠️ CLI Commands
 
-Configure your application in the `config/` directory:
-
-**config/app.ts**
-```typescript
-export default {
-    name: process.env.APP_NAME || 'ArikaJS',
-    env: process.env.NODE_ENV || 'development',
-    key: process.env.APP_KEY,
-    timezone: 'UTC',
-};
-```
-
-**config/database.ts**
-```typescript
-export default {
-    default: 'mysql',
-    connections: {
-        mysql: {
-            driver: 'mysql',
-            host: process.env.DB_HOST || 'localhost',
-            port: parseInt(process.env.DB_PORT || '3306'),
-            database: process.env.DB_DATABASE,
-            username: process.env.DB_USERNAME,
-            password: process.env.DB_PASSWORD,
-        },
-    },
-};
-```
-
----
-
-## 🎨 CLI Commands
-
-ArikaJS comes with a powerful CLI for common tasks:
+The ArikaJS CLI is your best friend during development.
 
 ```bash
-# Create a new application
-arika new my-app
-
-# Start development server
-arika serve --dev
-
-# Generate application key
-arika key:generate
-
-# Database migrations
-arika migrate
-arika migrate:rollback
-
-# Create migration
-arika make:migration create_posts_table
+arika list            # List all available commands
+arika help <command>  # Show detailed help for a specific command
+arika make:model      # Interactive menu to generate models/migrations
+arika migrate         # Run pending database migrations
+arika queue:work      # Start the background worker
 ```
 
 ---
-
-## 🧪 Testing
-
-ArikaJS is built with testing in mind:
-
-```typescript
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
-import app from './bootstrap/app';
-
-describe('User API', () => {
-    it('should return all users', async () => {
-        const response = await app.get('/api/users');
-        assert.strictEqual(response.status, 200);
-    });
-});
-```
-
----
-
-## 📖 Documentation
-
-Comprehensive documentation is available in the [GitHub repository](https://github.com/arikajs/arikajs).
-
-For guides and examples, check out:
-- [Installation Guide](https://github.com/arikajs/arikajs#installation)
-- [Routing](https://github.com/arikajs/arikajs#routing)
-- [Controllers](https://github.com/arikajs/arikajs#controllers)
-- [Database & ORM](https://github.com/arikajs/arikajs#models-active-record)
-- [Examples](https://github.com/arikajs/examples)
-
----
-
-## 🏗 Architecture
-
-```text
-arikajs/
-├── src/
-│   ├── Contracts
-│   │   └── Application.ts
-│   ├── http
-│   │   ├── Middleware
-│   │   │   ├── RequestLoggingMiddleware.ts
-│   │   │   ├── ValidateRequestMiddleware.ts
-│   │   │   └── ViewMiddleware.ts
-│   │   ├── Handler.ts
-│   │   └── Kernel.ts
-│   ├── providers
-│   │   ├── AuthServiceProvider.ts
-│   │   ├── DatabaseServiceProvider.ts
-│   │   ├── EventsServiceProvider.ts
-│   │   ├── FrameworkServiceProvider.ts
-│   │   ├── HttpServiceProvider.ts
-│   │   ├── LoggingServiceProvider.ts
-│   │   ├── SchedulerServiceProvider.ts
-│   │   ├── ValidationServiceProvider.ts
-│   │   └── ViewServiceProvider.ts
-│   ├── Application.ts
-│   ├── createApp.ts
-│   ├── helpers.ts
-│   └── index.ts
-├── tests/
-├── package.json
-├── tsconfig.json
-└── README.md
-```
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-```bash
-# Clone the repository
-git clone https://github.com/arikajs/arikajs.git
-
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-
-# Build the project
-npm run build
-```
+We love our community! Please see our [Contributing Guide](CONTRIBUTING.md) to learn how you can help make ArikaJS even better.
 
 ---
 
@@ -459,13 +144,11 @@ npm run build
 
 ArikaJS is open-sourced software licensed under the [MIT license](LICENSE).
 
----
+<div align="center">
 
-## 🙏 Acknowledgments
+**Built with ❤️ by [Prakash Tank](https://github.com/prakashtank) & The ArikaJS Team**
 
-ArikaJS draws inspiration from the best practices and patterns of modern web frameworks, including elegant API design, developer experience focus, and enterprise-grade architecture.
-
----
+</div>
 
 ## 💬 Community & Support
 

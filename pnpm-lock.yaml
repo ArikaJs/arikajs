@@ -24,6 +24,28 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  arikajs-demo-app:
+    dependencies:
+      arikajs:
+        specifier: workspace:*
+        version: link:../packages/arikajs
+      tsconfig-paths:
+        specifier: ^4.0.0
+        version: 4.2.0
+    devDependencies:
+      '@arikajs/cli':
+        specifier: workspace:*
+        version: link:../packages/cli
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.37
+      tsx:
+        specifier: ^4.0.0
+        version: 4.21.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   flowboard:
     dependencies:
       '@types/bcryptjs':

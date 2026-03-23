@@ -1,0 +1,22 @@
+{
+  "name": "arikajs-demo-app",
+  "version": "1.0.0",
+  "description": "ArikaJS API Project",
+  "private": true,
+  "scripts": {
+    "dev": "arika serve --dev",
+    "start": "node -r tsconfig-paths/register dist/server.js",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "arikajs": "workspace:*",
+    "tsconfig-paths": "^4.0.0"
+  },
+  "devDependencies": {
+    "@arikajs/cli": "workspace:*",
+    "typescript": "^5.0.0",
+    "tsx": "^4.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "author": "Prakash Tank"
+}
