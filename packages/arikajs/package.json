@@ -1,6 +1,6 @@
 {
   "name": "arikajs",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "The ArikaJS Framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -20,6 +20,7 @@
     "@arikajs/authorization": "workspace:*",
     "@arikajs/cache": "workspace:*",
     "@arikajs/carbon": "workspace:^",
+    "@arikajs/config": "workspace:*",
     "@arikajs/console": "workspace:*",
     "@arikajs/database": "workspace:*",
     "@arikajs/dispatcher": "workspace:*",

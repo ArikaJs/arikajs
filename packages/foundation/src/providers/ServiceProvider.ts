@@ -25,4 +25,11 @@ export abstract class ServiceProvider<T extends Application = Application> {
   boot(): void | Promise<void> {
     // Optional to override
   }
+
+  /**
+   * Register CLI commands with the application.
+   */
+  protected loadCommands(commands: any[]) {
+    this.app.registerCommands(commands);
+  }
 }

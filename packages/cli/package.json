@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/cli",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "The command-line interface for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -41,6 +41,7 @@
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/cli#readme",
   "dependencies": {
+    "arikajs": "workspace:*",
     "@arikajs/benchmark": "workspace:*",
     "@arikajs/console": "workspace:*",
     "@arikajs/database": "workspace:*",

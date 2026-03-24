@@ -18,7 +18,6 @@ export class Bootstrap {
         registry.register(HelpCommand);
         registry.register(KeyGenerateCommand);
         registry.register(BenchmarkCommand);
-        registry.registerLazy('docs:generate', 'Generate API documentation, Postman collection, and OpenAPI spec', () => import('./Commands/DocsGenerateCommand'));
         registry.registerLazy('route:list', 'List all registered routes', () => import('./Commands/RouteListCommand'));
 
         // Database-related commands (Lazy-loaded)
@@ -62,12 +61,21 @@ export class Bootstrap {
         registry.registerLazy('auth:install', 'Interactive menu to scaffold authentication system', () => import('./Commands/AuthInstallCommand'));
         registry.registerLazy('auth:install:web', 'Scaffold web authentication views and routes (Session-based)', () => import('./Commands/AuthWebInstallCommand'));
         registry.registerLazy('auth:install:api', 'Scaffold API authentication routes (JWT-based)', () => import('./Commands/AuthApiInstallCommand'));
+        registry.registerLazy('socialite:install', 'Install and configure @arikajs/socialite for the application', () => import('./Commands/SocialiteInstallCommand'));
         registry.registerLazy('storage:link', 'Create a symbolic link from "storage/app/public" to "public/storage"', () => import('./Commands/StorageLinkCommand'));
 
         const app = await ApplicationLoader.load();
 
-        if (app.instance && typeof app.instance.boot === 'function') {
-            await app.instance.boot();
+        if (app.instance) {
+            if (typeof app.instance.boot === 'function') {
+                await app.instance.boot();
+            }
+
+            // Discover and register commands from service providers
+            if (typeof app.instance.getCommands === 'function') {
+                const dynamicCommands = app.instance.getCommands();
+                dynamicCommands.forEach((command: any) => registry.register(command));
+            }
         }
 
         // In the future, this will discovery commands from @arikajs dependencies

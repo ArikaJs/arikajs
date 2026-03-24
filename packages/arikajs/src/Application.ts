@@ -23,6 +23,7 @@ export class Application extends FoundationApplication implements ApplicationCon
     protected router: Router;
     protected server?: any;
     protected isTerminating: boolean = false;
+    protected _commands: any[] = [];
 
     constructor(basePath: string = process.cwd()) {
         super(basePath);
@@ -237,6 +238,20 @@ export class Application extends FoundationApplication implements ApplicationCon
                 process.exit(0);
             }, 50);
         }
+    }
+
+    /**
+     * Register CLI commands with the application.
+     */
+    public registerCommands(commands: any[]) {
+        this._commands = [...this._commands, ...commands];
+    }
+
+    /**
+     * Get all registered commands.
+     */
+    public getCommands(): any[] {
+        return this._commands;
     }
 
     /**

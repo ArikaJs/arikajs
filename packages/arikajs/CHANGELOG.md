@@ -1,5 +1,38 @@
 # arikajs
 
+## 0.10.7
+
+### Patch Changes
+
+- - Restored package hoisting (.npmrc).
+  - Fixed workspace dependency declarations for internal packages.
+  - Added explicit type dependencies (tsx, @types/node).
+  - Formatted timestamp to YYYY-MM-DD HH:MM:SS format natively.
+- Updated dependencies
+  - @arikajs/auth@0.10.7
+  - @arikajs/authorization@0.10.7
+  - @arikajs/cache@0.10.7
+  - @arikajs/carbon@0.10.7
+  - @arikajs/config@0.10.7
+  - @arikajs/console@0.10.7
+  - @arikajs/database@0.10.7
+  - @arikajs/dispatcher@0.10.7
+  - @arikajs/encryption@0.10.7
+  - @arikajs/events@0.10.7
+  - @arikajs/foundation@0.10.7
+  - @arikajs/http@0.10.7
+  - @arikajs/localization@0.10.7
+  - @arikajs/logging@0.10.7
+  - @arikajs/mail@0.10.7
+  - @arikajs/middleware@0.10.7
+  - @arikajs/queue@0.10.7
+  - @arikajs/router@0.10.7
+  - @arikajs/scheduler@0.10.7
+  - @arikajs/session@0.10.7
+  - @arikajs/storage@0.10.7
+  - @arikajs/validation@0.10.7
+  - @arikajs/view@0.10.7
+
 ## 0.10.6
 
 ### Patch Changes

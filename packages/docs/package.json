@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/docs",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "API documentation and Postman collection generator for ArikaJS.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -23,7 +23,9 @@
     "documentation"
   ],
   "dependencies": {
-    "@arikajs/router": "workspace:*"
+    "@arikajs/console": "workspace:*",
+    "@arikajs/router": "workspace:*",
+    "@arikajs/foundation": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

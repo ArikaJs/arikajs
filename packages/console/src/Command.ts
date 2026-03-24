@@ -76,16 +76,16 @@ export abstract class Command {
         return await this.output.ask(question, defaultValue);
     }
 
-    protected progressStart(total: number) {
-        this.output.progressStart(total);
+    protected progressStart(total: number, message: string = '') {
+        this.output.progressStart(total, message);
     }
 
-    protected progressAdvance(step: number = 1) {
-        this.output.progressAdvance(step);
+    protected progressAdvance(step: number = 1, message: string = '') {
+        this.output.progressAdvance(step, message);
     }
 
-    protected progressFinish() {
-        this.output.progressFinish();
+    protected progressFinish(message: string = '') {
+        this.output.progressFinish(message);
     }
 
     protected async task(message: string, task: () => Promise<any> | any): Promise<any> {

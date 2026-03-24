@@ -113,51 +113,89 @@ export class Output {
      */
     protected progressTotal: number = 0;
     protected progressCurrent: number = 0;
+    protected progressMessage: string = '';
 
-    public progressStart(total: number) {
+    public progressStart(total: number, message: string = '') {
         this.progressTotal = total;
         this.progressCurrent = 0;
+        this.progressMessage = message;
         this.renderProgressBar();
     }
 
-    public progressAdvance(step: number = 1) {
+    public progressAdvance(step: number = 1, message: string = '') {
         this.progressCurrent += step;
+        if (message) this.progressMessage = message;
         this.renderProgressBar();
     }
 
-    public progressFinish() {
+    public progressFinish(message: string = '') {
         this.progressCurrent = this.progressTotal;
+        if (message) this.progressMessage = message;
         this.renderProgressBar();
         this.writeln('');
     }
 
     protected renderProgressBar() {
         const width = 40;
-        const progress = Math.min(1, this.progressCurrent / this.progressTotal);
+        const progress = Math.min(1, this.progressTotal > 0 ? this.progressCurrent / this.progressTotal : 0);
         const filledWidth = Math.round(width * progress);
         const emptyWidth = width - filledWidth;
 
-        const bar = '█'.repeat(filledWidth) + '░'.repeat(emptyWidth);
+        const bar = '●'.repeat(filledWidth) + '○'.repeat(emptyWidth);
         const percentage = Math.round(progress * 100);
 
         readline.cursorTo(process.stdout, 0);
-        process.stdout.write(` ${bar} ${percentage}% (${this.progressCurrent}/${this.progressTotal})`);
+        readline.clearLine(process.stdout, 0);
+        process.stdout.write(` ${this.colors.cyan}${bar}${this.colors.reset} ${this.colors.bold}${percentage}%${this.colors.reset} ${this.colors.gray}${this.progressMessage}${this.colors.reset}`);
+    }
+
+    /**
+     * Spinner support.
+     */
+    protected spinnerIndex = 0;
+    protected spinnerTimer: any = null;
+    protected spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    protected spinnerMessage = '';
+
+    protected startSpinner(message: string) {
+        this.spinnerMessage = message;
+        this.spinnerIndex = 0;
+        this.spinnerTimer = setInterval(() => {
+            const frame = this.spinnerFrames[this.spinnerIndex];
+            readline.cursorTo(process.stdout, 0);
+            process.stdout.write(`${this.colors.cyan}${frame}${this.colors.reset} ${message} ... `);
+            this.spinnerIndex = (this.spinnerIndex + 1) % this.spinnerFrames.length;
+        }, 80);
+    }
+
+    protected stopSpinner(success: boolean) {
+        if (this.spinnerTimer) {
+            clearInterval(this.spinnerTimer);
+            this.spinnerTimer = null;
+        }
+
+        readline.cursorTo(process.stdout, 0);
+        readline.clearLine(process.stdout, 0);
+
+        if (success) {
+            this.writeln(`${this.colors.green}✔${this.colors.reset} ${this.spinnerMessage} ${this.colors.green}DONE${this.colors.reset}`);
+        } else {
+            this.writeln(`${this.colors.red}✖${this.colors.reset} ${this.spinnerMessage} ${this.colors.red}FAIL${this.colors.reset}`);
+        }
     }
 
     /**
      * Run a task with a status indicator.
      */
     public async task(message: string, task: () => Promise<any> | any): Promise<any> {
-        this.write(`${message} ... `);
+        this.startSpinner(message);
 
         try {
             const result = await task();
-            readline.cursorTo(process.stdout, message.length + 5);
-            this.writeln(`${this.colors.green}DONE${this.colors.reset}`);
+            this.stopSpinner(true);
             return result;
         } catch (error: any) {
-            readline.cursorTo(process.stdout, message.length + 5);
-            this.writeln(`${this.colors.red}FAIL${this.colors.reset}`);
+            this.stopSpinner(false);
             this.error(error.message);
             throw error;
         }

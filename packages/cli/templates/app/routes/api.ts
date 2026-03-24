@@ -20,7 +20,7 @@ Route.get('/status', () => {
     return {
         status: 'UP',
         uptime: process.uptime(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toLocaleString('sv-SE', { timeZone: process.env.APP_TIMEZONE })
     };
 });
 

@@ -286,6 +286,23 @@ export class Application {
   }
 
   /**
+   * Register CLI commands with the application.
+   */
+  registerCommands(commands: any[]): void {
+    // This is a default implementation. Subclasses can override it for more specialized behavior.
+    // We store it in the container for potential use by other services.
+    const current = this.container.has('commands') ? this.container.make<any[]>('commands') : [];
+    this.container.instance('commands', [...current, ...commands]);
+  }
+
+  /**
+   * Get all registered commands.
+   */
+  getCommands(): any[] {
+    return this.container.has('commands') ? this.container.make<any[]>('commands') : [];
+  }
+
+  /**
    * Check if the application has been booted.
    */
   isBooted(): boolean {

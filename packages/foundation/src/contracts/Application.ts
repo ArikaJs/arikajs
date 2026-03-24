@@ -17,4 +17,6 @@ export interface Application {
     extend<T = any>(token: any, callback: (instance: T) => T): void;
     terminate(): Promise<void>;
     isBooted(): boolean;
+    registerCommands(commands: any[]): void;
+    getCommands?(): any[];
 }

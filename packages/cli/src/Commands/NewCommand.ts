@@ -30,17 +30,41 @@ export class NewCommand extends Command {
         try {
             const templatePath = templateManager.resolveTemplatePath();
 
-            await this.task(`Scaffolding project in ${targetDir}`, async () => {
-                templateManager.copyTemplate(templatePath, targetDir, name);
-                templateManager.setupEnvironmentFiles(targetDir, name);
-            });
+            this.progressStart(100, 'initializing project scaffolding...');
+
+            // Stage 1: Scaffolding (15%)
+            templateManager.copyTemplate(templatePath, targetDir, name);
+            this.progressAdvance(15, 'setting up environment and files...');
+
+            // Stage 2: Environment setup (10%)
+            templateManager.setupEnvironmentFiles(targetDir, name);
+            this.progressAdvance(10, shouldInstall ? 'preparing dependency installation...' : 'finishing project setup...');
 
             if (shouldInstall) {
-                this.writeln('');
-                this.info(' 📦 Installing dependencies...');
-                this.writeln('');
-                await this.installDependencies(targetDir);
+                // Stage 3: Dependency installation (75%)
+                // Since npm install takes a long time, we'll use a timer to simulate progress up to 95%
+                // while the installation runs in the background.
+                const installPromise = this.installDependencies(targetDir, true);
+                
+                let currentSubPercent = 0;
+                const progressInterval = setInterval(() => {
+                    // Slowly increment to 95% total (we've already done 25%)
+                    // 75% total is the target for this stage
+                    if (currentSubPercent < 70) {
+                        const step = Math.min(2, 70 - currentSubPercent);
+                        currentSubPercent += step;
+                        this.progressAdvance(step, 'installing dependencies (this may take a few minutes)...');
+                    }
+                }, 1500);
+
+                try {
+                    await installPromise;
+                } finally {
+                    clearInterval(progressInterval);
+                }
             }
+
+            this.progressFinish('Project created successfully!');
 
             this.writeln('');
             this.success('Project created successfully!');
@@ -56,12 +80,13 @@ export class NewCommand extends Command {
             this.writeln('');
 
         } catch (error: any) {
+            this.progressFinish('Project setup failed');
             this.writeln('');
             this.error(`Failed to create project: ${error.message}`);
         }
     }
 
-    private async installDependencies(targetDir: string): Promise<void> {
+    private async installDependencies(targetDir: string, silent: boolean = false): Promise<void> {
         return new Promise((resolve, reject) => {
             const pkgPath = path.join(targetDir, 'package.json');
             let pkgObj: any = null;
@@ -98,7 +123,7 @@ export class NewCommand extends Command {
                 '--no-fund'
             ], {
                 cwd: targetDir,
-                stdio: 'inherit',
+                stdio: silent ? 'pipe' : 'inherit',
                 shell: true
             });
 

@@ -1,112 +1,95 @@
-## Arika Docs
+# @arikajs/docs
 
-`@arikajs/docs` is the **documentation engine** of the ArikaJS ecosystem.
+<div align="center">
 
-It allows you to automatically generate high-quality API documentation, Postman collections, and OpenAPI specifications by analyzing your application's routes.
+**Modern, Automated, and Multi-Format Documentation for ArikaJS**
 
-The goal of this package is to eliminate the manual work of keeping documentation in sync with your codebase.
+[![npm version](https://img.shields.io/npm/v/@arikajs/docs.svg?style=flat-square)](https://www.npmjs.com/package/@arikajs/docs)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
----
-
-### Status
-
-- **Stage**: Beta / v0.x
-- **Extensibility**: Driver-based architecture (add your own documentation formats)
-- **Features**:
-  - Route metadata extraction from `@arikajs/router`
-  - Postman Collection (v2.1.0) generation
-  - Arika-themed interactive HTML documentation
-  - Markdown (DOCS.md) generation
-  - OpenAPI 3.0 specification generation
-  - **New**: Route filtering by prefix (e.g., generate docs only for `api/v1`)
+</div>
 
 ---
 
-## Features
+## 🚀 Purpose
 
-- **🚀 Extensible architecture**
-  - Uses a **Driver Pattern** for all documentation formats.
-  - Easily add new drivers by implementing the `DocDriver` interface.
+`@arikajs/docs` is the official documentation engine for the ArikaJS ecosystem. It eliminates the manual work of maintaining API docs by analyzing your application's routes and automatically generating high-quality artifacts in multiple formats.
 
-- **🎨 Multi-Format Generation**
-  - **HTML**: A premium, interactive web page for your API.
-  - **Postman**: Ready-to-import JSON collection with pre-configured headers.
-  - **OpenAPI**: Industry-standard Swagger/OpenAPI 3.0 specification.
-  - **Markdown**: Clean, readable `DOCS.md` for GitHub or local documentation.
-
-- **🔍 Intelligent Route Analysis**
-  - **Prefix Filtering**: Only document specific sections of your app.
-  - Automatically groups endpoints by prefix (e.g., `api`, `admin`).
-  - Captures route names, methods, and full path hierarchies.
-  - Displays middleware and parameter information.
-
-- **Environment Support**
-  - Automatically generates Postman environment JSON with your `base_url`.
+With one command, you can have a full suite of Postman collections, OpenAPI specs, and interactive HTML documentation that stays perfectly in sync with your codebase.
 
 ---
 
-## Installation
+## ✨ Feature Highlights
+
+- 🎨 **Multi-Format Generation** - HTML, Postman (v2.1), OpenAPI (3.0), and Markdown.
+- 🔍 **Intelligent Analysis** - Automatically groups endpoints and detects parameters.
+- 📡 **Live Sync** - Generates docs based on your actual route definitions.
+- 🎯 **Prefix Filtering** - Generate documentation for specific API versions or modules.
+- 🍱 **Modular & Optional** - Install it only when you need it.
+- 🪄 **Dynamic CLI Integration** - Adds `docs:*` commands to your Arika CLI automatically.
+
+---
+
+## 📦 Installation
+
+Install the package via npm:
 
 ```bash
 npm install @arikajs/docs
 ```
 
-This package is designed to be used with the ArikaJS CLI but can also be used as a standalone library.
-
----
-
-## Usage (via CLI)
-
-The easiest way to generate documentation is using the ArikaJS CLI:
+Once installed, use the Arika CLI to safely scaffold your documentation config:
 
 ```bash
-arika docs:generate
+node arika docs:install
 ```
 
-This will create a `docs/` directory in your project root containing all generation artifacts.
+### 🛠️ Configuration
 
----
+The installation command creates a `config/docs.ts` file. You can customize your output paths and exclusions there:
 
-## Standalone Usage
-
-```ts
-import { DocumentationGenerator } from '@arikajs/docs';
-
-const generator = new DocumentationGenerator();
-generator.generateAll('My App Name', './docs-output');
+```typescript
+export default {
+    title: 'My Awesome API',
+    version: '1.0.0',
+    output: {
+        html: './docs/html',
+        postman: './docs/postman_collection.json',
+        openapi: './docs/openapi.yaml',
+    }
+};
 ```
 
 ---
 
-## Project Structure
+## 📚 Basic Usage
 
-Inside the `docs` package:
+### 1. Register the Provider
+Add the `DocsServiceProvider` to your `bootstrap/app.ts` to enable documentation commands:
 
-- `src/`
-  - `PostmanGenerator.ts` – Handles Postman JSON generation
-  - `HtmlGenerator.ts` – Handles premium HTML documentation
-  - `MarkdownGenerator.ts` – Handles Markdown generation
-  - `OpenApiGenerator.ts` – Handles OpenAPI 3.0 generation
-  - `Generator.ts` – The main orchestrator
-  - `index.ts` – Public exports
+```typescript
+import { DocsServiceProvider } from '@arikajs/docs';
 
----
+app.register(DocsServiceProvider);
+```
 
-## Philosophy
+### 2. Generate Documentation
+Run the generator command to scan your routes and create the artifacts:
 
-> “Your code is the source of truth; your documentation should reflect it instantly.”
-
----
-
-## Contributing
-
-Contributions are welcome, especially around:
-- Adding support for JSDoc-based parameter descriptions.
-- Enhancing the HTML documentation search and "Try it out" features.
-- Adding support for more documentation formats.
+```bash
+node arika docs:generate
+```
 
 ---
 
-## License
+## 🛡️ Safety Policy
 
-`@arikajs/docs` is open-sourced software licensed under the **MIT license**.
+The `@arikajs/docs` package follows a strict **non-destructive** installation policy:
+- `docs:install` will never overwrite your existing `config/docs.ts` unless the `--force` flag is used.
+- It will never modify or delete your application's route logic or controllers.
+
+---
+
+## 📝 License
+
+ArikaJS Docs is open-sourced software licensed under the [MIT license](LICENSE).

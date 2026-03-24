@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/events",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "Event dispatching and listener system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -41,6 +41,7 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.11.24",
+    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   },
   "author": "Prakash Tank"

@@ -1,0 +1,62 @@
+
+export default {
+    /*
+    |--------------------------------------------------------------------------
+    | Socialite Providers
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the OAuth providers that you would like to use
+    | in your application. You may add as many providers as you wish.
+    |
+    */
+
+    providers: {
+        google: {
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            redirect: process.env.GOOGLE_REDIRECT_URI,
+        },
+
+        github: {
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            redirect: process.env.GITHUB_REDIRECT_URI,
+        },
+
+        facebook: {
+            client_id: process.env.FACEBOOK_CLIENT_ID,
+            client_secret: process.env.FACEBOOK_CLIENT_SECRET,
+            redirect: process.env.FACEBOOK_REDIRECT_URI,
+        },
+
+        linkedin: {
+            client_id: process.env.LINKEDIN_CLIENT_ID,
+            client_secret: process.env.LINKEDIN_CLIENT_SECRET,
+            redirect: process.env.LINKEDIN_REDIRECT_URI,
+        },
+
+        gitlab: {
+            client_id: process.env.GITLAB_CLIENT_ID,
+            client_secret: process.env.GITLAB_CLIENT_SECRET,
+            redirect: process.env.GITLAB_REDIRECT_URI,
+        },
+
+        slack: {
+            client_id: process.env.SLACK_CLIENT_ID,
+            client_secret: process.env.SLACK_CLIENT_SECRET,
+            redirect: process.env.SLACK_REDIRECT_URI,
+        },
+
+        x: {
+            client_id: process.env.X_CLIENT_ID,
+            client_secret: process.env.X_CLIENT_SECRET,
+            redirect: process.env.X_REDIRECT_URI,
+        },
+
+        twitter: {
+            client_id: process.env.X_CLIENT_ID,
+            client_secret: process.env.X_CLIENT_SECRET,
+            redirect: process.env.X_REDIRECT_URI,
+        },
+    },
+};

@@ -17,6 +17,8 @@ export interface Application extends HttpApplicationContract {
     tagged<T = any>(tag: string): T[];
     extend<T = any>(token: any, callback: (instance: T) => T): void;
     register(provider: any): void;
+    registerCommands(commands: any[]): void;
+    getCommands(): any[];
     boot(): Promise<void>;
     run(): Promise<void>;
     terminate(): Promise<void>;

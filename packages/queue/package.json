@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/queue",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "Asynchronous job processing for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
+    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   },
   "author": "Prakash Tank"

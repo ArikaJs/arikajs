@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/http",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "Native HTTP layer for the ArikaJS framework.",
   "repository": {
     "type": "git",
@@ -39,6 +39,7 @@
     "@types/busboy": "^1.5.4",
     "@types/cookie": "^0.6.0",
     "@types/node": "^20.11.24",
+    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   },
   "author": "Prakash Tank"

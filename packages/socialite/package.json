@@ -1,0 +1,40 @@
+{
+  "name": "@arikajs/socialite",
+  "version": "0.10.7",
+  "description": "Modern OAuth authentication for ArikaJS applications.",
+  "type": "module",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:tests": "tsc -p tsconfig.test.json",
+    "clean": "rm -rf dist",
+    "test": "npm run build && npm run build:tests && node --test 'dist/tests/**/*.test.js'",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "dependencies": {
+    "@arikajs/foundation": "workspace:*",
+    "@arikajs/http": "workspace:*",
+    "axios": "^1.6.7",
+    "query-string": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
+  },
+  "author": "Prakash Tank",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/socialite"
+  },
+  "bugs": {
+    "url": "https://github.com/ArikaJs/arikajs/issues"
+  },
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/socialite#readme"
+}

@@ -4,4 +4,7 @@ export * from './Generator';
 export * from './MarkdownGenerator';
 export * from './PostmanGenerator';
 export * from './OpenApiGenerator';
-export * from './HtmlGenerator';
+export * from './HtmlGenerator.js';
+export { DocsServiceProvider } from './DocsServiceProvider.js';
+export { DocsGenerateCommand } from './Commands/DocsGenerateCommand.js';
+export { DocsInstallCommand } from './Commands/DocsInstallCommand.js';
