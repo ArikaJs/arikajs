@@ -29,21 +29,6 @@ importers:
 
   flowboard:
     dependencies:
-      '@arikajs/authorization':
-        specifier: workspace:*
-        version: link:../packages/authorization
-      '@arikajs/console':
-        specifier: workspace:*
-        version: link:../packages/console
-      '@arikajs/database':
-        specifier: workspace:*
-        version: link:../packages/database
-      '@arikajs/http':
-        specifier: workspace:*
-        version: link:../packages/http
-      '@arikajs/queue':
-        specifier: workspace:*
-        version: link:../packages/queue
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6

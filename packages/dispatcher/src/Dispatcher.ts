@@ -199,8 +199,35 @@ export class Dispatcher {
             resolvedHandler = plan.resolvedHandler;
             pipeline = plan.pipeline;
         } else {
-            // Safety fallback
-            resolvedHandler = route.handler;
+            // Fallback for non-plan routes (safety)
+            const handler = route.handler;
+            let controllerMiddleware: any[] = [];
+            
+            if (Array.isArray(handler)) {
+                if (!this.controllerResolver) {
+                    throw new Error('Container required for controller resolution.');
+                }
+                const resolved = this.controllerResolver.resolve(handler);
+                resolvedHandler = resolved;
+
+                if (typeof resolved.controller.getMiddleware === 'function') {
+                    controllerMiddleware = resolved.controller.getMiddleware() || [];
+                } else if (resolved.controller.constructor && resolved.controller.constructor.middleware) {
+                    controllerMiddleware = resolved.controller.constructor.middleware;
+                }
+            } else if (typeof handler === 'function') {
+                resolvedHandler = handler;
+            } else {
+                throw new Error('Invalid route handler.');
+            }
+            
+            const middleware = [...(route.middleware || []), ...controllerMiddleware];
+            if (middleware.length > 0) {
+                pipeline = new Pipeline<Request, Response>(this.container);
+                pipeline.setMiddlewareGroups(this.middlewareGroups);
+                pipeline.setAliases(this.routeMiddleware);
+                pipeline.pipe(middleware);
+            }
         }
 
         // 2. Execute Pipeline or direct handler

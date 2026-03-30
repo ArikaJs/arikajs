@@ -97,14 +97,34 @@ export class RouteMatcher {
         if (node.routes.length > 0) {
             const route = node.routes.find(r => r.method === normalizedMethod || r.method === 'ANY');
             if (route) {
-                const hasParams = collectedValues.length > 0;
+                // LAST-MILE: Validate constraints if any
+                if (route.regex && !route.regex.test(path)) {
+                    return null;
+                }
+
+                // BACKWARD COMPATIBILITY: Lazy Proxy for params
+                const params = new Proxy({}, {
+                    get: (target, key: string) => {
+                        const idx = route.paramKeys ? route.paramKeys.indexOf(key) : -1;
+                        return idx !== -1 ? collectedValues[idx] : undefined;
+                    },
+                    ownKeys: () => route.paramKeys || [],
+                    getOwnPropertyDescriptor: (target, key: string) => {
+                        if (route.paramKeys && route.paramKeys.includes(key)) {
+                            return {
+                                enumerable: true,
+                                configurable: true,
+                                value: collectedValues[route.paramKeys.indexOf(key)]
+                            };
+                        }
+                        return undefined;
+                    }
+                });
                 
-                // Lazy-params: We avoid building the object here. 
-                // The Dispatcher will build it only if required.
                 return { 
                     route, 
-                    params: collectedValues as any, // Temporary array-based params
-                    hasParams 
+                    params,
+                    hasParams: collectedValues.length > 0
                 };
             }
         }
