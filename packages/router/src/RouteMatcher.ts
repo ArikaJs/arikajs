@@ -10,10 +10,12 @@ class RadixNode {
 export class RouteMatcher {
     private root: RadixNode = new RadixNode();
     private isBuilt = false;
+    private staticPathMap: Map<string, any[]> = new Map();
 
     private buildTree() {
         const routes = RouteRegistry.getInstance().getRoutes();
         this.root = new RadixNode(); // Reset root
+        this.staticPathMap.clear(); // Reset static map
         for (const route of routes) {
             this.insert(route);
         }
@@ -21,6 +23,15 @@ export class RouteMatcher {
     }
 
     private insert(route: any) {
+        // Fast-path: Literal O(1) lookup index
+        const isStatic = route.path.indexOf(':') === -1 && route.path.indexOf('{') === -1;
+        if (isStatic) {
+            if (!this.staticPathMap.has(route.path)) {
+                this.staticPathMap.set(route.path, []);
+            }
+            this.staticPathMap.get(route.path)!.push(route);
+        }
+
         let node = this.root;
         const parts = route.path.split('/').filter(Boolean);
 
@@ -43,50 +54,58 @@ export class RouteMatcher {
     public match(method: string, path: string): MatchedRoute | null {
         if (!this.isBuilt) this.buildTree();
 
-        let node = this.root;
-        const normalizedPath = path.split('?')[0];
-        const parts = normalizedPath.split('/').filter(Boolean);
-        const collectedValues: string[] = [];
         const normalizedMethod = method.toUpperCase();
 
-        for (let i = 0; i < parts.length; i++) {
-            const part = parts[i];
-            const nextNode = node.children.get(part);
-            if (nextNode) {
-                node = nextNode;
-            } else if (node.paramNode) {
-                collectedValues.push(part);
-                node = node.paramNode;
-            } else {
-                return null;
+        // 1. Literal O(1) Fast-Path (The Fastify "Literal Jump")
+        const staticRoutes = this.staticPathMap.get(path);
+        if (staticRoutes) {
+            for (let i = 0; i < staticRoutes.length; i++) {
+                const route = staticRoutes[i];
+                if (route.method === normalizedMethod || route.method === 'ANY') {
+                    return { route, params: {}, hasParams: false };
+                }
+            }
+        }
+
+        // 2. Pointer-Based Scanner (The Fastify "Radix Scan")
+        let node = this.root;
+        const collectedValues: string[] = [];
+        const len = path.length;
+        let start = 1; // Skip the leading slash
+
+        if (len > 1) {
+            while (start < len) {
+                let end = start;
+                while (end < len && path[end] !== '/') end++;
+                
+                const part = path.substring(start, end);
+                const nextNode = node.children.get(part);
+                
+                if (nextNode) {
+                    node = nextNode;
+                } else if (node.paramNode) {
+                    collectedValues.push(part);
+                    node = node.paramNode;
+                } else {
+                    return null; // Branch exhausted
+                }
+
+                start = end + 1;
             }
         }
 
         if (node.routes.length > 0) {
-            // Find a route that matches the method OR has method 'ANY'
             const route = node.routes.find(r => r.method === normalizedMethod || r.method === 'ANY');
             if (route) {
-                const params: Record<string, string> = {};
-                const paramKeys = route.paramKeys || [];
+                const hasParams = collectedValues.length > 0;
                 
-                // Map collected values to the route's specific param keys
-                for (let i = 0; i < Math.min(collectedValues.length, paramKeys.length); i++) {
-                    params[paramKeys[i]] = collectedValues[i];
-                }
-
-                // If there are constraints, verify them
-                if (route.constraints && Object.keys(route.constraints).length > 0) {
-                    for (const [key, pattern] of Object.entries(route.constraints)) {
-                        if (params[key]) {
-                            const regex = new RegExp(`^${pattern}$`);
-                            if (!regex.test(params[key])) {
-                                return null;
-                            }
-                        }
-                    }
-                }
-
-                return { route, params, hasParams: Object.keys(params).length > 0 };
+                // Lazy-params: We avoid building the object here. 
+                // The Dispatcher will build it only if required.
+                return { 
+                    route, 
+                    params: collectedValues as any, // Temporary array-based params
+                    hasParams 
+                };
             }
         }
 

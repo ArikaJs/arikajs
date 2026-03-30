@@ -11,22 +11,31 @@ export class MethodInvoker {
     /**
      * Invoke the handler (closure or controller method) with injected parameters.
      */
-    public async invoke(
+    public invoke(
         handler: Function | { controller: any; method: string },
         request: Request,
         response: Response,
-        params: Record<string, any>
-    ): Promise<any> {
+        params: any
+    ): Promise<any> | any {
+        const paramValues = Array.isArray(params) ? params : (params ? Object.values(params) : []);
+
+        // Fast-path: Skip container overhead for simple handlers
+        if (typeof handler === 'function') {
+            if (handler.length <= 3 && !(handler as any).inject) {
+                return (handler as any)(request, response, ...paramValues);
+            }
+        }
+
         // Advanced DI via Container
         if (this.container && typeof this.container.call === 'function') {
-            return await this.container.call(handler, { request, response, ...params });
+            return this.container.call(handler, { request, response, ...params });
         }
 
         if (typeof handler === 'function') {
-            return await handler(request, response, ...Object.values(params));
+            return (handler as any)(request, response, ...paramValues);
         }
 
-        const { controller, method } = handler;
-        return await controller[method](request, response, ...Object.values(params));
+        const { controller, method } = (handler as any);
+        return controller[method](request, response, ...paramValues);
     }
 }

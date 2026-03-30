@@ -89,7 +89,7 @@ export class Response {
         if (status) {
             this.status(status);
         }
-        this._content = JSON.stringify(data);
+        this._content = Buffer.from(JSON.stringify(data));
         this.header('Content-Type', 'application/json');
         return this;
     }
@@ -135,9 +135,19 @@ export class Response {
     }
 
     /**
-     * Get the current content.
+     * Get the current content as a string for human consumption.
      */
     getContent(): string | Buffer | null {
+        if (Buffer.isBuffer(this._content)) {
+            return this._content.toString();
+        }
+        return this._content;
+    }
+
+    /**
+     * Get the raw content for network transmission.
+     */
+    getRawContent(): string | Buffer | null {
         return this._content;
     }
 

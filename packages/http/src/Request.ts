@@ -13,10 +13,14 @@ export class Request {
     private _cookies: Record<string, string | undefined> | null = null;
     private _body: any = null;
     private _files: Record<string, UploadedFile> = {};
-    private _params: Record<string, string> = {};
+    private _params: any = {};
+    private _paramMap: Record<string, string> | null = null;
     private _auth: any = null;
     private _view: any = null;
     private _route: any = null;
+    private _path: string | null = null;
+    private _query: any = null;
+    private _all: any = null;
 
     constructor(app: Application, req: IncomingMessage) {
         this.app = app;
@@ -37,10 +41,14 @@ export class Request {
         this._cookies = null;
         this._body = null;
         this._params = {};
+        this._paramMap = null;
         this._baseUrl = null;
         this._session = null;
         this._auth = null;
         this._view = null;
+        this._path = null;
+        this._query = null;
+        this._all = null;
     }
 
     /**
@@ -137,9 +145,11 @@ export class Request {
      * Get the request path.
      */
     path(): string {
+        if (this._path !== null) return this._path;
         const url = this.req.url || '/';
         const queryIndex = url.indexOf('?');
-        return queryIndex === -1 ? url : url.slice(0, queryIndex);
+        this._path = queryIndex === -1 ? url : url.slice(0, queryIndex);
+        return this._path;
     }
 
     /**
@@ -236,22 +246,36 @@ export class Request {
     /**
      * Get a query parameter.
      */
-    query(key: string): string | null {
-        this.ensureSearchParams();
-        return this.searchParams.get(key);
+    query(key: string): any {
+        if (this._query === null) {
+            this.ensureSearchParams();
+            this._query = Object.fromEntries((this as any).searchParams.entries());
+        }
+        return this._query[key] ?? null;
     }
 
     /**
      * Set the route parameters.
      */
-    setParams(params: Record<string, string>): void {
+    setParams(params: any): void {
         this._params = params;
+        this._paramMap = null;
     }
 
     /**
      * Get all route parameters.
      */
     params(): Record<string, string> {
+        if (Array.isArray(this._params)) {
+            if (this._paramMap) return this._paramMap;
+            const keys = this._route?.paramKeys || [];
+            const map: Record<string, string> = {};
+            for (let i = 0; i < this._params.length; i++) {
+                if (keys[i]) map[keys[i]] = this._params[i];
+            }
+            this._paramMap = map;
+            return map;
+        }
         return this._params;
     }
 
@@ -259,6 +283,11 @@ export class Request {
      * Get a specific route parameter.
      */
     param(key: string, defaultValue: string | null = null): string | null {
+        if (Array.isArray(this._params)) {
+            const keys = this._route?.paramKeys || [];
+            const index = keys.indexOf(key);
+            return index !== -1 ? this._params[index] : defaultValue;
+        }
         return this._params[key] ?? defaultValue;
     }
 
@@ -329,10 +358,16 @@ export class Request {
      * Get all input (query + body).
      */
     all(): any {
-        this.ensureSearchParams();
-        const query = Object.fromEntries(this.searchParams.entries());
+        if (this._all !== null) return this._all;
+        
+        if (this._query === null) {
+            this.ensureSearchParams();
+            this._query = Object.fromEntries((this as any).searchParams.entries());
+        }
+        
         const body = typeof this._body === 'object' && this._body !== null ? this._body : {};
-        return { ...query, ...body };
+        this._all = { ...this._query, ...body, ...this._params };
+        return this._all;
     }
 
     /**

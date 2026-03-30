@@ -12,21 +12,26 @@ export class ServeStaticMiddleware {
         });
     }
 
-    public async handle(request: Request, next: (req: Request) => Promise<Response>, response: Response): Promise<Response> {
+    public handle(request: Request, next: (req: Request) => Promise<Response> | Response, response: Response): Promise<Response> | Response {
+        const path = request.path();
+
+        // Fast-path: Skip filesystem check for paths that likely aren't assets (no dots)
+        if (path === '/' || path.indexOf('.') === -1) {
+            return next(request);
+        }
+
         return new Promise((resolve, reject) => {
             const req = request.getIncomingMessage();
             const res = response.getOriginalResponse();
 
-            this.serve(req as any, res as any, async (err: any) => {
-                if (err) {
-                    return reject(err);
-                }
+            this.serve(req as any, res as any, (err: any) => {
+                if (err) return reject(err);
                 
-                try {
-                    const result = await next(request);
+                const result = next(request);
+                if (result instanceof Promise) {
+                    result.then(resolve).catch(reject);
+                } else {
                     resolve(result);
-                } catch (e) {
-                    reject(e);
                 }
             });
         });

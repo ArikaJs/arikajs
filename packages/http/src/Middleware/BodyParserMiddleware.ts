@@ -9,25 +9,34 @@ export class BodyParserMiddleware implements Middleware {
     /**
      * Handle the incoming request.
      */
-    async handle(
+    handle(
         request: Request,
         next: (request: Request) => Promise<Response> | Response,
         response?: Response
-    ): Promise<Response> {
+    ): Promise<Response> | Response {
         const method = request.method();
-        const contentType = request.header('content-type') as string | undefined;
-
-        // Only parse for methods that can have a body
-        if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method) && contentType) {
-            try {
-                const { body, files } = await this.parseBody(request);
-                request.setBody(body);
-                request.setFiles(files);
-            } catch (error) {
-                // If parsing fails, we'll just continue with empty body
-            }
+        
+        // Fast-path: Only parse for methods that can have a body
+        if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') {
+            return next(request);
         }
 
+        const contentType = request.header('content-type') as string | undefined;
+        if (!contentType) {
+            return next(request);
+        }
+
+        return this.processBody(request, next);
+    }
+
+    private async processBody(request: Request, next: (request: Request) => Promise<Response> | Response): Promise<Response> {
+        try {
+            const { body, files } = await this.parseBody(request);
+            request.setBody(body);
+            request.setFiles(files);
+        } catch (error) {
+            // Keep going with empty body
+        }
         return next(request);
     }
 

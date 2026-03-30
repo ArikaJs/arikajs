@@ -2,16 +2,28 @@
 import { Log } from '@arikajs/logging';
 
 export class RequestLoggingMiddleware {
-    public async handle(request: any, next: (request: any) => Promise<any>): Promise<any> {
+    public handle(request: any, next: (request: any) => Promise<any> | any): Promise<any> | any {
+        // Benchmarking Fast-path: Skip logging if silent mode is enabled
+        if (process.env.ARIKA_SILENT === 'true') {
+            return next(request);
+        }
+
         const start = Date.now();
-        const method = request.method();
-        const url = request.path();
+        const res = next(request);
 
-        const response = await next(request);
+        if (res instanceof Promise) {
+            return res.then(response => {
+                this.log(request, response, start);
+                return response;
+            });
+        }
 
+        this.log(request, res, start);
+        return res;
+    }
+
+    private log(request: any, response: any, start: number) {
         const duration = Date.now() - start;
-        Log.info(`${method} ${url} - ${duration}ms`);
-
-        return response;
+        Log.info(`${request.method()} ${request.path()} - ${duration}ms`);
     }
 }

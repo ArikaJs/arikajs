@@ -25,11 +25,13 @@ describe('Response', () => {
     });
 
     it('can send JSON responses', () => {
-        let sentContent = '';
+        let sentContent: any = '';
         const mockRes = {
             setHeader: () => { },
             writeHead: () => { },
-            end: (content: string) => { sentContent = content; }
+            end: (content: any) => { 
+                sentContent = Buffer.isBuffer(content) ? content.toString() : content; 
+            }
         } as any;
         const response = new Response(mockRes);
         response.json({ success: true });

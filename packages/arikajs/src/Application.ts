@@ -164,22 +164,43 @@ export class Application extends FoundationApplication implements ApplicationCon
             request.reset(req);
             response.reset(res);
 
-            const handleRequest = async () => {
-                try {
-                    const finalResponse = await (kernel as any).handle(request, response);
-                    (kernel as any).terminate(request, finalResponse);
-                } catch (error: any) {
-                    if (!res.headersSent) {
-                        res.writeHead(500, { 'Content-Type': 'application/json' });
-                        res.end(JSON.stringify({ error: 'Internal Server Error', message: error.message }));
-                    }
-                } finally {
+            try {
+                const result = (kernel as any).handle(request, response);
+
+                if (result instanceof Promise) {
+                    result.then((finalResponse: any) => {
+                        (kernel as any).terminate(request, finalResponse);
+                        requestPool.release(request);
+                        responsePool.release(response);
+                    }).catch((error: any) => {
+                        this.handleFatalError(res, error);
+                        requestPool.release(request);
+                        responsePool.release(response);
+                    });
+                } else {
+                    (kernel as any).terminate(request, result);
                     requestPool.release(request);
                     responsePool.release(response);
                 }
-            };
-            handleRequest();
+            } catch (error: any) {
+                this.handleFatalError(res, error);
+                requestPool.release(request);
+                responsePool.release(response);
+            }
         };
+    }
+
+    /**
+     * Handle fatal errors that occur outside the Kernel's management.
+     */
+    private handleFatalError(res: any, error: any) {
+        if (!res.headersSent) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                error: 'Internal Server Error',
+                message: error.message || 'An unexpected error occurred'
+            }));
+        }
     }
 
     /**

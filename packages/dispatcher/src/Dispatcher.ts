@@ -52,14 +52,24 @@ export class Dispatcher {
             }
 
             const hasMiddleware = (route.middleware && route.middleware.length > 0) || (controllerMiddleware && controllerMiddleware.length > 0);
+            const middleware = hasMiddleware ? [...(route.middleware || []), ...(controllerMiddleware || [])] : [];
+            
+            let pipeline: Pipeline<Request, Response> | null = null;
+            if (hasMiddleware) {
+                pipeline = new Pipeline<Request, Response>(this.container);
+                pipeline.setMiddlewareGroups(this.middlewareGroups);
+                pipeline.setAliases(this.routeMiddleware);
+                pipeline.pipe(middleware);
+            }
 
             this.executionPlans.set(route, {
                 route,
                 hasMiddleware,
                 controllerMiddleware,
                 resolvedHandler,
+                pipeline,
                 handler: (req: any, res: any, params: any) => this.invoker.invoke(resolvedHandler, req, res, params),
-                middleware: hasMiddleware ? [...(route.middleware || []), ...(controllerMiddleware || [])] : []
+                middleware
             });
 
             // Pre-serialize simple responses if possible (only if handler takes no arguments)
@@ -81,6 +91,14 @@ export class Dispatcher {
         this.container = container;
         this.controllerResolver = new ControllerResolver(container);
         this.invoker.setContainer(container);
+        
+        // Update existing execution plans with the new container
+        for (const plan of this.executionPlans.values()) {
+            if (plan.pipeline) {
+                (plan.pipeline as any).container = container;
+            }
+        }
+        
         return this;
     }
 
@@ -97,6 +115,14 @@ export class Dispatcher {
      */
     public setMiddlewareGroups(groups: Record<string, any[]>): this {
         this.middlewareGroups = groups;
+        
+        // Update existing execution plans
+        for (const plan of this.executionPlans.values()) {
+            if (plan.pipeline) {
+                plan.pipeline.setMiddlewareGroups(groups);
+            }
+        }
+        
         return this;
     }
 
@@ -105,6 +131,14 @@ export class Dispatcher {
      */
     public setRouteMiddleware(middleware: Record<string, any>): this {
         this.routeMiddleware = middleware;
+        
+        // Update existing execution plans
+        for (const plan of this.executionPlans.values()) {
+            if (plan.pipeline) {
+                plan.pipeline.setAliases(middleware);
+            }
+        }
+        
         return this;
     }
 
@@ -123,16 +157,18 @@ export class Dispatcher {
     /**
      * Dispatch the matched route to its handler.
      */
-    public async dispatch(
+    public dispatch(
         matchedRoute: MatchedRoute,
         request: Request,
         response: Response
-    ): Promise<Response> {
+    ): Promise<Response> | Response {
         const { route, params } = matchedRoute;
-        const handler = route.handler;
+        
+        // Lazy-params: If params is an array, we'll map it only when requested
+        const paramValues = Array.isArray(params) ? params : Object.values(params);
 
-        // Set parameters on the request object
         if (typeof request.setParams === 'function') {
+            // Internally, our Request object now handles both array and record
             request.setParams(params);
         }
 
@@ -140,88 +176,75 @@ export class Dispatcher {
             (request as any).setRoute(route);
         }
 
-        // NEW: FormRequest Handling
-        if ((route as any)._formRequest) {
-            const FormRequestClass = (route as any)._formRequest;
-            const formRequest = new FormRequestClass(request.getApplication(), request.getRaw());
-
-            // Transfer existing state
-            formRequest.setParams(params);
-            formRequest.setRoute(route);
-            formRequest.setBody((request as any).body());
-            formRequest.session = request.session;
-            formRequest.auth = request.auth;
-            formRequest.view = (request as any).view;
-
-            // Trigger validation
-            await formRequest.validateForm();
-
-            // Replace original request with our specialized FormRequest
-            request = formRequest;
+        // 0. Resolve Route Parameters (Model Binding) - only if we have binders
+        if (this.parameterBinders.size > 0 && !Array.isArray(params)) {
+            return this.resolveParameters(params).then(resolvedParams => {
+                return this.execute(route, request, response, resolvedParams);
+            });
         }
 
-        // 0. Resolve Route Parameters (Model Binding) - only if we have binders
-        const resolvedParams = this.parameterBinders.size > 0 ? await this.resolveParameters(params) : params;
+        return this.execute(route, request, response, params);
+    }
 
-        // 1. Resolve Handler
-        let resolvedHandler: Function | { controller: any; method: string };
-        let controllerMiddleware: any[] = [];
+    /**
+     * Internal execution of the route plan.
+     */
+    private execute(route: any, request: Request, response: Response, params: any): Promise<Response> | Response {
+        // 1. Resolve Handler & Pipeline from Execution Plan
+        let resolvedHandler: any;
+        let pipeline: Pipeline<Request, Response> | null = null;
 
         const plan = this.executionPlans.get(route);
         if (plan) {
             resolvedHandler = plan.resolvedHandler;
-            controllerMiddleware = plan.controllerMiddleware;
+            pipeline = plan.pipeline;
         } else {
-            if (Array.isArray(handler)) {
-                if (!this.controllerResolver) {
-                    throw new Error('Container required for controller resolution.');
-                }
-                const resolved = this.controllerResolver.resolve(handler);
-                resolvedHandler = resolved;
-
-                // Extract controller-level middleware
-                if (typeof resolved.controller.getMiddleware === 'function') {
-                    controllerMiddleware = resolved.controller.getMiddleware() || [];
-                } else if (resolved.controller.constructor && resolved.controller.constructor.middleware) {
-                    controllerMiddleware = resolved.controller.constructor.middleware;
-                }
-            } else if (typeof handler === 'function') {
-                resolvedHandler = handler;
-            } else {
-                throw new Error('Invalid route handler.');
-            }
+            // Safety fallback
+            resolvedHandler = route.handler;
         }
 
-        // 2. Prepare Middleware Pipeline
-        const pipeline = new Pipeline<Request, Response>(this.container);
-
-        if (plan && plan.hasMiddleware) {
-            pipeline.pipe(plan.middleware);
-        } else if (!plan) {
-            // Fallback for non-plan routes
-            if (route.middleware) pipeline.pipe(route.middleware);
-            if (controllerMiddleware) pipeline.pipe(controllerMiddleware);
-        }
-
-        pipeline.setMiddlewareGroups(this.middlewareGroups);
-        pipeline.setAliases(this.routeMiddleware);
-
-        // 3. Execute Pipeline
+        // 2. Execute Pipeline or direct handler
         try {
-            return await pipeline.handle(request, async (req: Request) => {
-                // 4. Invoke Handler
-                const result = await this.invoker.invoke(resolvedHandler, req, response, resolvedParams);
+            const executeAndResolve = (req: Request, res?: Response): Promise<Response> | Response => {
+                const finalRes = res || response;
+                const result = this.invoker.invoke(resolvedHandler, req, finalRes, params);
+                
+                if (result instanceof Promise) {
+                    return result.then(r => this.responseResolver.resolve(r, finalRes, route));
+                }
+                return this.responseResolver.resolve(result, finalRes, route);
+            };
 
-                // 5. Normalize Response
-                return await this.responseResolver.resolve(result, response);
-            }, response);
-        } catch (error) {
-            if (this.exceptionHandler) {
-                const handledResult = await this.exceptionHandler(error, request, response);
-                return await this.responseResolver.resolve(handledResult, response);
+            if (pipeline) {
+                const result = pipeline.handle(request, executeAndResolve as any, response);
+                if (result instanceof Promise) {
+                    return result.catch(error => this.handleException(error, request, response));
+                }
+                return result;
             }
-            throw error;
+
+            const result = executeAndResolve(request, response);
+            if (result instanceof Promise) {
+                return result.catch(error => this.handleException(error, request, response));
+            }
+            return result;
+        } catch (error) {
+            return this.handleException(error, request, response);
         }
+    }
+
+    /**
+     * Handle an exception using the registered handler or rethrow.
+     */
+    private handleException(error: any, request: Request, response: Response): Promise<Response> | Response {
+        if (this.exceptionHandler) {
+            const result = this.exceptionHandler(error, request, response);
+            if (result instanceof Promise) {
+                return result.then(r => this.responseResolver.resolve(r, response));
+            }
+            return this.responseResolver.resolve(result, response);
+        }
+        throw error;
     }
 
     /**
