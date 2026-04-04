@@ -29,22 +29,51 @@ export class Handler {
      * Render an exception into an HTTP response.
      */
     public async render(request: Request, error: any, response: Response): Promise<Response> {
-        // 1. Check if the error has a custom renderer
-        for (const [type, renderer] of this.renderers.entries()) {
-            if (error instanceof type) {
-                return renderer(request, error, response);
+        try {
+            // 1. Check if the error has a custom renderer
+            for (const [type, renderer] of this.renderers.entries()) {
+                if (error instanceof type) {
+                    return renderer(request, error, response);
+                }
             }
-        }
 
-        // 2. Check if the error is "renderable" (has a render method)
-        if (typeof error.render === 'function') {
-            return error.render(request, response);
-        }
+            // 2. Check if the error is "renderable" (has a render method)
+            if (typeof error.render === 'function') {
+                return error.render(request, response);
+            }
 
-        // 3. Handle HttpException specifically
-        if (error instanceof HttpException) {
-            const status = error.getStatusCode();
-            const isBrowserRequest = this.isBrowserRequest(request);
+            // 3. Handle HttpException specifically
+            if (error instanceof HttpException) {
+                const status = error.getStatusCode();
+                const isBrowserRequest = this.isBrowserRequest(request) || this.shouldDisplayStackTrace();
+
+                if (isBrowserRequest) {
+                    return this.renderForBrowser(request, status, error, response);
+                }
+
+                return response.status(status).json({
+                    error: true,
+                    message: error.message,
+                    ...(this.shouldDisplayStackTrace() ? { trace: error.stack } : {})
+                });
+            }
+
+            // 4. Default error handling
+            const status = error.statusCode || error.status || 500;
+            const message = status === 500 && !this.shouldDisplayStackTrace()
+                ? 'Internal Server Error'
+                : error.message || 'Unknown Error';
+
+            const isBrowserRequest = this.isBrowserRequest(request) || this.shouldDisplayStackTrace();
+
+            // Diagnostic Logging
+            if (this.shouldDisplayStackTrace()) {
+                console.log(`[Exception Handler] Rendering error: "${message}"`);
+                console.log(`[Exception Handler] Status: ${status}`);
+                console.log(`[Exception Handler] Path: ${request.path()}`);
+                console.log(`[Exception Handler] Accept Header: ${request.header('accept')}`);
+                console.log(`[Exception Handler] Is Browser Request: ${isBrowserRequest}`);
+            }
 
             if (isBrowserRequest) {
                 return this.renderForBrowser(request, status, error, response);
@@ -52,30 +81,15 @@ export class Handler {
 
             return response.status(status).json({
                 error: true,
-                message: error.message,
-                ...(this.shouldDisplayStackTrace() ? { trace: error.stack } : {})
+                message: message,
+                ...(this.shouldDisplayStackTrace() ? {
+                    name: error.name,
+                    trace: error.stack
+                } : {})
             });
+        } catch (renderError) {
+            throw renderError;
         }
-
-        // 4. Default error handling
-        const status = error.statusCode || error.status || 500;
-        const message = status === 500 && !this.shouldDisplayStackTrace()
-            ? 'Internal Server Error'
-            : error.message || 'Unknown Error';
-
-        const isBrowserRequest = this.isBrowserRequest(request);
-        if (isBrowserRequest) {
-            return this.renderForBrowser(request, status, error, response);
-        }
-
-        return response.status(status).json({
-            error: true,
-            message: message,
-            ...(this.shouldDisplayStackTrace() ? {
-                name: error.name,
-                trace: error.stack
-            } : {})
-        });
     }
 
     /**
@@ -193,7 +207,7 @@ export class Handler {
                 if (match) {
                     const file = match[2];
                     const isApp = file.includes('/app/') || (!file.includes('node_modules') && !file.includes('packages/'));
-                    
+
                     return {
                         method: (match[1] || 'anonymous').replace('async ', ''),
                         file: file,
@@ -212,7 +226,7 @@ export class Handler {
         let snippetLine = 0;
 
         const mainFrame = frames.find((f: any) => f.isApp) || frames[0];
-        
+
         if (mainFrame && mainFrame.file && mainFrame.file.startsWith('/') && !mainFrame.raw) {
             try {
                 const fs = await import('fs');
@@ -220,14 +234,14 @@ export class Handler {
                 const lines = content.split('\n');
                 const start = Math.max(0, mainFrame.line - 6);
                 const end = Math.min(lines.length, mainFrame.line + 4);
-                
+
                 snippetFile = mainFrame.file;
                 snippetLine = mainFrame.line;
 
                 codeSnippet = lines.slice(start, end).map((code, index) => {
                     const currentLine = start + index + 1;
                     const isErrorLine = currentLine === mainFrame.line;
-                    
+
                     // Basic syntax highlighting for the preview
                     let highlighted = code
                         .replace(/&/g, '&amp;')
@@ -235,22 +249,20 @@ export class Handler {
                         .replace(/>/g, '&gt;');
 
                     // Process strings first to avoid matching keywords inside them
-                    highlighted = highlighted
-                        .replace(/('[^']*')/g, '<span style="color:#d946ef">$1</span>')
-                        .replace(/("[^"]*")/g, '<span style="color:#d946ef">$1</span>')
-                        .replace(/(`[^`]*`)/g, '<span style="color:#d946ef">$1</span>');
+                    // Combine into one regex to avoid matching the "color" attribute from the first replacement!
+                    highlighted = highlighted.replace(/('[^']*'|"[^"]*"|`[^`]*`)/g, '<span style="color:#d946ef">$1</span>');
 
                     // Process keywords next, using word boundaries to avoid matching inside tags or larger words
                     const keywords = ['static', 'public', 'protected', 'private', 'async', 'await', 'class', 'interface', 'export', 'import', 'from', 'const', 'let', 'var', 'return', 'if', 'else', 'for', 'while', 'try', 'catch', 'new', 'this', 'throw'];
                     const keywordRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
-                    
+
                     highlighted = highlighted.replace(keywordRegex, (match, p1, offset, string) => {
                         // Check if we are inside an HTML tag (very basic check)
                         const before = string.substring(0, offset);
                         const openTags = (before.match(/<span/g) || []).length;
                         const closeTags = (before.match(/<\/span>/g) || []).length;
                         if (openTags > closeTags) return match; // Skip if inside a span
-                        
+
                         return `<span style="color:#0ea5e9">${match}</span>`;
                     });
 
@@ -490,10 +502,10 @@ export class Handler {
                         </div>
                         <div class="frames">
                             ${frames.map((frame: any) => {
-                                if (frame.raw) {
-                                    return `<div class="frame"><div class="frame-location" style="opacity:0.5">${frame.raw}</div></div>`;
-                                }
-                                return `
+            if (frame.raw) {
+                return `<div class="frame"><div class="frame-location" style="opacity:0.5">${frame.raw}</div></div>`;
+            }
+            return `
                                 <div class="frame ${frame.isApp ? 'is-app' : ''}">
                                     <div>
                                         <span class="frame-method">${frame.method}</span>
@@ -506,7 +518,7 @@ export class Handler {
                                     <div class="frame-full-path">${frame.file}</div>
                                 </div>
                                 `;
-                            }).join('')}
+        }).join('')}
                         </div>
                     </div>
                 </div>

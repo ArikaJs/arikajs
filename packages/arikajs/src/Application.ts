@@ -158,11 +158,31 @@ export class Application extends FoundationApplication implements ApplicationCon
             (obj: any) => obj.reset(null)
         );
 
+        const { Handler } = require('./http/Handler');
+        let handler: any;
+        try { handler = this.make(Handler); } catch (e) { handler = new Handler(); }
+
         return (req: any, res: any) => {
             const request = requestPool.acquire();
             const response = responsePool.acquire();
             request.reset(req);
             response.reset(res);
+
+            const handleError = (error: any) => {
+                handler.report(error);
+                Promise.resolve(handler.render(request, error, response))
+                    .then((finalResponse: any) => {
+                        (kernel as any).terminate(request, finalResponse);
+                    })
+                    .catch((renderError: any) => {
+                        // True last resort — Handler itself threw
+                        this.handleFatalError(res, renderError);
+                    })
+                    .finally(() => {
+                        requestPool.release(request);
+                        responsePool.release(response);
+                    });
+            };
 
             try {
                 const result = (kernel as any).handle(request, response);
@@ -172,20 +192,14 @@ export class Application extends FoundationApplication implements ApplicationCon
                         (kernel as any).terminate(request, finalResponse);
                         requestPool.release(request);
                         responsePool.release(response);
-                    }).catch((error: any) => {
-                        this.handleFatalError(res, error);
-                        requestPool.release(request);
-                        responsePool.release(response);
-                    });
+                    }).catch(handleError);
                 } else {
                     (kernel as any).terminate(request, result);
                     requestPool.release(request);
                     responsePool.release(response);
                 }
             } catch (error: any) {
-                this.handleFatalError(res, error);
-                requestPool.release(request);
-                responsePool.release(response);
+                handleError(error);
             }
         };
     }

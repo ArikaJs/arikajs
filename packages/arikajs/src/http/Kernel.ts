@@ -83,22 +83,28 @@ export class Kernel {
         const method = request.method();
 
         if (method === 'GET') {
-            // 1. O(1) Literal Warp
-            const fastHandler = this.fastPath.get(path);
-            if (fastHandler) {
-                const result = fastHandler(request, response);
-                return this.handleWarpResult(result, response);
-            }
-
-            // 2. Pattern Warp (High-speed dynamic jump)
-            for (let i = 0; i < this.patternWarp.length; i++) {
-                const warp = this.patternWarp[i];
-                const match = warp.regex.exec(path);
-                if (match) {
-                    const params: any = match.slice(1);
-                    const result = warp.handler(request, response, params);
+            try {
+                // 1. O(1) Literal Warp
+                const fastHandler = this.fastPath.get(path);
+                if (fastHandler) {
+                    const result = fastHandler(request, response);
                     return this.handleWarpResult(result, response);
                 }
+
+                // 2. Pattern Warp (High-speed dynamic jump)
+                for (let i = 0; i < this.patternWarp.length; i++) {
+                    const warp = this.patternWarp[i];
+                    const match = warp.regex.exec(path);
+                    if (match) {
+                        const params: any = match.slice(1);
+                        const result = warp.handler(request, response, params);
+                        return this.handleWarpResult(result, response);
+                    }
+                }
+            } catch (error) {
+                // Route warp errors to the official Exception Handler for pretty UI rendering
+                this.handler.report(error);
+                return this.handler.render(request, error, response);
             }
         }
 
@@ -109,12 +115,18 @@ export class Kernel {
                 }, response);
 
                 if (result instanceof Promise) {
-                    return result.then(r => this.sendResponse(r, response));
+                    return result
+                        .then(r => this.sendResponse(r, response))
+                        .catch(error => {
+                            this.handler.report(error);
+                            return this.handler.render(request, error, response);
+                        });
                 }
 
                 return this.sendResponse(result, response);
             } catch (error) {
-                return (this.app as any).make('handler').report(error).render(request, error);
+                this.handler.report(error);
+                return this.handler.render(request, error, response);
             }
         });
     }
@@ -148,7 +160,7 @@ export class Kernel {
         if (result instanceof Promise) {
             return result.then(r => this.sendResponse(r, response));
         }
-        
+
         // Handle actual Response objects
         if (result && typeof result.terminate === 'function') {
             result.terminate();

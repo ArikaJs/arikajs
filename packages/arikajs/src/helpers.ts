@@ -107,19 +107,35 @@ export function auth(): any {
  */
 export async function view(template?: string, data: any = {}): Promise<any> {
     const req = request();
+    
+    // Capture synchronous stack trace so that framework errors show the exact application file calling view()
+    const callStack = new Error().stack || '';
 
-    // 1. If we are in a request context and req.view.render exists, use it!
-    // This is the preferred way as it handles session errors, CSRF, etc. correctly
-    if (req && req.view && typeof req.view.render === 'function') {
-        if (template === undefined) return req.view;
-        return await req.view.render(template, data);
+    const enrichError = (err: any) => {
+        if (err && err.stack) {
+            // Keep the original error type but append the caller application stack trace
+            const framesToKeep = callStack.split('\n').slice(2); // Remove Error and view() frame
+            err.stack = err.stack + '\n' + framesToKeep.join('\n');
+        }
+        return err;
+    };
+
+    try {
+        // 1. If we are in a request context and req.view.render exists, use it!
+        // This is the preferred way as it handles session errors, CSRF, etc. correctly
+        if (req && req.view && typeof req.view.render === 'function') {
+            if (template === undefined) return req.view;
+            return await req.view.render(template, data);
+        }
+
+        // 2. Fallback to global view engine
+        const engine = app().make('view') as any;
+        if (template === undefined) return engine;
+
+        return await engine.render(template, data);
+    } catch (err) {
+        throw enrichError(err);
     }
-
-    // 2. Fallback to global view engine
-    const engine = app().make('view') as any;
-    if (template === undefined) return engine;
-
-    return await engine.render(template, data);
 }
 
 /**
