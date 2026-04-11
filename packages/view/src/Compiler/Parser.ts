@@ -34,17 +34,17 @@ export class Parser {
 
         if (token.type === TokenType.Text) {
             this.position++;
-            return { type: NodeType.Text, content: token.value };
+            return { type: NodeType.Text, content: token.value, line: token.line };
         }
 
         if (token.type === TokenType.Expression) {
             this.position++;
-            return { type: NodeType.Expression, content: token.value };
+            return { type: NodeType.Expression, content: token.value, line: token.line };
         }
 
         if (token.type === TokenType.RawExpression) {
             this.position++;
-            return { type: NodeType.RawExpression, content: token.value };
+            return { type: NodeType.RawExpression, content: token.value, line: token.line };
         }
 
         if (token.type === TokenType.Directive) {

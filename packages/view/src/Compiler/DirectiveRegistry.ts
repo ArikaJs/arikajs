@@ -205,46 +205,59 @@ export class DirectiveRegistry {
         // SPA Engine Configuration (@spa)
         this.register('spa', () => {
             const spaScript = `<script data-spa-ignore>
-document.addEventListener('click', async (e) => {
-    const link = e.target.closest('a');
-    if (!link || link.target || link.origin !== window.location.origin || link.getAttribute('href').startsWith('#') || link.getAttribute('href').startsWith('javascript:')) return;
-    
-    e.preventDefault();
-    const url = link.href;
-
-    try {
-        const response = await fetch(url, { headers: { 'X-Arika-Spa': 'true' } });
-        if (!response.ok) throw new Error('Network error');
+(function() {
+    const cache = new Map();
+    const dispatch = (name, detail) => document.dispatchEvent(new CustomEvent(name, { detail }));
+    document.addEventListener('click', async (e) => {
+        const link = e.target.closest('a');
+        if (!link || link.target || link.origin !== window.location.origin || link.getAttribute('href').startsWith('#') || link.getAttribute('href').startsWith('javascript:') || link.hasAttribute('data-spa-ignore')) return;
         
-        const html = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
+        e.preventDefault();
+        const url = link.href;
+        dispatch('arika:spa:start', { url });
 
-        window.history.pushState({}, '', url);
-        document.title = doc.title;
+        try {
+            let html;
+            if (cache.has(url)) {
+                html = cache.get(url);
+            } else {
+                const response = await fetch(url, { headers: { 'X-Arika-Spa': 'true' } });
+                if (!response.ok) throw new Error('Network error');
+                html = await response.text();
+                cache.set(url, html);
+            }
+            
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
 
-        const updateBody = () => {
-            document.body.innerHTML = doc.body.innerHTML;
-            document.querySelectorAll('script').forEach(oldScript => {
-                if (oldScript.hasAttribute('data-spa-ignore')) return;
-                const newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                newScript.textContent = oldScript.textContent;
-                oldScript.replaceWith(newScript);
-            });
-        };
+            const updateDOM = () => {
+                document.title = doc.title;
+                document.body.innerHTML = doc.body.innerHTML;
+                
+                document.querySelectorAll('script').forEach(oldScript => {
+                    if (oldScript.hasAttribute('data-spa-ignore')) return;
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.textContent = oldScript.textContent;
+                    oldScript.replaceWith(newScript);
+                });
+                
+                window.history.pushState({}, '', url);
+                dispatch('arika:spa:end', { url });
+            };
 
-        if (document.startViewTransition) {
-            document.startViewTransition(updateBody);
-        } else {
-            updateBody();
+            if (document.startViewTransition) {
+                document.startViewTransition(updateDOM);
+            } else {
+                updateDOM();
+            }
+        } catch (err) {
+            console.error('[SPA] Navigation failed:', err);
+            window.location.href = url;
         }
-    } catch (err) {
-        window.location.href = url;
-    }
-});
+    });
 
-window.addEventListener('popstate', () => window.location.reload());
+})();
 </script>`;
             return `_output += ${JSON.stringify(spaScript)};`;
         });

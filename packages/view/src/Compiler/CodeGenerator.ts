@@ -23,19 +23,23 @@ export class CodeGenerator {
     }
 
     private generateNode(node: Node): string {
+        let code = '';
         switch (node.type) {
             case NodeType.Text:
                 const text = (node as TextNode).content
                     .replace(/\\/g, '\\\\')
                     .replace(/`/g, '\\`')
                     .replace(/\${/g, '\\${');
-                return `_output += \`${text}\`;`;
+                code = `_output += \`${text}\`;`;
+                break;
 
             case NodeType.Expression:
-                return `_output += _escape(${this.cleanExpression((node as ExpressionNode).content)});`;
+                code = `_output += _escape(${this.cleanExpression((node as ExpressionNode).content)});`;
+                break;
 
             case NodeType.RawExpression:
-                return `_output += (${this.cleanExpression((node as RawExpressionNode).content)});`;
+                code = `_output += (${this.cleanExpression((node as RawExpressionNode).content)});`;
+                break;
 
             case NodeType.Directive:
                 const dir = node as DirectiveNode;
@@ -47,13 +51,18 @@ export class CodeGenerator {
                     // Fallback for unknown directives (e.g., CSS @media, @keyframes)
                     const originalText = `@${dir.name}${dir.expression ? '(' + dir.expression + ')' : ''}`;
                     const sanitized = originalText.replace(/`/g, '\\`').replace(/\${/g, '\\${');
-                    return `_output += \`${sanitized}\`;\n${childrenCode}`;
+                    code = `_output += \`${sanitized}\`;\n${childrenCode}`;
+                } else {
+                    code = result;
                 }
-                return result;
-
-            default:
-                return '';
+                break;
         }
+
+        if (node.line && code) {
+            return `/* line ${node.line} */ ${code}`;
+        }
+
+        return code;
     }
 
     private cleanExpression(exp: string): string {

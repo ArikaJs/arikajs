@@ -1,16 +1,15 @@
 # Arika View v2.0 ⚡
 
-`@arikajs/view` is a production-grade, TypeScript-first template engine designed for the ArikaJS ecosystem. It combines the power of modern JS with a clean, expressive syntax inspired by Laravel Blade, but built natively for the Node.js event loop.
-
-**v2.0 Update:** Arika View now natively competes with React by offering lightning-fast Server-Side Generation (via Strict Mode) and an instant Single Page Application feeling (via HTML-over-the-wire).
+`@arikajs/view` is a high-performance, server-first template engine designed for the ArikaJS ecosystem. It provides an instant Single-Page Application (SPA) experience using a native Node.js compiler, eliminating the complexity of heavy client-side frameworks.
 
 ---
 
-## ⚡ Beating React: The Performance Engine
+## ⚡ Server-Driven Native Performance
 
-### 1️⃣ The "Strict Mode" Native Compiler (10x Faster SSR)
-Arika View uses a highly optimized V8 compiler that transparently maps your server variables dynamically into native arguments, eliminating the notorious JavaScript `with(_data)` penalty.
-Your template variables (like `{{ $user.name }}`) are JIT-compiled into pure native JavaScript functions under the hood. It takes effectively **0 milliseconds** of latency to render complex dashboards, crushing standard React SSR speeds.
+### 1️⃣ Zero-Runtime Overhead (Strict Mode)
+Arika View uses a highly optimized V8 compiler that maps your server variables directly into native function arguments. By eliminating the `with(_data)` runtime lookup used by traditional engines like EJS, we achieve near-zero latency rendering.
+
+Your template variables (like `{{ $user.name }}`) are JIT-compiled into pure native JavaScript functions, making UI rendering mathematically as fast as the V8 engine itself.
 
 ```typescript
 // Enabled by default in modern ArikaJs apps natively inside Engine.ts!
@@ -44,6 +43,25 @@ Arika View features a completely customized compiler stack:
 - **Parser**: Builds a robust Abstract Syntax Tree (AST) for deeply nested loops/blocks.
 - **Directive Registry**: Modular system for extending templating language.
 - **Code Generator**: Produces highly optimized, async-ready JavaScript buffers.
+
+---
+
+## 🛡️ Security & XSS Protection
+
+Everything in Arika View is **Safe by Default**.
+
+### Escaped Output (Standard)
+All values inside double curly braces are automatically escaped to prevent Cross-Site Scripting (XSS) attacks.
+```html
+{{ "<script>alert(1)</script>" }}
+<!-- Renders as: &lt;script&gt;alert(1)&lt;/script&gt; -->
+```
+
+### Raw Output (Unsafe)
+If you specifically need to output raw HTML, use the `{!! !!}` syntax. **Use this only for content you trust.**
+```html
+{!! "<h1>Trusted Title</h1>" !!}
+```
 
 ---
 

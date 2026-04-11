@@ -445,11 +445,18 @@ export class Engine {
             }
             return await func(this, data);
         } catch (e: any) {
-            if (this.config.dev) {
-                // In dev mode, we could enhance the error further
-                throw new Error(`Error in ${templateName}: ${e.message}\nStack: ${e.stack}`);
+            // Attempt to find the source line from the stack trace (using our injected comments)
+            let lineInfo = '';
+            const stack = e.stack || '';
+            const match = stack.match(/\/\* line (\d+) \*\//);
+            if (match) {
+                lineInfo = ` at line ${match[1]}`;
             }
-            throw new Error(`Error rendering template "${templateName}": ${e.message}`);
+
+            if (this.config.dev) {
+                throw new Error(`Error in ${templateName}${lineInfo}: ${e.message}\nStack: ${e.stack}`);
+            }
+            throw new Error(`Error rendering template "${templateName}"${lineInfo}: ${e.message}`);
         }
     }
 
@@ -539,8 +546,27 @@ export class Engine {
     public async renderComponent(defaultSlotContent: string): Promise<string> {
         const component = this.componentStack.pop();
         if (component) {
+            // Create $attributes bag with merging logic
+            const attributes = {
+                ...component.data,
+                merge: (defaults: Record<string, any>) => {
+                    const merged = { ...defaults, ...component.data };
+                    // Special handling for class merging
+                    if (defaults.class && component.data.class) {
+                        merged.class = `${defaults.class} ${component.data.class}`;
+                    }
+                    return Object.entries(merged)
+                        .map(([k, v]) => (v === true || v === 'true') ? k : `${k}="${v}"`)
+                        .join(' ');
+                },
+                toString: () => Object.entries(component.data)
+                    .map(([k, v]) => (v === true || v === 'true') ? k : `${k}="${v}"`)
+                    .join(' ')
+            };
+
             const componentData = {
                 ...component.data,
+                $attributes: attributes,
                 slot: defaultSlotContent,
                 ...component.slots
             };
