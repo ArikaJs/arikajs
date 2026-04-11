@@ -44,6 +44,8 @@ export class Authenticate {
                     return next(request);
                 }
             }
+            
+            console.log(`[AUTH DEBUG] Unauthenticated for [${request.method()}] ${request.path()}. Checked guards: [${guardsToCheck.join(', ')}]. Session ID: ${request.session?.getId?.()}`);
 
             // 5. Fail if no guard authenticated
             return this.unauthenticated(request, guardsToCheck, response);

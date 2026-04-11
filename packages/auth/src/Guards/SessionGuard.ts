@@ -131,8 +131,11 @@ export class SessionGuard implements Guard {
     }
 
     private getRememberCookie(): string | null {
+        if (this.request?.cookie && typeof this.request.cookie === 'function') {
+            return this.request.cookie('remember_web');
+        }
         if (this.request?.cookies && typeof this.request.cookies === 'function') {
-            return this.request.cookies('remember_web');
+            return this.request.cookies()['remember_web'] || null;
         }
         return this.request?.cookies?.['remember_web'] || null;
     }

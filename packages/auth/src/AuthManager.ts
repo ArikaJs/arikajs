@@ -82,7 +82,11 @@ export class AuthManager {
 
     private createSessionDriver(name: string, config: any, request: any): SessionGuard {
         const provider = this.getProvider(config.provider);
-        return new SessionGuard(provider, request.session);
+        const guard = new SessionGuard(provider, request.session);
+        if (typeof (guard as any).setRequest === 'function') {
+            (guard as any).setRequest(request);
+        }
+        return guard;
     }
 
     private createTokenDriver(name: string, config: any, request: any): Guard {

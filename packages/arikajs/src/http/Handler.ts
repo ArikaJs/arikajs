@@ -42,51 +42,23 @@ export class Handler {
                 return error.render(request, response);
             }
 
-            // 3. Handle HttpException specifically
-            if (error instanceof HttpException) {
-                const status = error.getStatusCode();
-                const isBrowserRequest = this.isBrowserRequest(request) || this.shouldDisplayStackTrace();
+            // 3. Determine if it's an API request
+            const status = (error instanceof HttpException) ? error.getStatusCode() : (error.statusCode || error.status || 500);
+            const isBrowser = this.isBrowserRequest(request);
 
-                if (isBrowserRequest) {
-                    return this.renderForBrowser(request, status, error, response);
-                }
-
+            if (!isBrowser) {
                 return response.status(status).json({
                     error: true,
-                    message: error.message,
-                    ...(this.shouldDisplayStackTrace() ? { trace: error.stack } : {})
+                    message: error.message || (status === 500 ? 'Internal Server Error' : 'Unknown Error'),
+                    ...(this.shouldDisplayStackTrace() ? { 
+                        name: error.name,
+                        trace: error.stack 
+                    } : {})
                 });
             }
 
-            // 4. Default error handling
-            const status = error.statusCode || error.status || 500;
-            const message = status === 500 && !this.shouldDisplayStackTrace()
-                ? 'Internal Server Error'
-                : error.message || 'Unknown Error';
-
-            const isBrowserRequest = this.isBrowserRequest(request) || this.shouldDisplayStackTrace();
-
-            // Diagnostic Logging
-            if (this.shouldDisplayStackTrace()) {
-                console.log(`[Exception Handler] Rendering error: "${message}"`);
-                console.log(`[Exception Handler] Status: ${status}`);
-                console.log(`[Exception Handler] Path: ${request.path()}`);
-                console.log(`[Exception Handler] Accept Header: ${request.header('accept')}`);
-                console.log(`[Exception Handler] Is Browser Request: ${isBrowserRequest}`);
-            }
-
-            if (isBrowserRequest) {
-                return this.renderForBrowser(request, status, error, response);
-            }
-
-            return response.status(status).json({
-                error: true,
-                message: message,
-                ...(this.shouldDisplayStackTrace() ? {
-                    name: error.name,
-                    trace: error.stack
-                } : {})
-            });
+            // 4. Browser Request Handling
+            return this.renderForBrowser(request, status, error, response);
         } catch (renderError) {
             throw renderError;
         }

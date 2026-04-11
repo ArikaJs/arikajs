@@ -234,7 +234,7 @@ export class Dispatcher {
         try {
             const executeAndResolve = (req: Request, res?: Response): Promise<Response> | Response => {
                 const finalRes = res || response;
-                const result = this.invoker.invoke(resolvedHandler, req, finalRes, params);
+                const result = this.invoker.invoke(resolvedHandler, req, finalRes, params, route);
                 
                 if (result instanceof Promise) {
                     return result.then(r => this.responseResolver.resolve(r, finalRes, route));

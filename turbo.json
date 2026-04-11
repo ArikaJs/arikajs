@@ -20,6 +20,11 @@
             "inputs": [
                 "src/**/*.ts",
                 "tests/**/*.ts"
+            ],
+            "env": [
+                "NODE_ENV",
+                "APP_KEY",
+                "APP_ENV"
             ]
         },
         "lint": {
