@@ -1,5 +1,13 @@
 # @arikajs/middleware
 
+## 0.10.8
+
+### Patch Changes
+
+- Updated dependencies [6dd5cde]
+  - @arikajs/logging@0.10.8
+  - @arikajs/http@0.10.8
+
 ## 0.10.7
 
 ### Patch Changes

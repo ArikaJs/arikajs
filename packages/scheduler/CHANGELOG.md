@@ -1,5 +1,17 @@
 # @arikajs/scheduler
 
+## 0.10.8
+
+### Patch Changes
+
+- Updated dependencies [6dd5cde]
+  - @arikajs/logging@0.10.8
+  - @arikajs/foundation@0.10.8
+  - @arikajs/cache@0.10.8
+  - @arikajs/console@0.10.8
+  - @arikajs/events@0.10.8
+  - @arikajs/queue@0.10.8
+
 ## 0.10.7
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @arikajs/docs
 
+## 0.10.8
+
+### Patch Changes
+
+- @arikajs/foundation@0.10.8
+- @arikajs/router@0.10.8
+- @arikajs/console@0.10.8
+
 ## 0.10.7
 
 ### Patch Changes

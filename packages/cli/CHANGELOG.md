@@ -1,5 +1,22 @@
 # @arikajs/cli
 
+## 0.10.8
+
+### Patch Changes
+
+- 6dd5cde: - fix(view): resolve HMR duplicate watchers by adding CLI bootstrap detection
+  - fix(view): resolve component AST parsing issues in CodeGenerator
+  - fix(logging): safely handle missing config contexts in LogManager
+  - fix(cli): optimize process isolation between CLI and server
+  - perf: standardized benchmark suite and optimized warp drive routing
+- Updated dependencies [6dd5cde]
+  - arikajs@0.10.8
+  - @arikajs/benchmark@0.10.8
+  - @arikajs/scheduler@0.10.8
+  - @arikajs/docs@0.10.8
+  - @arikajs/console@0.10.8
+  - @arikajs/database@0.10.8
+
 ## 0.10.7
 
 ### Patch Changes

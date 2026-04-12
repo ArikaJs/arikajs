@@ -1,5 +1,7 @@
 # @arikajs/validation
 
+## 0.10.8
+
 ## 0.10.7
 
 ### Patch Changes

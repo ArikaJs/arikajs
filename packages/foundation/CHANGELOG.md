@@ -1,5 +1,11 @@
 # @arikajs/foundation
 
+## 0.10.8
+
+### Patch Changes
+
+- @arikajs/config@0.10.8
+
 ## 0.10.7
 
 ### Patch Changes
