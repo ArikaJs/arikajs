@@ -191,7 +191,11 @@ export class Application {
         ? provider
         : new provider(this);
 
-    this.providers.push(providerInstance);
+    // Prevent duplicate provider registration
+    const isDuplicate = this.providers.some(p => p.constructor === providerInstance.constructor);
+    if (!isDuplicate) {
+        this.providers.push(providerInstance);
+    }
   }
 
   /**

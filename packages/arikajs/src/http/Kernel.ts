@@ -10,6 +10,7 @@ import { VerifyCsrfToken } from './Middleware/VerifyCsrfToken';
 import { ServeStaticMiddleware } from './Middleware/ServeStaticMiddleware';
 import { StartSession } from '@arikajs/session';
 import { Authenticate, EnsureEmailIsVerified } from '@arikajs/auth';
+import { ResolveServerAction } from './Actions/ResolveServerAction';
 
 
 export class Kernel {
@@ -34,6 +35,7 @@ export class Kernel {
             StartSession,
             ViewMiddleware,
             VerifyCsrfToken,
+            ResolveServerAction,
         ],
         api: [],
     };
@@ -79,6 +81,17 @@ export class Kernel {
      * Handle an incoming HTTP request.
      */
     public handle(request: Request, response: Response): Promise<Response> | Response {
+        // Elite HMR Silent Fast-Path: Bypass logging, middleware and rendering
+        if (request.header('X-Arika-HMR') === 'check') {
+            try {
+                const view = this.app.make<any>('view');
+                if (view && view.engine) {
+                    response.header('X-Arika-State-Hash', view.engine().stateHash || '');
+                    return response.status(204).send('');
+                }
+            } catch (e) { /* View not registered yet */ }
+        }
+
         const path = (request as any).req.url;
         const method = request.method();
 

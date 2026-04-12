@@ -1,4 +1,4 @@
-export type DirectiveHandler = (expression: string | null, children?: string) => string;
+export type DirectiveHandler = (expression: string | null, children?: string, append?: string) => string;
 
 export class DirectiveRegistry {
     private directives: Map<string, DirectiveHandler> = new Map();
@@ -15,10 +15,10 @@ export class DirectiveRegistry {
         return this.directives.has(name);
     }
 
-    public handle(name: string, expression: string | null, children?: string): string | null {
+    public handle(name: string, expression: string | null, children?: string, append: string = '_output += '): string | null {
         const handler = this.directives.get(name);
         if (handler) {
-            return handler(expression, children);
+            return handler(expression, children, append);
         }
         return null;
     }
@@ -71,7 +71,7 @@ export class DirectiveRegistry {
             }`;
         });
 
-        this.register('each', (exp, children) => {
+        this.register('each', (exp, children, append) => {
             // @each('view', data, 'item', 'empty')
             const args = exp?.split(',').map(a => a.trim()) || [];
             const view = args[0];
@@ -83,10 +83,10 @@ export class DirectiveRegistry {
                 const __items = ${collection};
                 if (__items && __items.length > 0) {
                     for (const ${item} of __items) {
-                        _output += await _engine.render(${view}, { ..._data, ${item} }, true);
+                        ${append} await _engine.render(${view}, { ..._data, ${item} }, true);
                     }
                 } else if (${emptyView}) {
-                    _output += await _engine.render(${emptyView}, _data, true);
+                    ${append} await _engine.render(${emptyView}, _data, true);
                 }
             `;
         });
@@ -99,46 +99,50 @@ export class DirectiveRegistry {
         this.register('default', () => `default:`);
 
         // Layouts & Includes
-        this.register('extends', (exp) => `_engine.extend(${exp});`);
-        this.register('extend', (exp) => `_engine.extend(${exp});`);
-        this.register('include', (exp) => `_output += await _engine.render(${exp}, _data, true);`);
-        this.register('includeIf', (exp) => {
+        this.register('extends', (exp, children, append) => `_engine.extend(${exp});`);
+        this.register('extend', (exp, children, append) => `_engine.extend(${exp});`);
+        this.register('include', (exp, children, append) => `${append} await _engine.render(${exp}, _data, true);`);
+        this.register('includeIf', (exp, children, append) => {
             const args = exp?.split(',').map(a => a.trim()) || [];
             const view = args[0];
             const data = args[1] || '_data';
-            return `if (_engine.exists(${view})) { _output += await _engine.render(${view}, ${data}, true); }`;
+            return `if (_engine.exists(${view})) { ${append} await _engine.render(${view}, ${data}, true); }`;
         });
-        this.register('includeWhen', (exp) => {
+        this.register('includeWhen', (exp, children, append) => {
             const args = exp?.split(',').map(a => a.trim()) || [];
             const condition = args[0];
             const view = args[1];
             const data = args[2] || '_data';
-            return `if (${condition}) { _output += await _engine.render(${view}, ${data}, true); }`;
+            return `if (${condition}) { ${append} await _engine.render(${view}, ${data}, true); }`;
         });
-        this.register('includeUnless', (exp) => {
+        this.register('includeUnless', (exp, children, append) => {
             const args = exp?.split(',').map(a => a.trim()) || [];
             const condition = args[0];
             const view = args[1];
             const data = args[2] || '_data';
-            return `if (!(${condition})) { _output += await _engine.render(${view}, ${data}, true); }`;
+            return `if (!(${condition})) { ${append} await _engine.render(${view}, ${data}, true); }`;
         });
-        this.register('yield', (exp) => `_output += _engine.yield(${exp});`);
+        this.register('yield', (exp, children, append) => `${append} _engine.yield(${exp});`);
+
+        // SEO & Meta
+        this.register('meta', (exp) => `_engine.setMeta(${exp});`);
+        this.register('head', (exp, children, append) => `${append} _engine.renderMeta();`);
 
         // Assets
-        this.register('vite', (exp) => {
+        this.register('vite', (exp, children, append) => {
             return `{
                 const __scripts = Array.isArray(${exp}) ? ${exp} : [${exp}];
                 const __isDev = !!(_data.env && (_data.env.APP_ENV === 'development' || _data.env.APP_ENV === 'local') || (typeof process !== 'undefined' && process.env.NODE_ENV === 'development'));
                 const __url = (_data.env && _data.env.APP_URL) || 'http://localhost:3000';
                 
                 if (__isDev) {
-                    _output += \`<script type="module" src="http://localhost:5173/@vite/client"></script>\`;
+                    ${append} \`<script type="module" src="http://localhost:5173/@vite/client"></script>\`;
                     for (const s of __scripts) {
-                        _output += \`<script type="module" src="http://localhost:5173/\${s}"></script>\`;
+                        ${append} \`<script type="module" src="http://localhost:5173/\${s}"></script>\`;
                     }
                 } else {
                     for (const s of __scripts) {
-                        _output += \`<script type="module" src="\${__url}/build/\${s}"></script>\`;
+                        ${append} \`<script type="module" src="\${__url}/build/\${s}"></script>\`;
                     }
                 }
             }`;
@@ -154,7 +158,7 @@ export class DirectiveRegistry {
         this.register('prepend', (exp, children) => {
             return `_engine.startPrepend(${exp}, _output); _output = "";\n${children}\n _output = _engine.endPrepend(_output);`;
         });
-        this.register('stack', (exp) => `_output += _engine.stack(${exp});`);
+        this.register('stack', (exp, children, append) => `${append} _engine.stack(${exp});`);
 
         // Components
         this.register('component', (exp, children) => {
@@ -165,7 +169,7 @@ export class DirectiveRegistry {
         });
 
         // Security & Utils
-        this.register('verbatim', (exp, children) => `_output += \`${children?.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`;`);
+        this.register('verbatim', (exp, children, append) => `${append} \`${children?.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`;`);
         this.register('once', (exp, children) => {
             const id = Math.random().toString(36).substring(7);
             return `if (!_engine.hasOnce('${id}')) { _engine.markOnce('${id}'); ${children} }`;
@@ -188,26 +192,113 @@ export class DirectiveRegistry {
         });
 
         // Async
-        this.register('await', (exp, children) => {
-            return `_output += await (${exp});`;
+        this.register('await', (exp, children, append) => {
+            return `${append} await (${exp});`;
         });
 
-        this.register('json', (exp) => `_output += JSON.stringify(${exp});`);
-        this.register('js', (exp) => `_output += ${exp};`);
-        this.register('dump', (exp) => `_output += \`<pre>\${JSON.stringify(${exp}, null, 2)}</pre>\`;`);
-        this.register('dd', (exp) => `_output += \`<pre>\${JSON.stringify(${exp}, null, 2)}</pre>\`; return _output;`);
+        this.register('json', (exp, children, append) => `${append} JSON.stringify(${exp});`);
+        this.register('js', (exp, children, append) => `${append} ${exp};`);
+        this.register('dump', (exp, children, append) => `${append} \`<pre>\${JSON.stringify(${exp}, null, 2)}</pre>\`;`);
+        this.register('dd', (exp, children, append) => `${append} \`<pre>\${JSON.stringify(${exp}, null, 2)}</pre>\`; return _output;`);
 
         // HTMX / Fragments
-        this.register('fragment', (exp, children) => {
+        this.register('fragment', (exp, children, append) => {
             return `if (!_engine.isFragmentMode() || _engine.getFragment() === ${exp}) {\n${children}\n}`;
         });
 
         // SPA Engine Configuration (@spa)
-        this.register('spa', () => {
+        this.register('spa', (exp, children, append) => {
             const spaScript = `<script data-spa-ignore>
 (function() {
     const cache = new Map();
     const dispatch = (name, detail) => document.dispatchEvent(new CustomEvent(name, { detail }));
+
+    // Global Actions Proxy
+    window.actions = new Proxy({}, {
+        get(target, name) {
+            if (!target[name]) {
+                target[name] = {
+                    _start: [], _finish: [], _error: [], _always: [], _optimistic: [],
+                    start: function(cb) { this._start.push(cb); return this; },
+                    finish: function(cb) { this._finish.push(cb); return this; },
+                    error: function(cb) { this._error.push(cb); return this; },
+                    always: function(cb) { this._always.push(cb); return this; },
+                    optimistic: function(cb) { this._optimistic.push(cb); return this; }
+                };
+            }
+            return target[name];
+        }
+    });
+
+    const updateContent = async (url, html, pushState = true) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // 1. Preserve elements with data-preserve
+        const preserved = new Map();
+        document.querySelectorAll('[data-preserve]').forEach(el => {
+            const id = el.id || el.name || el.getAttribute('data-preserve-id') || el.outerHTML.substring(0, 100);
+            preserved.set(id, el);
+        });
+
+        const updateDOM = () => {
+            // Restore Scroll Position for the CURRENT page before leaving
+            if (pushState) {
+                history.replaceState({ ...history.state, scrollX: window.scrollX, scrollY: window.scrollY }, '');
+            }
+
+            document.title = doc.title;
+            document.body.innerHTML = doc.body.innerHTML;
+
+            // 2. Re-insert preserved elements
+            document.querySelectorAll('[data-preserve]').forEach(newEl => {
+                const id = newEl.id || newEl.name || newEl.getAttribute('data-preserve-id') || newEl.outerHTML.substring(0, 100);
+                const oldEl = preserved.get(id);
+                if (oldEl) {
+                    newEl.replaceWith(oldEl);
+                }
+            });
+
+            document.querySelectorAll('script').forEach(oldScript => {
+                if (oldScript.hasAttribute('data-spa-ignore')) return;
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.textContent = oldScript.textContent;
+                oldScript.replaceWith(newScript);
+            });
+
+            if (pushState) {
+                window.history.pushState({ scrollX: 0, scrollY: 0 }, '', url);
+            } else {
+                // Return to previous scroll
+                window.scrollTo(history.state?.scrollX || 0, history.state?.scrollY || 0);
+            }
+            initLive();
+            dispatch('arika:spa:end', { url });
+        };
+
+        if (document.startViewTransition) {
+            document.startViewTransition(updateDOM);
+        } else {
+            updateDOM();
+        }
+    };
+
+    const initLive = (root = document) => {
+        root.querySelectorAll('[data-fetch]').forEach(el => {
+            if (el.__arika_live) return;
+            el.__arika_live = true;
+            const fetchContent = async () => {
+                try {
+                    const res = await fetch(el.dataset.fetch, { headers: { 'X-Arika-Fragment': 'true' } });
+                    if (res.ok) el.innerHTML = await res.text();
+                } catch (e) { console.error('[Live] Fetch failed:', e); }
+            };
+            if (el.dataset.interval) setInterval(fetchContent, parseInt(el.dataset.interval));
+            window.addEventListener('focus', () => fetchContent());
+        });
+    };
+
     document.addEventListener('click', async (e) => {
         const link = e.target.closest('a');
         if (!link || link.target || link.origin !== window.location.origin || link.getAttribute('href').startsWith('#') || link.getAttribute('href').startsWith('javascript:') || link.hasAttribute('data-spa-ignore')) return;
@@ -226,84 +317,139 @@ export class DirectiveRegistry {
                 html = await response.text();
                 cache.set(url, html);
             }
-            
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-
-            const updateDOM = () => {
-                document.title = doc.title;
-                document.body.innerHTML = doc.body.innerHTML;
-                
-                document.querySelectorAll('script').forEach(oldScript => {
-                    if (oldScript.hasAttribute('data-spa-ignore')) return;
-                    const newScript = document.createElement('script');
-                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                    newScript.textContent = oldScript.textContent;
-                    oldScript.replaceWith(newScript);
-                });
-                
-                window.history.pushState({}, '', url);
-                dispatch('arika:spa:end', { url });
-            };
-
-            if (document.startViewTransition) {
-                document.startViewTransition(updateDOM);
-            } else {
-                updateDOM();
-            }
+            await updateContent(url, html, true);
         } catch (err) {
             console.error('[SPA] Navigation failed:', err);
             window.location.href = url;
         }
     });
 
+    document.addEventListener('submit', async (e) => {
+        const form = e.target;
+        const actionInput = form.querySelector('input[name="_action"]');
+        if (!actionInput) return;
+
+        e.preventDefault();
+        const actionName = actionInput.value;
+        const action = window.actions[actionName];
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        action._optimistic.forEach(cb => cb(data));
+        action._start.forEach(cb => cb());
+
+        try {
+            const response = await fetch(form.action || window.location.href, {
+                method: form.method || 'POST',
+                headers: { 'X-Arika-Action': actionName, 'Accept': 'application/json' },
+                body: formData
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                action._finish.forEach(cb => cb(result));
+            } else if (response.status === 422) {
+                // Zero-JS Validation Mapping
+                const errors = result.errors || {};
+                document.querySelectorAll('[data-error-field]').forEach(el => {
+                    const field = el.getAttribute('data-error-field');
+                    if (errors[field]) {
+                        el.innerHTML = Array.isArray(errors[field]) ? errors[field][0] : errors[field];
+                        el.removeAttribute('hidden');
+                        el.style.display = '';
+                    } else {
+                        el.setAttribute('hidden', '');
+                    }
+                });
+                action._error.forEach(cb => cb(errors));
+            } else {
+                action._error.forEach(cb => cb(result.errors || result));
+            }
+        } catch (err) {
+            action._error.forEach(cb => cb(err));
+        } finally {
+            action._always.forEach(cb => cb());
+        }
+    });
+
+    window.addEventListener('popstate', async () => {
+        const url = window.location.href;
+        if (cache.has(url)) {
+            await updateContent(url, cache.get(url), false);
+        } else {
+            window.location.reload();
+        }
+    });
+
+    // 4. Hover Prefetching
+    document.addEventListener('mouseenter', async (e) => {
+        const link = e.target.closest('a[data-prefetch]');
+        if (!link || cache.has(link.href)) return;
+        
+        try {
+            const response = await fetch(link.href, { headers: { 'X-Arika-Spa': 'true' } });
+            if (response.ok) cache.set(link.href, await response.text());
+        } catch (e) {}
+    }, true);
+
+    initLive();
 })();
 </script>`;
-            return `_output += ${JSON.stringify(spaScript)};`;
+            return `${append} ${JSON.stringify(spaScript)};`;
         });
+
+        // Smart Data Fetching (@fetch)
+        this.register('fetch', (exp, children, append) => `${append} ' data-fetch="' + ${exp} + '"';`);
+        this.register('interval', (exp, children, append) => `${append} ' data-interval="' + ${exp} + '"';`);
+        this.register('prefetch', (exp, children, append) => `${append} ' data-prefetch'`);
 
         // --- FORM HELPERS ---
 
         // @csrf -> hidden input with CSRF token from _data._csrf
-        this.register('csrf', () => '_output += `<input type="hidden" name="_token" value="${(_data._csrf || "")}">`;');
+        this.register('csrf', (exp, children, append) => `${append} \`<input type="hidden" name="_token" value="\${(_data._csrf || "")}">\`;`);
 
         // @method('PUT') -> hidden method spoofing input
-        this.register('method', (exp) => `_output += \`<input type="hidden" name="_method" value="\${${exp}}">\`;`);
+        this.register('method', (exp, children, append) => `${append} \`<input type="hidden" name="_method" value="\${${exp}}">\`;`);
 
         // @error('field') ... @enderror
-        this.register('error', (exp, children) => {
+        this.register('error', (exp, children, append) => {
             return `{
                 const __fieldErrors = _data.errors && _data.errors[${exp}];
-                if (__fieldErrors) {
-                    const message = Array.isArray(__fieldErrors) ? __fieldErrors[0] : __fieldErrors;
+                const __hasError = !!__fieldErrors;
+                const __message = Array.isArray(__fieldErrors) ? __fieldErrors[0] : __fieldErrors;
+                
+                ${append} \`<span data-error-field="\${${exp}}" \${!__hasError ? 'hidden style="display:none"' : ''}>\`;
+                if (__hasError) {
+                    const message = __message;
                     ${children}
                 }
+                ${append} \`</span>\`;
             }`;
         });
 
         // --- CONDITIONAL ATTRIBUTES ---
 
-        this.register('checked', (exp) => `_output += (${exp}) ? ' checked' : '';`);
-        this.register('selected', (exp) => `_output += (${exp}) ? ' selected' : '';`);
-        this.register('disabled', (exp) => `_output += (${exp}) ? ' disabled' : '';`);
-        this.register('required', (exp) => `_output += (${exp}) ? ' required' : '';`);
-        this.register('readonly', (exp) => `_output += (${exp}) ? ' readonly' : '';`);
+        this.register('checked', (exp, children, append) => `${append} (${exp}) ? ' checked' : '';`);
+        this.register('selected', (exp, children, append) => `${append} (${exp}) ? ' selected' : '';`);
+        this.register('disabled', (exp, children, append) => `${append} (${exp}) ? ' disabled' : '';`);
+        this.register('required', (exp, children, append) => `${append} (${exp}) ? ' required' : '';`);
+        this.register('readonly', (exp, children, append) => `${append} (${exp}) ? ' readonly' : '';`);
 
         // @class({'cls-a': condition, 'cls-b': true})
-        this.register('class', (exp) => {
+        this.register('class', (exp, children, append) => {
             return `{
                 const __classMap = ${exp};
                 const __classes = Object.entries(__classMap).filter(([, v]) => Boolean(v)).map(([c]) => c).join(' ');
-                _output += __classes ? \` class="\${__classes}"\` : '';
+                ${append} __classes ? \` class="\${__classes}"\` : '';
             }`;
         });
 
         // @style({'color:red': condition})
-        this.register('style', (exp) => {
+        this.register('style', (exp, children, append) => {
             return `{
                 const __styleMap = ${exp};
                 const __styles = Object.entries(__styleMap).filter(([, v]) => Boolean(v)).map(([s]) => s).join('; ');
-                _output += __styles ? \` style="\${__styles}"\` : '';
+                ${append} __styles ? \` style="\${__styles}"\` : '';
             }`;
         });
 
@@ -386,13 +532,42 @@ export class DirectiveRegistry {
 
         // --- TRANSLATION ---
 
-        this.register('lang', (exp) => `_output += _escape((_data.__t && _data.__t(${exp})) || ${exp});`);
-        this.register('t', (exp) => `_output += _escape((_data.__t && _data.__t(${exp})) || ${exp});`);
-        this.register('choice', (exp) => {
+        this.register('lang', (exp, children, append) => `${append} _escape((_data.__t && _data.__t(${exp})) || ${exp});`);
+        this.register('t', (exp, children, append) => `${append} _escape((_data.__t && _data.__t(${exp})) || ${exp});`);
+        this.register('choice', (exp, children, append) => {
             const args = exp?.split(',').map(a => a.trim()) || [];
             const key = args[0];
             const count = args[1] || '1';
-            return `_output += _escape((_data.__choice && _data.__choice(${key}, ${count})) || ${key});`;
+            return `${append} _escape((_data.__choice && _data.__choice(${key}, ${count})) || ${key});`;
+        });
+
+        // Server Actions (@action)
+        this.register('action', (exp, children, append) => {
+            return `${append} '<input type="hidden" name="_action" value="' + ${exp} + '">';\n` +
+                   `${append} '<input type="hidden" name="_action_sign" value="' + _engine.signAction(${exp}) + '">';`;
+        });
+
+        // Template Caching (@cache)
+        this.register('cache', (exp, children) => {
+            const args = exp?.split(',').map(a => a.trim()) || [];
+            const key = args[0];
+            const ttl = args[1] || '3600';
+            
+            return `{
+                const __cacheKey = ${key};
+                const __ttl = ${ttl};
+                const __cached = await _engine.getCachedFragment(__cacheKey);
+                if (__cached !== null) {
+                    _output += __cached;
+                } else {
+                    const __prevOutput = _output;
+                    _output = "";
+                    ${children}
+                    const __captured = _output;
+                    _output = __prevOutput + __captured;
+                    await _engine.setCachedFragment(__cacheKey, __captured, __ttl);
+                }
+            }`;
         });
 
     }

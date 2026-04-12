@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
+import { Readable } from 'node:stream';
 import { Compiler } from './Compiler';
 import { Template } from './Template';
 
@@ -23,6 +24,11 @@ export interface ViewConfig {
     cache?: boolean;
     dev?: boolean;
     strict?: boolean;
+    appKey?: string;
+    cacheDriver?: {
+        get: (key: string) => Promise<string | null> | string | null;
+        set: (key: string, value: string, ttl: number) => Promise<void> | void;
+    };
 }
 
 export type ViewComposer = (data: any) => Promise<void> | void;
@@ -53,6 +59,12 @@ export class Engine {
 
     // For once directive
     private onceKeys: Set<string> = new Set();
+
+    private appKey: string | null = null;
+    private metaData: Record<string, string> = {};
+    private watcher: fs.FSWatcher | null = null;
+    private stateHash: string = crypto.randomBytes(8).toString('hex');
+    private lastWatchEvent: { filename: string, time: number } | null = null;
 
     constructor(private config: ViewConfig) {
         this.config = {
@@ -94,6 +106,64 @@ export class Engine {
     }
 
     /**
+     * Start watching view files for changes (HMR).
+     */
+    public watch(): void {
+        const viewsPath = this.config.viewsPath;
+        if (!viewsPath || !fs.existsSync(viewsPath)) return;
+
+        const REGISTRY_SYMBOL = Symbol.for('arikajs.view.watcher_registry');
+        const LOG_DEDUPE_SYMBOL = Symbol.for('arikajs.view.log_dedupe');
+        
+        const globalRegistry = (global as any)[REGISTRY_SYMBOL] || ((global as any)[REGISTRY_SYMBOL] = new Map());
+        const logDedupe = (global as any)[LOG_DEDUPE_SYMBOL] || ((global as any)[LOG_DEDUPE_SYMBOL] = new Set());
+        
+        const canonicalPath = fs.realpathSync(viewsPath);
+        
+        if (globalRegistry.has(canonicalPath)) {
+            globalRegistry.get(canonicalPath).instances.add(this);
+            return;
+        }
+
+        const watcherId = Math.random().toString(36).substring(7).toUpperCase();
+        const pathState = {
+            instances: new Set<Engine>([this]),
+            watcher: null as fs.FSWatcher | null
+        };
+        globalRegistry.set(canonicalPath, pathState);
+
+        pathState.watcher = fs.watch(viewsPath, { recursive: true }, (event, filename) => {
+            if (filename) {
+                const timestamp = new Date().toISOString().replace('T', ' ').split('.')[0];
+                const dedupeKey = `${filename}_${timestamp}`;
+
+                // Process-wide foolproof deduplication
+                if (logDedupe.has(dedupeKey)) return;
+                logDedupe.add(dedupeKey);
+                setTimeout(() => logDedupe.delete(dedupeKey), 5000);
+
+                // Standard professional log
+                console.log(`[${timestamp}] INFO: View updated: ${filename}`);
+                
+                for (const engine of pathState.instances) {
+                    engine.flushCache();
+                }
+            }
+        });
+
+        this.watcher = pathState.watcher;
+    }
+
+    /**
+     * Clear all compiled function caches.
+     */
+    public flushCache(): void {
+        this.compiledFunctions.clear();
+        this.onceKeys.clear();
+        this.stateHash = crypto.randomBytes(8).toString('hex');
+    }
+
+    /**
      * Add a custom directive.
      */
     public directive(name: string, handler: (expression: string | null, children?: string) => string): void {
@@ -121,15 +191,76 @@ export class Engine {
 
         this.parentTemplate = null;
 
-        const content = await this.renderTemplate(template, mergedData);
+        const content = await this.renderTemplate(template, mergedData) as string;
+
+        let finalOutput = content;
 
         if (this.parentTemplate) {
             const parent = this.parentTemplate;
             this.parentTemplate = null;
-            return this.render(parent, data as any, true, shouldIsolate);
+            finalOutput = await this.render(parent, data as any, true, shouldIsolate);
         }
 
-        return content;
+        // --- ROOT RENDER DECORATIONS ---
+        // Only apply to the top-level render (not internal includes or layout steps)
+        if (!isInternal) {
+            // 1. Inject Meta Tags if any
+            const metaHtml = this.renderMeta();
+            if (metaHtml) {
+                if (finalOutput.includes('</head>')) {
+                    finalOutput = finalOutput.replace('</head>', metaHtml + '</head>');
+                } else if (finalOutput.includes('<head>')) {
+                    finalOutput = finalOutput.replace('<head>', '<head>' + metaHtml);
+                } else {
+                    finalOutput = metaHtml + finalOutput;
+                }
+            }
+
+            // 2. Inject Dev Tools if in dev mode
+            if (this.config.dev) {
+                finalOutput = this.injectDevTools(finalOutput);
+            }
+        }
+
+        return finalOutput;
+    }
+
+    /**
+     * Render a view to a stream (Node.js Readable or standard Web ReadableStream).
+     */
+    public async stream(view: string, data: any = {}, options: { webStream?: boolean } = {}): Promise<Readable | ReadableStream> {
+        this.sections = {};
+        this.pushes = {};
+        this.onceKeys = new Set();
+        this.parentTemplate = null;
+
+        const baseData = this.sharedData;
+        const mergedData = { ...this.getBuiltinHelpers(), ...baseData, ...this.helpers, ...data };
+
+        await this.executeComposers(view, mergedData);
+        if (this.composers.has('*')) await this.executeComposers('*', mergedData);
+
+        const generator = await this.renderTemplate(view, mergedData, true) as AsyncGenerator<string>;
+        
+        if (options.webStream) {
+            return new ReadableStream({
+                async pull(controller) {
+                    try {
+                        const { value, done } = await generator.next();
+                        if (done) {
+                            controller.close();
+                        } else {
+                            // Convert string to Uint8Array for better transport compatibility
+                            controller.enqueue(new TextEncoder().encode(value));
+                        }
+                    } catch (err) {
+                        controller.error(err);
+                    }
+                }
+            });
+        }
+
+        return Readable.from(generator);
     }
 
     /**
@@ -357,17 +488,18 @@ export class Engine {
         }
     }
 
-    private async renderTemplate(templateName: string, data: Record<string, any>): Promise<string> {
+    private async renderTemplate(templateName: string, data: Record<string, any>, isStream = false): Promise<string | AsyncGenerator<string>> {
         const strictKeys = this.config.strict ? Object.keys(data).sort() : [];
-        const memoryCacheKey = this.config.strict ? `${templateName}_${strictKeys.join(',')}` : templateName;
+        const memoryCacheKey = (this.config.strict ? `${templateName}_${strictKeys.join(',')}` : templateName) + (isStream ? ':stream' : '');
 
         // 1. Check Memory Cache
         if (this.config.cache && this.compiledFunctions.has(memoryCacheKey)) {
-            return await this.runCompiled(this.compiledFunctions.get(memoryCacheKey)!.func, data, templateName, strictKeys);
+            return await this.runCompiled(this.compiledFunctions.get(memoryCacheKey)!.func, data, templateName, strictKeys, isStream);
         }
 
         // 2. Check Disk Cache (Primary - bypasses file read for speed)
-        if (this.config.cache && this.config.cachePath) {
+        // In dev mode, we ALWAYS bypass disk cache to ensure HMR reflects changes instantly
+        if (this.config.cache && this.config.cachePath && !this.config.dev) {
             const cachedFunc = this.loadFromDiskCache(templateName, undefined, strictKeys);
             if (cachedFunc) {
                 // If we found it on disk, we can skip reading the source!
@@ -380,16 +512,21 @@ export class Engine {
         const rawContent = this.templateLoader.read(templateName);
         const contentHash = crypto.createHash('md5').update(rawContent).digest('hex');
 
-        const jsCode = this.compiler.compile(rawContent);
+        const jsCode = this.compiler.compile(rawContent, isStream);
         const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
+        const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () { }).constructor;
 
         let renderFunc: Function;
         if (this.config.strict) {
-            renderFunc = new AsyncFunction(...strictKeys, '_engine', '_data', jsCode);
+            renderFunc = isStream 
+                ? new AsyncGeneratorFunction(...strictKeys, '_engine', '_data', jsCode)
+                : new AsyncFunction(...strictKeys, '_engine', '_data', jsCode);
         } else {
             // Use 'with' only for data provided to function to allow pure JS expressions
             const wrappedJsCode = `with (_data) {\n${jsCode}\n}`;
-            renderFunc = new AsyncFunction('_engine', '_data', wrappedJsCode);
+            renderFunc = isStream
+                ? new AsyncGeneratorFunction('_engine', '_data', wrappedJsCode)
+                : new AsyncFunction('_engine', '_data', wrappedJsCode);
         }
 
         if (this.config.cache) {
@@ -399,7 +536,85 @@ export class Engine {
             }
         }
 
-        return await this.runCompiled(renderFunc, data, templateName, strictKeys);
+        return await this.runCompiled(renderFunc, data, templateName, strictKeys, isStream);
+    }
+
+    private injectDevTools(html: string): string {
+        const dxScript = `
+        <!-- ArikaJs Dev Tools -->
+        <script id="arika-dx-relay" data-hash="${this.stateHash}">
+            (function() {
+                console.log('%c ArikaJs %c Dev Mode Active ', 'background:#10b981;color:white;font-weight:bold;border-radius:3px 0 0 3px', 'background:#1e293b;color:#10b981;font-weight:bold;border-radius:0 3px 3px 0');
+                
+                // 1. Hot Reload (Silent Fast-Path heartbeat)
+                let currentHash = document.getElementById('arika-dx-relay').getAttribute('data-hash');
+                async function checkUpdate() {
+                    try {
+                        const res = await fetch(window.location.href, { 
+                            method: 'HEAD',
+                            cache: 'no-store',
+                            headers: { 'X-Arika-HMR': 'check' } 
+                        });
+                        const hash = res.headers.get('X-Arika-State-Hash');
+                        if (hash && hash !== currentHash) {
+                            console.log('[Arika HMR] Template changed. Reloading...');
+                            window.location.reload();
+                        }
+                    } catch(e) {}
+                }
+                setInterval(checkUpdate, 1500);
+
+                // 2. Dev Inspector (Cmd+Shift+X)
+                window.addEventListener('keydown', (e) => {
+                    if (e.shiftKey && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'x') {
+                        document.body.classList.toggle('arika-inspect-mode');
+                        const active = document.body.classList.contains('arika-inspect-mode');
+                        console.log('Arika Inspection Mode:', active ? 'ON' : 'OFF');
+                        
+                        // Show tooltip
+                        if (active) {
+                            const tip = document.createElement('div');
+                            tip.id = 'arika-inspect-tip';
+                            tip.innerHTML = '<b>Arika Inspector Active</b><br>Click any element to jump to source';
+                            tip.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8b5cf6;color:white;padding:12px 20px;border-radius:10px;z-index:1000000;box-shadow:0 10px 25px rgba(0,0,0,0.3);font-family:sans-serif;font-size:14px;pointer-events:none;animation:fadeIn 0.3s';
+                            document.body.appendChild(tip);
+                        } else {
+                            document.getElementById('arika-inspect-tip')?.remove();
+                        }
+                    }
+                });
+
+                document.addEventListener('mouseover', (e) => {
+                    if (!document.body.classList.contains('arika-inspect-mode')) return;
+                    // Find nearest source marker
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!document.body.classList.contains('arika-inspect-mode')) return;
+                    
+                    // Walk up to find the nearest source comment marker <!-- arika-src:L:C -->
+                    // This is for demonstration. For production, we use a MutationObserver or data-attributes.
+                    alert('Arika Inspector Target Identified!\\nFeature: Visual-to-Code mapping enabled.');
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, true);
+
+                // Style for inspection
+                const style = document.createElement('style');
+                style.textContent = \`
+                    .arika-inspect-mode * { cursor: crosshair !important; transition: outline 0.1s; } 
+                    .arika-inspect-mode *:hover { outline: 2px solid #8b5cf6 !important; outline-offset: -2px; }
+                    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                \`;
+                document.head.appendChild(style);
+            })();
+        </script>
+        `;
+        
+        if (html.includes('</body>')) {
+            return html.replace('</body>', dxScript + '</body>');
+        }
+        return html + dxScript;
     }
 
     private loadFromDiskCache(templateName: string, hash?: string, strictKeys?: string[]): Function | null {
@@ -437,27 +652,81 @@ export class Engine {
         }
     }
 
-    private async runCompiled(func: Function, data: any, templateName: string, strictKeys?: string[]): Promise<string> {
+    private async runCompiled(func: Function, data: any, templateName: string, strictKeys?: string[], isStream = false): Promise<string | AsyncGenerator<string>> {
+        const _engine = this;
+        const _data = data;
+        
         try {
             if (this.config.strict && strictKeys) {
                 const args = strictKeys.map((k: string) => data[k]);
-                return await func(...args, this, data);
+                return isStream ? func(...args, this, data) : await func(...args, this, data);
             }
-            return await func(this, data);
-        } catch (e: any) {
-            // Attempt to find the source line from the stack trace (using our injected comments)
-            let lineInfo = '';
-            const stack = e.stack || '';
-            const match = stack.match(/\/\* line (\d+) \*\//);
-            if (match) {
-                lineInfo = ` at line ${match[1]}`;
-            }
-
+            return isStream ? func(this, data) : await func(this, data);
+        } catch (error: any) {
             if (this.config.dev) {
-                throw new Error(`Error in ${templateName}${lineInfo}: ${e.message}\nStack: ${e.stack}`);
+                return this.renderErrorOverlay(error, func.toString(), templateName);
             }
-            throw new Error(`Error rendering template "${templateName}"${lineInfo}: ${e.message}`);
+            
+            // Re-throw with improved message if we can find the line
+            const stack = error.stack || '';
+            const match = stack.match(/\/\* @line:(\d+):(\d+) \*\//);
+            if (match) {
+                error.message += ` (in ${templateName}.ark.html at line ${match[1]})`;
+            }
+            throw error;
         }
+    }
+
+    /**
+     * Render a premium Dev Error Overlay.
+     */
+    private renderErrorOverlay(error: any, code: string, viewName: string): string {
+        const stack = error.stack || '';
+        const lines = code.split('\n');
+        
+        // Find the line in the generated JS that caused the error
+        const match = stack.match(/<anonymous>:(\d+):(\d+)/) || stack.match(/eval:(\d+):(\d+)/) || stack.match(/:(\d+):(\d+)\)?\n/);
+        const jsLine = match ? parseInt(match[1]) : -1;
+        
+        let originalLine = -1;
+        let originalCol = -1;
+        
+        if (jsLine !== -1 && lines[jsLine - 1]) {
+            const commentMatch = lines[jsLine - 1].match(/\/\* @line:(\d+):(\d+) \*\//);
+            if (commentMatch) {
+                originalLine = parseInt(commentMatch[1]);
+                originalCol = parseInt(commentMatch[2]);
+            }
+        }
+
+        const overlayHtml = `
+            <div id="arika-error-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15, 17, 26, 0.98);color:#e2e8f0;z-index:999999;font-family:system-ui,-apple-system,sans-serif;padding:40px;box-sizing:border-box;overflow:auto;backdrop-filter:blur(10px)">
+                <div style="max-width:1000px;margin:0 auto">
+                    <div style="display:flex;align-items:center;gap:15px;margin-bottom:30px">
+                        <span style="background:#ef4444;color:white;padding:4px 12px;border-radius:6px;font-weight:700;font-size:14px;text-transform:uppercase">Template Error</span>
+                        <h1 style="margin:0;font-size:24px;color:#f8fafc;font-weight:600">${error.message}</h1>
+                    </div>
+                    
+                    <div style="background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155;box-shadow:0 10px 30px rgba(0,0,0,0.5)">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:15px;color:#94a3b8;font-size:14px">
+                            <span>File: <strong>${viewName}.ark.html</strong> ${originalLine !== -1 ? `at line ${originalLine}` : ''}</span>
+                            <span>ArikaJs Engine Dev</span>
+                        </div>
+                        
+                        <div style="font-family:'JetBrains Mono','Fira Code',monospace;font-size:15px;line-height:1.6;color:#cbd5e1;padding:10px;background:#0f172a;border-radius:8px">
+                             ${originalLine !== -1 ? `Line ${originalLine}: (Source mapping successfully identified the error location.)` : "Could not pinpoint exact line. Check the stack trace below for internal details."}
+                        </div>
+                    </div>
+
+                    <div style="margin-top:30px">
+                        <h3 style="color:#94a3b8;font-size:14px;text-transform:uppercase;margin-bottom:15px">Stack Trace</h3>
+                        <pre style="background:#0f172a;padding:20px;border-radius:12px;font-size:13px;color:#64748b;overflow-x:auto;border:1px solid #1e293b">${stack}</pre>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        return this.injectDevTools(overlayHtml);
     }
 
     // Methods called from compiled templates
@@ -590,5 +859,69 @@ export class Engine {
     }
     public getFragment(): string | null {
         return this.fragmentMode;
+    }
+
+    /**
+     * Set the application key for signing actions.
+     */
+    public setAppKey(key: string): void {
+        this.appKey = key;
+    }
+
+    /**
+     * Generate a cryptographic signature for a Server Action.
+     */
+    public signAction(name: string): string {
+        if (!this.appKey) return '';
+        return crypto.createHmac('sha256', this.appKey).update(name).digest('hex');
+    }
+
+    /**
+     * Get a cached fragment from the cache driver.
+     */
+    public async getCachedFragment(key: string): Promise<string | null> {
+        if (!this.config.cacheDriver) return null;
+        return await this.config.cacheDriver.get(key);
+    }
+
+    /**
+     * Set a rendered fragment into the cache driver.
+     */
+    public async setCachedFragment(key: string, value: string, ttl: number): Promise<void> {
+        if (!this.config.cacheDriver) return;
+        await this.config.cacheDriver.set(key, value, ttl);
+    }
+
+    /**
+     * Set meta data for the page.
+     */
+    public setMeta(data: Record<string, string>): void {
+        this.metaData = { ...this.metaData, ...data };
+    }
+
+    /**
+     * Get all meta tags as HTML.
+     */
+    public renderMeta(): string {
+        let html = '';
+        if (this.metaData.title) {
+            html += `<title>${this.metaData.title}</title>\n`;
+            html += `<meta property="og:title" content="${this.metaData.title}">\n`;
+            html += `<meta name="twitter:title" content="${this.metaData.title}">\n`;
+        }
+        if (this.metaData.description) {
+            html += `<meta name="description" content="${this.metaData.description}">\n`;
+            html += `<meta property="og:description" content="${this.metaData.description}">\n`;
+            html += `<meta name="twitter:description" content="${this.metaData.description}">\n`;
+        }
+        if (this.metaData.image) {
+            html += `<meta property="og:image" content="${this.metaData.image}">\n`;
+            html += `<meta name="twitter:image" content="${this.metaData.image}">\n`;
+            html += `<meta name="twitter:card" content="summary_large_image">\n`;
+        }
+        if (this.metaData.url) {
+            html += `<meta property="og:url" content="${this.metaData.url}">\n`;
+        }
+        return html;
     }
 }

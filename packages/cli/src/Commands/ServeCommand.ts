@@ -44,7 +44,7 @@ export class ServeCommand extends Command {
         this.writeln('');
 
         const command = isTypeScript ? 'npx' : 'node';
-        const args = isTypeScript ? ['--yes', 'tsx', 'watch', '--clear-screen=false', '-r', 'tsconfig-paths/register', serverFile] : [serverFile];
+        const args = isTypeScript ? ['--yes', 'tsx', '-r', 'tsconfig-paths/register', serverFile] : [serverFile];
 
         let watcher: fs.FSWatcher | null = null;
         let server: ReturnType<typeof spawn> | null = null;
@@ -110,7 +110,7 @@ export class ServeCommand extends Command {
         if (isTypeScript) {
             this.comment(' [System] Hot-reloading enabled (watching code, config & resources)');
 
-            const watchExtensions = ['.ts', '.js', '.json', '.ark.html', '.env'];
+            const watchExtensions = ['.ts', '.js', '.json', '.env'];
             const ignoreDirs = ['node_modules', '.git', 'dist', 'storage'];
 
             watcher = fs.watch(root, { recursive: true }, async (event, filename) => {

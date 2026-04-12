@@ -8,8 +8,8 @@ export enum NodeType {
 
 export interface Node {
     type: NodeType;
-    line?: number;
-    [key: string]: any;
+    line: number;
+    column: number;
 }
 
 export interface RootNode extends Node {

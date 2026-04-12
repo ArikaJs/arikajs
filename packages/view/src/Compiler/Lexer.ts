@@ -11,12 +11,14 @@ export interface Token {
     type: TokenType;
     value: string;
     line: number;
+    column: number;
 }
 
 export class Lexer {
     private input: string;
     private position: number = 0;
     private line: number = 1;
+    private column: number = 1;
 
     constructor(input: string) {
         this.input = input;
@@ -61,8 +63,9 @@ export class Lexer {
             if (char === '@') {
                 // Peek if it's an escaped @@
                 if (this.input[this.position + 1] === '@') {
-                    tokens.push({ type: TokenType.Text, value: '@', line: this.line });
+                    tokens.push({ type: TokenType.Text, value: '@', line: this.line, column: this.column });
                     this.position += 2;
+                    this.column += 2;
                     continue;
                 }
 
@@ -73,8 +76,9 @@ export class Lexer {
                     continue;
                 } else {
                     // Not a directive, treat as regular text
-                    tokens.push({ type: TokenType.Text, value: '@', line: this.line });
+                    tokens.push({ type: TokenType.Text, value: '@', line: this.line, column: this.column });
                     this.position++;
+                    this.column++;
                     continue;
                 }
             }
@@ -86,8 +90,13 @@ export class Lexer {
             } else if (this.position < this.input.length) {
                 // Avoid infinite loop if no other token matches but position didn't advance
                 const char = this.input[this.position];
-                tokens.push({ type: TokenType.Text, value: char, line: this.line });
-                if (char === '\n') this.line++;
+                tokens.push({ type: TokenType.Text, value: char, line: this.line, column: this.column });
+                if (char === '\n') {
+                    this.line++;
+                    this.column = 1;
+                } else {
+                    this.column++;
+                }
                 this.position++;
             }
         }
@@ -96,39 +105,66 @@ export class Lexer {
 
     private consumeRawExpression(): Token {
         const start = this.position;
+        const startLine = this.line;
+        const startColumn = this.column;
+
         this.position += 3; // {!!
+        this.column += 3;
         while (this.position < this.input.length && !this.input.startsWith('!!}', this.position)) {
-            if (this.input[this.position] === '\n') this.line++;
+            if (this.input[this.position] === '\n') {
+                this.line++;
+                this.column = 1;
+            } else {
+                this.column++;
+            }
             this.position++;
         }
         this.position += 3; // !!}
+        this.column += 3;
         return {
             type: TokenType.RawExpression,
             value: this.input.substring(start + 3, this.position - 3).trim(),
-            line: this.line
+            line: startLine,
+            column: startColumn
         };
     }
 
     private consumeExpression(): Token {
         const start = this.position;
+        const startLine = this.line;
+        const startColumn = this.column;
+
         this.position += 2; // {{
+        this.column += 2;
         while (this.position < this.input.length && !this.input.startsWith('}}', this.position)) {
-            if (this.input[this.position] === '\n') this.line++;
+            if (this.input[this.position] === '\n') {
+                this.line++;
+                this.column = 1;
+            } else {
+                this.column++;
+            }
             this.position++;
         }
         this.position += 2; // }}
+        this.column += 2;
         return {
             type: TokenType.Expression,
             value: this.input.substring(start + 2, this.position - 2).trim(),
-            line: this.line
+            line: startLine,
+            column: startColumn
         };
     }
 
     private consumeDirective(): Token {
         const start = this.position;
+        const startLine = this.line;
+        const startColumn = this.column;
+
         this.position++; // @
+        this.column++;
         while (this.position < this.input.length && /[a-zA-Z0-9_]/.test(this.input[this.position])) {
             this.position++;
+            this.column++;
         }
 
         let value = this.input.substring(start, this.position);
@@ -136,19 +172,28 @@ export class Lexer {
         // Check for expression @directive(...)
         // Allow optional whitespace before the parenthesis
         let tempPos = this.position;
+        let tempCol = this.column;
         while (tempPos < this.input.length && (this.input[tempPos] === ' ' || this.input[tempPos] === '\t')) {
             tempPos++;
+            tempCol++;
         }
 
         if (this.input[tempPos] === '(') {
             this.position = tempPos;
+            this.column = tempCol;
             let parenCount = 1;
             this.position++;
+            this.column++;
             const exprStart = this.position;
             while (this.position < this.input.length && parenCount > 0) {
                 if (this.input[this.position] === '(') parenCount++;
                 if (this.input[this.position] === ')') parenCount--;
-                if (this.input[this.position] === '\n') this.line++;
+                if (this.input[this.position] === '\n') {
+                    this.line++;
+                    this.column = 1;
+                } else {
+                    this.column++;
+                }
                 this.position++;
             }
             value = this.input.substring(start, this.position);
@@ -157,48 +202,80 @@ export class Lexer {
         return {
             type: TokenType.Directive,
             value,
-            line: this.line
+            line: startLine,
+            column: startColumn
         };
     }
 
     private consumeComponentStart(): Token {
         const start = this.position;
+        const startLine = this.line;
+        const startColumn = this.column;
+
         while (this.position < this.input.length && this.input[this.position] !== '>') {
-            if (this.input[this.position] === '\n') this.line++;
+            if (this.input[this.position] === '\n') {
+                this.line++;
+                this.column = 1;
+            } else {
+                this.column++;
+            }
             this.position++;
         }
         this.position++; // >
+        this.column++;
         return {
             type: TokenType.ComponentStart,
             value: this.input.substring(start, this.position),
-            line: this.line
+            line: startLine,
+            column: startColumn
         };
     }
 
     private consumeComponentEnd(): Token {
         const start = this.position;
+        const startLine = this.line;
+        const startColumn = this.column;
+
         while (this.position < this.input.length && this.input[this.position] !== '>') {
+            if (this.input[this.position] === '\n') {
+                this.line++;
+                this.column = 1;
+            } else {
+                this.column++;
+            }
             this.position++;
         }
         this.position++; // >
+        this.column++;
         return {
             type: TokenType.ComponentEnd,
             value: this.input.substring(start, this.position),
-            line: this.line
+            line: startLine,
+            column: startColumn
         };
     }
 
     private consumeComment(): void {
         this.position += 4; // {{--
+        this.column += 4;
         while (this.position < this.input.length && !this.input.startsWith('--}}', this.position)) {
-            if (this.input[this.position] === '\n') this.line++;
+            if (this.input[this.position] === '\n') {
+                this.line++;
+                this.column = 1;
+            } else {
+                this.column++;
+            }
             this.position++;
         }
         this.position += 4; // --}}
+        this.column += 4;
     }
 
     private consumeText(): Token {
         const start = this.position;
+        const startLine = this.line;
+        const startColumn = this.column;
+
         while (this.position < this.input.length) {
             const char = this.input[this.position];
             if (char === '@' ||
@@ -209,13 +286,19 @@ export class Lexer {
                 this.input.startsWith('</x-', this.position)) {
                 break;
             }
-            if (char === '\n') this.line++;
+            if (char === '\n') {
+                this.line++;
+                this.column = 1;
+            } else {
+                this.column++;
+            }
             this.position++;
         }
         return {
             type: TokenType.Text,
             value: this.input.substring(start, this.position),
-            line: this.line
+            line: startLine,
+            column: startColumn
         };
     }
 }

@@ -1,4 +1,5 @@
 import { ServerResponse } from 'node:http';
+import { Readable } from 'node:stream';
 import * as cookie from 'cookie';
 
 export class Response {
@@ -7,6 +8,7 @@ export class Response {
     private _headers: Record<string, string | number | string[]> = {};
     private _cookies: string[] = [];
     private _content: string | Buffer | null = null;
+    private _isStreamed: boolean = false;
 
     constructor(res: ServerResponse) {
         if (res) this.reset(res);
@@ -135,6 +137,42 @@ export class Response {
     }
 
     /**
+     * Set the response content as a stream (supports Node Readable and Web ReadableStream).
+     */
+    public stream(content: Readable | ReadableStream): this {
+        this._isStreamed = true;
+        if (!this._headers['Content-Type']) {
+            this.header('Content-Type', 'text/html');
+        }
+        this.header('Transfer-Encoding', 'chunked');
+        
+        // 1. Set Status
+        this.res.statusCode = this._status;
+
+        // 2. Set Headers
+        const headerKeys = Object.keys(this._headers);
+        for (let i = 0; i < headerKeys.length; i++) {
+            const key = headerKeys[i];
+            this.res.setHeader(key, this._headers[key]);
+        }
+
+        // 3. Set Cookies
+        if (this._cookies.length > 0) {
+            this.res.setHeader('Set-Cookie', this._cookies);
+        }
+
+        // 4. Pipe stream to raw Node response
+        if (content instanceof Readable) {
+            content.pipe(this.res);
+        } else {
+            // Web ReadableStream to Node Writable
+            Readable.fromWeb(content as any).pipe(this.res);
+        }
+        
+        return this;
+    }
+
+    /**
      * Get the current content as a string for human consumption.
      */
     getContent(): string | Buffer | null {
@@ -170,7 +208,7 @@ export class Response {
      * This is called by the Kernel.
      */
     terminate(): void {
-        if (this.res.writableEnded) {
+        if (this.res.writableEnded || this._isStreamed) {
             return;
         }
 

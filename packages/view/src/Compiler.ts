@@ -22,13 +22,13 @@ export class Compiler {
     /**
      * Compile a template string into a executable JavaScript function body.
      */
-    public compile(content: string): string {
+    public compile(content: string, isStream = false): string {
         const lexer = new Lexer(content);
         const tokens = lexer.tokenize();
 
         const parser = new Parser(tokens);
         const ast = parser.parse();
 
-        return this.generator.generate(ast);
+        return this.generator.generate(ast, isStream);
     }
 }

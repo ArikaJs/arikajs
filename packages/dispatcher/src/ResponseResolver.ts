@@ -26,7 +26,7 @@ export class ResponseResolver {
         }
 
         // If it's a native stream, map to the response's stream handler if supported
-        if (value instanceof Stream) {
+        if (value instanceof Stream || (value && typeof value.getReader === 'function')) {
             if (typeof response.stream === 'function') {
                 return response.stream(value);
             }

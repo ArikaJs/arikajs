@@ -8,21 +8,24 @@ export class CodeGenerator {
         this.registry = registry;
     }
 
-    public generate(root: RootNode): string {
-        let jsCode = 'let _output = "";\n';
+    public generate(root: RootNode, isStream = false): string {
+        const append = isStream ? 'yield ' : '_output += ';
+        let jsCode = isStream ? '' : 'let _output = "";\n';
         jsCode += 'const _escape = (val) => String(val ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/\\\'/g, "&#39;");\n';
 
-        jsCode += this.generateNodes(root.children);
+        jsCode += this.generateNodes(root.children, append);
 
-        jsCode += 'return _output;';
+        if (!isStream) {
+            jsCode += 'return _output;';
+        }
         return jsCode;
     }
 
-    private generateNodes(nodes: Node[]): string {
-        return nodes.map(node => this.generateNode(node)).join('\n');
+    private generateNodes(nodes: Node[], append: string): string {
+        return nodes.map(node => this.generateNode(node, append)).join('\n');
     }
 
-    private generateNode(node: Node): string {
+    private generateNode(node: Node, append: string): string {
         let code = '';
         switch (node.type) {
             case NodeType.Text:
@@ -30,36 +33,45 @@ export class CodeGenerator {
                     .replace(/\\/g, '\\\\')
                     .replace(/`/g, '\\`')
                     .replace(/\${/g, '\\${');
-                code = `_output += \`${text}\`;`;
+                code = `${append}\`${text}\`;`;
                 break;
 
             case NodeType.Expression:
-                code = `_output += _escape(${this.cleanExpression((node as ExpressionNode).content)});`;
+                code = `${append}_escape(${this.cleanExpression((node as ExpressionNode).content)});`;
                 break;
 
             case NodeType.RawExpression:
-                code = `_output += (${this.cleanExpression((node as RawExpressionNode).content)});`;
+                code = `${append}(${this.cleanExpression((node as RawExpressionNode).content)});`;
                 break;
 
             case NodeType.Directive:
                 const dir = node as DirectiveNode;
-                const childrenCode = dir.children ? this.generateNodes(dir.children) : '';
+                const childrenCode = dir.children ? this.generateNodes(dir.children, append) : '';
                 const cleanedExp = dir.expression ? this.cleanExpression(dir.expression) : null;
-                const result = this.registry.handle(dir.name, cleanedExp, childrenCode);
+                const result = this.registry.handle(dir.name, cleanedExp, childrenCode, append);
 
                 if (result === null) {
                     // Fallback for unknown directives (e.g., CSS @media, @keyframes)
                     const originalText = `@${dir.name}${dir.expression ? '(' + dir.expression + ')' : ''}`;
                     const sanitized = originalText.replace(/`/g, '\\`').replace(/\${/g, '\\${');
-                    code = `_output += \`${sanitized}\`;\n${childrenCode}`;
+                    code = `${append}\`${sanitized}\`;\n${childrenCode}`;
                 } else {
                     code = result;
+                }
+                
+                // Inject Source Tracking for Dev Inspector (Visual Tracing)
+                // We wrap the output to inject a marker if it's a high-level block
+                if (node.line && (dir.name === 'component' || dir.name === 'include' || dir.name === 'yield')) {
+                    const sourceInfo = `${node.line}:${node.column}`;
+                    // Naive but effective for these core directives
+                    code = code.replace(/_output \+= `/g, `_output += \`<!-- arika-src:${sourceInfo} -->`);
                 }
                 break;
         }
 
         if (node.line && code) {
-            return `/* line ${node.line} */ ${code}`;
+            // Enhanced source mapping comment for Error Overlay and Dev Inspector
+            return `/* @line:${node.line}:${node.column} */ ${code}`;
         }
 
         return code;

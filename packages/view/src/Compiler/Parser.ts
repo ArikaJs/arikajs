@@ -12,7 +12,9 @@ export class Parser {
     public parse(): RootNode {
         const root: RootNode = {
             type: NodeType.Root,
-            children: []
+            children: [],
+            line: 1,
+            column: 1
         };
 
         while (this.position < this.tokens.length) {
@@ -34,17 +36,17 @@ export class Parser {
 
         if (token.type === TokenType.Text) {
             this.position++;
-            return { type: NodeType.Text, content: token.value, line: token.line };
+            return { type: NodeType.Text, content: token.value, line: token.line, column: token.column } as any;
         }
 
         if (token.type === TokenType.Expression) {
             this.position++;
-            return { type: NodeType.Expression, content: token.value, line: token.line };
+            return { type: NodeType.Expression, content: token.value, line: token.line, column: token.column } as any;
         }
 
         if (token.type === TokenType.RawExpression) {
             this.position++;
-            return { type: NodeType.RawExpression, content: token.value, line: token.line };
+            return { type: NodeType.RawExpression, content: token.value, line: token.line, column: token.column } as any;
         }
 
         if (token.type === TokenType.Directive) {
@@ -71,7 +73,8 @@ export class Parser {
             type: NodeType.Directive,
             name,
             expression,
-            line: token.line
+            line: token.line,
+            column: token.column
         };
 
         // Check if this is a block directive (if, for, each, etc.)
@@ -118,6 +121,7 @@ export class Parser {
             name: 'component',
             expression: this.parseComponentAttributes(name, attributesRaw),
             line: token.line,
+            column: token.column,
             children: []
         };
 

@@ -9,6 +9,8 @@ import { BenchmarkCommand } from './Commands/BenchmarkCommand';
 
 export class Bootstrap {
     public static async boot(): Promise<CommandRegistry> {
+        (global as any).__ARIKA_CLI_BOOTSTRAP__ = true;
+        
         const registry = new CommandRegistry();
 
         // Core commands

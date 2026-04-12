@@ -111,10 +111,196 @@ await view.renderFragment('dashboard', 'sidebar');
 
 ---
 
+### Server Actions (@action) — Zero-API Development 🚀
+Arika View eliminates the need for manual API routing. Call your controller methods directly from your HTML and handle the response with a reactive fluent API.
+
+#### **1. Define the Action**
+Inside any form, use the `@action` directive to point to a controller method.
+```html
+<form @action="updateProfile">
+    <input name="name" value="{{ $user.name }}">
+    <button type="submit">Save Changes</button>
+</form>
+```
+
+#### **2. Handle the Lifecycle**
+Use the `actions` global object to add interactivity without writing complex fetch logic.
+```javascript
+actions.updateProfile
+    .optimistic((data) => {
+        document.querySelector('.display-name').innerText = data.name;
+    })
+    .start(() => {
+        myButton.loading = true;
+    })
+    .finish((response) => {
+        toast.success(response.message);
+    })
+    .error((errors) => {
+        alert('Validation failed!');
+    })
+    .always(() => {
+        myButton.loading = false;
+    });
+```
+
+### 🚀 Single Page Application (@spa)
+
+The `@spa` directive transforms your app into a high-performance SPA with **zero configuration**.
+
+```html
+<body @spa>
+    <!-- Automatic speed boost enabled -->
+</body>
+```
+
+#### **Native Performance Features**
+- **State Preservation**: Add `data-preserve` to any element (inputs, videos, sidebars) to keep them alive across page transitions.
+```html
+<input name="search" data-preserve>
+```
+- **Scroll Restoration**: Automatically remembers and restores your scroll position per route.
+- **Predictive Navigation**: Use `@prefetch` on links to load them as soon as the user hovers, making transitions feel instant.
+```html
+<a href="/profile" @prefetch>View Profile</a>
+```
+- **View Transitions**: Uses the native browser View Transition API for smooth, fluid animations.
+- **Smart Lifecycle**: Listen for `arika:spa:start` and `arika:spa:end` events for custom loaders.
+
+
+### 📡 Live Fragments (@fetch)
+
+Create reactive UI components that handle their own data fetching and polling.
+
+```html
+<div @fetch="/api/statistics" @interval="5000">
+    <!-- This content will refresh every 5 seconds -->
+    <p>Loading stats...</p>
+</div>
+```
+
+#### **Features**
+- **Automatic Polling**: Use `@interval(ms)` to keep data fresh.
+- **Focus Revalidation**: Automatically refreshes content when the user returns to the tab.
+- **SSR First**: The initial content is rendered on the server, then the client takes over.
+- **Fragment Support**: Works perfectly with Arika's `@fragment` system for partial updates.
+
+
+### ⚡ Template-Level Caching (@cache)
+
+Boost performance by caching expensive HTML fragments. Perfect for sidebars, navigation, or heavy data-driven components.
+
+```html
+@cache('global_sidebar', 3600)
+    <!-- This block only renders once per hour -->
+    @foreach($heavy_data as $item)
+        <div>{{ $item->compute() }}</div>
+    @endforeach
+@endcache
+```
+
+### 🌊 Streaming SSR (Zero-Delay Rendering)
+
+ArikaJS supports native streaming SSR, allowing you to stream the HTML markup to the browser as it's being generated. This significantly improves the **Largest Contentful Paint (LCP)** and **Time to First Byte (TTFB)** for data-heavy pages.
+
+```typescript
+// In your Controller
+public async index({ view }) {
+    // Instead of view.render(), use view.stream()
+    return await view.stream('homepage', { 
+        data: heavyDatabaseQuery() 
+    });
+}
+```
+
+👉 **Why Streaming?** The server can send the `<head>` and top-level layout immediately while waiting for slow database queries or asynchronous operations inside the view.
+
+### 🌍 Edge-Ready Architecture (Web Streams)
+
+ArikaJS is built for the modern edge. The View Engine is **Cross-Runtime Compatible**, supporting standard **Web Streams (Fetch API)** out of the box. This means you can deploy your interactive SSR applications to:
+
+-   **Cloudflare Workers**
+-   **Vercel Edge Functions**
+-   **Deno / Bun** / **AWS Lambda**
+
+---
+
+### 🛡 Zero-JS Validation Mapping
+
+Forget writing manual `fetch` error handlers. ArikaJS automatically maps server-side validation errors to your UI.
+
+```html
+<form @action('register') method="POST">
+    <input name="email">
+    <!-- This updates automatically if validation fails -->
+    @error('email') <span class="error">{{ $message }}</span> @enderror
+</form>
+```
+
+When the server returns a `422` error, the Arika SPA engine identifies the `@error` fragments and live-patches them with the new messages instanty.
+
+---
+
+### 📂 Zero-API File Uploads
+
+Server Actions natively support `multipart/form-data`. Uploading files is as simple as adding an input.
+
+```html
+<form @action('upload') method="POST" enctype="multipart/form-data">
+    <input type="file" name="avatar">
+    <button>Upload</button>
+</form>
+```
+
+In your controller, the file is ready for you:
+```typescript
+public async upload({ request }) {
+    const file = request.file('avatar');
+    await file.store('avatars');
+}
+```
+
+---
+
+### 🌐 SEO & Meta System
+
+Managing social media tags and SEO is dead simple with the `@meta` directive.
+
+```html
+@meta({
+  title: "Welcome to ArikaJS",
+  description: "The high-performance interactivity framework",
+  image: "https://arika.js/og-image.png"
+})
+```
+
+This automatically generates all necessary `<title>`, `<meta name="description">`, and OpenGraph tags. To render them, simply place the `@head` directive in your base layout's `<head>`:
+
+```html
+<head>
+  @head
+  <!-- Your other assets -->
+</head>
+```
+
+---
+
+### 🛠 Elite Dev Experience (DX)
+
+ArikaJS includes premium debugging tools built-in:
+
+-   **Error Overlay**: When a template fails, we show you the exact line in your `.ark.html` file, not just a cryptic JS stack trace.
+-   **Dev Inspector**: Press `Cmd+Shift+X` and click any element to see exactly which view file and line generated it.
+-   **Hot Reload (HMR)**: Changes to your views are live-patched into the browser without losing application state or needing a full refresh.
+
+---
+
 ## 🛠 Directives Reference
 
 | Directive | Description |
 |-----------|-------------|
+| `@meta(obj)` | **[NEW]** Declaratively set page titles, descriptions, and social images. |
+| `@head` | **[NEW]** Renders all collected SEO and OpenGraph tags into the document head. |
 | `@spa` | **[NEW]** Instantly upgrades the frontend site to a Single Page Application. |
 | `@if`, `@elseif`, `@else` | Standard conditional logic. |
 | `@unless` | Inverse of `@if`. |

@@ -8,7 +8,7 @@ import {
     AuthResponse,
     RolePermissionMixin,
     Policy
-} from '../src';
+} from '../src/index';
 
 class Post {
     constructor(public id: number, public userId: number, public title: string) { }

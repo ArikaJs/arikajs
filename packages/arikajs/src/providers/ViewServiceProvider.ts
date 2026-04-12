@@ -4,8 +4,9 @@ import { View } from '@arikajs/view';
 import { carbon } from '@arikajs/carbon';
 import path from 'path';
 import { ViewMiddleware } from '../http/Middleware/ViewMiddleware';
+import { Application } from '../Contracts/Application';
 
-export class ViewServiceProvider extends ServiceProvider {
+export class ViewServiceProvider extends ServiceProvider<Application> {
     /**
      * Register the service provider.
      */
@@ -23,7 +24,13 @@ export class ViewServiceProvider extends ServiceProvider {
             const view = new View({
                 viewsPath,
                 cachePath,
-                cache: config.get('app.env') === 'production'
+                cache: config.get('app.env') === 'production',
+                dev: config.get('app.debug', false),
+                appKey: config.get('app.key') as string,
+                cacheDriver: this.app.has('cache') ? {
+                    get: (key: string) => this.app.make<any>('cache').get(`view_cache:${key}`),
+                    set: (key: string, value: string, ttl: number) => this.app.make<any>('cache').set(`view_cache:${key}`, value, ttl)
+                } : undefined
             });
 
             // Register standard view helpers
@@ -41,10 +48,15 @@ export class ViewServiceProvider extends ServiceProvider {
         });
     }
 
-    /**
-     * Boot the service provider.
-     */
     public async boot(): Promise<void> {
-        //
+        const view = this.app.make<View>(View);
+        
+        // Prevent the CLI process from running duplicate watchers
+        // We only want the actual HTTP server (server.ts) to watch files.
+        const isCli = (global as any).__ARIKA_CLI_BOOTSTRAP__ === true;
+        
+        if (view.config.dev && !isCli) {
+            view.engine().watch();
+        }
     }
 }
