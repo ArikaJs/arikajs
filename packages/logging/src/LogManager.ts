@@ -12,7 +12,11 @@ export class LogManager {
     protected channels: Map<string, Logger> = new Map();
     protected customCreators: Map<string, (config: any) => LoggerContract> = new Map();
 
-    constructor(protected config: any) { }
+    constructor(protected config: any = {}) { 
+        this.config = config || {};
+        this.config.default = this.config.default || 'console';
+        this.config.channels = this.config.channels || { console: { driver: 'console' } };
+    }
 
     public channel(name?: string): Logger {
         const channelName = name || this.config.default;
