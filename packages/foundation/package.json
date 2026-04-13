@@ -2,7 +2,7 @@
   "name": "@arikajs/foundation",
   "version": "0.10.8",
   "description": "Core application and service container layer for the ArikaJS framework.",
-  "license": "MIT",
+  "license": "BSL-1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

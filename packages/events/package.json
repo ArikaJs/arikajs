@@ -2,7 +2,7 @@
   "name": "@arikajs/events",
   "version": "0.10.8",
   "description": "Event dispatching and listener system for the ArikaJS framework.",
-  "license": "MIT",
+  "license": "BSL-1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

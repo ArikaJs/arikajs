@@ -2,7 +2,7 @@
   "name": "@arikajs/validation",
   "version": "0.10.8",
   "description": "Powerful, expressive validation system for the ArikaJS framework.",
-  "license": "MIT",
+  "license": "BSL-1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

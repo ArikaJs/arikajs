@@ -6,7 +6,7 @@
 
 **A Modern, Elegant Web Framework for Node.js**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: BSL-1.1](https://img.shields.io/badge/License-BSL_1.1-orange.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Performance](https://img.shields.io/badge/Performance-2.6x_Faster_than_Express-orange.svg)](#-blazing-fast-performance)
 [![Speed](https://img.shields.io/badge/Speed-Outperforms_Fastify-red.svg)](#-blazing-fast-performance)
@@ -219,9 +219,28 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 📜 License
+## 📜 License & Trademark
 
-All packages in this monorepo are open-sourced software licensed under the [MIT license](LICENSE).
+ArikaJS is licensed under the **[Business Source License 1.1 (BSL-1.1)](./LICENSE)**.
+
+- ✅ **Free** for personal, educational, and non-production use
+- ✅ **Free** for production use by individuals and small teams (< 5 persons)
+- 💼 **Commercial license required** for organizations with 5+ persons in production
+- 🔓 Automatically converts to **Apache 2.0** on **January 1, 2029**
+
+For commercial licensing, contact: **prakashtank@arikajs.dev**
+
+---
+
+## ™️ Trademark Notice
+
+**"ArikaJS"** and the ArikaJS logo are trademarks of **Prakash Tank**.
+
+- ❌ You may **not** use the name "ArikaJS", "Arika Framework", or any confusingly similar name for derivative works
+- ❌ You may **not** publish any fork or derivative under the ArikaJS brand
+- ✅ You may reference "ArikaJS" in documentation, articles, and tutorials for informational purposes
+
+Unauthorized use of the ArikaJS trademark is a violation of trademark law.
 
 ---
 
