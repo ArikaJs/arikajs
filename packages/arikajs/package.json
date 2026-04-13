@@ -1,6 +1,6 @@
 {
   "name": "arikajs",
-  "version": "0.10.8",
+  "version": "0.10.9",
   "description": "The ArikaJS Framework.",
   "license": "BSL-1.1",
   "main": "dist/index.js",

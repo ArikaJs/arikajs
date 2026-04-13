@@ -1,5 +1,14 @@
 # @arikajs/docs
 
+## 0.10.9
+
+### Patch Changes
+
+- Updated dependencies [394c886]
+  - @arikajs/foundation@0.10.9
+  - @arikajs/router@0.10.9
+  - @arikajs/console@0.10.9
+
 ## 0.10.8
 
 ### Patch Changes

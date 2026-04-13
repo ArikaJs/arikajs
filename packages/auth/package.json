@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/auth",
-  "version": "0.10.8",
+  "version": "0.10.9",
   "description": "Flexible, multi-guard authentication system for the ArikaJS framework.",
   "license": "BSL-1.1",
   "main": "dist/index.js",

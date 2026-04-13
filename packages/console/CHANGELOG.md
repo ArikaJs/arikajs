@@ -1,5 +1,15 @@
 # @arikajs/console
 
+## 0.10.9
+
+### Patch Changes
+
+- 394c886: - chore: switch license from MIT to BSL-1.1 for all packages
+  - fix(ci): add ESLint v8 and root .eslintrc.json to resolve CI lint failures
+  - fix(foundation): correct prefer-const and ban-types lint errors
+  - fix(router): correct prefer-const lint error in RouteEntry
+  - docs: add trademark notice and BSL-1.1 license information to README
+
 ## 0.10.8
 
 ## 0.10.7

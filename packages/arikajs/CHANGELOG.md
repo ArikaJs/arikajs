@@ -1,5 +1,39 @@
 # arikajs
 
+## 0.10.9
+
+### Patch Changes
+
+- 394c886: - chore: switch license from MIT to BSL-1.1 for all packages
+  - fix(ci): add ESLint v8 and root .eslintrc.json to resolve CI lint failures
+  - fix(foundation): correct prefer-const and ban-types lint errors
+  - fix(router): correct prefer-const lint error in RouteEntry
+  - docs: add trademark notice and BSL-1.1 license information to README
+- Updated dependencies [394c886]
+  - @arikajs/view@0.10.9
+  - @arikajs/logging@0.10.9
+  - @arikajs/foundation@0.10.9
+  - @arikajs/router@0.10.9
+  - @arikajs/cache@0.10.9
+  - @arikajs/auth@0.10.9
+  - @arikajs/authorization@0.10.9
+  - @arikajs/carbon@0.10.9
+  - @arikajs/config@0.10.9
+  - @arikajs/console@0.10.9
+  - @arikajs/database@0.10.9
+  - @arikajs/dispatcher@0.10.9
+  - @arikajs/encryption@0.10.9
+  - @arikajs/events@0.10.9
+  - @arikajs/http@0.10.9
+  - @arikajs/localization@0.10.9
+  - @arikajs/mail@0.10.9
+  - @arikajs/middleware@0.10.9
+  - @arikajs/queue@0.10.9
+  - @arikajs/scheduler@0.10.9
+  - @arikajs/session@0.10.9
+  - @arikajs/storage@0.10.9
+  - @arikajs/validation@0.10.9
+
 ## 0.10.8
 
 ### Patch Changes
