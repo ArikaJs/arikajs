@@ -80,7 +80,7 @@ export class RouteEntry implements RouteDefinition {
      * Compile the path into a regex.
      */
     private compilePath(path: string) {
-        let paramKeys: string[] = [];
+        const paramKeys: string[] = [];
         const pattern = path
             .replace(/:([a-zA-Z0-9_]+)|\{([a-zA-Z0-9_]+)\}/g, (_, key1, key2) => {
                 const key = key1 || key2;

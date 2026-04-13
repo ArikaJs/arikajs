@@ -89,7 +89,7 @@ export class Container {
    */
   make<T>(token: Token<T>): T {
     const originalToken = this.getAlias(token);
-    let binding = this.bindings.get(originalToken);
+    const binding = this.bindings.get(originalToken);
 
     if (!binding) {
       if (typeof originalToken === 'function') {
