@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/config",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "description": "Premium configuration management for ArikaJS.",
   "type": "module",
   "license": "BSL-1.1",

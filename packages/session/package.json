@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/session",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "description": "Powerful, secure, driver-based session management for the ArikaJS framework.",
   "license": "BSL-1.1",
   "main": "dist/index.js",

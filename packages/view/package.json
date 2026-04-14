@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/view",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "description": "Server-side rendering and template engine for the ArikaJS framework.",
   "license": "BSL-1.1",
   "main": "dist/index.js",

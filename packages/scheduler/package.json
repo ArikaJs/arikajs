@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/scheduler",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "description": "Task scheduling for ArikaJS.",
   "license": "BSL-1.1",
   "main": "dist/index.js",

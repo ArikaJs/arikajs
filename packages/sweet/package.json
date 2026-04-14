@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/sweet",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "description": "Premium, advanced alerts and notifications for ArikaJS — with Glassmorphism and fluent API.",
   "license": "BSL-1.1",
   "main": "dist/index.js",

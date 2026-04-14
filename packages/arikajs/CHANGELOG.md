@@ -1,5 +1,37 @@
 # arikajs
 
+## 0.10.10
+
+### Patch Changes
+
+- a1f7aac: - chore: complete transition of all individual package LICENSE files to BSL-1.1
+  - docs: update all package READMEs to reflect the new BSL-1.1 licensing and trademark notice
+  - chore: remove all remaining references to MIT license from the active source and documentation
+- Updated dependencies [a1f7aac]
+  - @arikajs/auth@0.10.10
+  - @arikajs/authorization@0.10.10
+  - @arikajs/cache@0.10.10
+  - @arikajs/carbon@0.10.10
+  - @arikajs/config@0.10.10
+  - @arikajs/console@0.10.10
+  - @arikajs/database@0.10.10
+  - @arikajs/dispatcher@0.10.10
+  - @arikajs/encryption@0.10.10
+  - @arikajs/events@0.10.10
+  - @arikajs/foundation@0.10.10
+  - @arikajs/http@0.10.10
+  - @arikajs/localization@0.10.10
+  - @arikajs/logging@0.10.10
+  - @arikajs/mail@0.10.10
+  - @arikajs/middleware@0.10.10
+  - @arikajs/queue@0.10.10
+  - @arikajs/router@0.10.10
+  - @arikajs/scheduler@0.10.10
+  - @arikajs/session@0.10.10
+  - @arikajs/storage@0.10.10
+  - @arikajs/validation@0.10.10
+  - @arikajs/view@0.10.10
+
 ## 0.10.9
 
 ### Patch Changes

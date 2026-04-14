@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/router",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "description": "Routing and request-dispatching layer of the ArikaJS framework.",
   "license": "BSL-1.1",
   "main": "dist/index.js",
