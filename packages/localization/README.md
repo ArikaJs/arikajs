@@ -125,4 +125,4 @@ localization/
 
 ## 📜 License
 
-`@arikajs/localization` is open-sourced software licensed under the **MIT License**.
+`@arikajs/localization` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.

@@ -158,7 +158,7 @@ scheduler/
 
 ## 📄 License
 
-`@arikajs/scheduler` is open-source software licensed under the **MIT License**.
+`@arikajs/scheduler` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
 
 ---
 

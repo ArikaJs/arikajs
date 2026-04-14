@@ -244,7 +244,7 @@ config/
 
 ## 📄 License
 
-`@arikajs/config` is open-source software licensed under the **MIT License**.
+`@arikajs/config` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
 
 ---
 

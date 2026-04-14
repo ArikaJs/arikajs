@@ -600,4 +600,4 @@ Before submitting a PR:
 
 ## License
 
-`@arikajs/foundation` is open-sourced software licensed under the **MIT license**.
+`@arikajs/foundation` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.

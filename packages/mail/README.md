@@ -345,7 +345,7 @@ A log or array transport will be added for test environments.
 
 ## 📄 License
 
-`@arikajs/mail` is open-source software licensed under the **MIT License**.
+`@arikajs/mail` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
 
 ---
 

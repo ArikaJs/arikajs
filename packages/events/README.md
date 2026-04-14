@@ -237,7 +237,7 @@ it('dispatches the order event', async () => {
 
 ## 📄 License
 
-`@arikajs/events` is open-source software licensed under the **MIT License**.
+`@arikajs/events` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
 
 ---
 

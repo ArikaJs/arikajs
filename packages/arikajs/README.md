@@ -8,7 +8,7 @@
 
 [![npm version](https://img.shields.io/npm/v/arikajs.svg?style=flat-square)](https://www.npmjs.com/package/arikajs)
 [![npm downloads](https://img.shields.io/npm/dm/arikajs.svg?style=flat-square)](https://www.npmjs.com/package/arikajs)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![License: BSL-1.1](https://img.shields.io/badge/License-BSL_1.1-orange.svg?style=flat-square)](../../LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg?style=flat-square)](https://nodejs.org/)
 [![GitHub stars](https://img.shields.io/github/stars/arikajs/arikajs.svg?style=flat-square)](https://github.com/arikajs/arikajs/stargazers)
@@ -142,7 +142,7 @@ We love our community! Please see our [Contributing Guide](CONTRIBUTING.md) to l
 
 ## 📝 License
 
-ArikaJS is open-sourced software licensed under the [MIT license](LICENSE).
+ArikaJS is licensed under the [Business Source License 1.1 (BSL-1.1)](../../LICENSE).
 
 <div align="center">
 

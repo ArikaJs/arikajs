@@ -7,7 +7,7 @@
 **The Official Command-Line Interface for ArikaJS**
 
 [![npm version](https://img.shields.io/npm/v/@arikajs/cli.svg)](https://www.npmjs.com/package/@arikajs/cli)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: BSL-1.1](https://img.shields.io/badge/License-BSL_1.1-orange.svg)](./LICENSE)
 
 </div>
 
@@ -438,7 +438,7 @@ We welcome contributions! Please see our [Contributing Guide](https://github.com
 
 ## 📝 License
 
-The ArikaJS CLI is open-sourced software licensed under the [MIT license](LICENSE).
+The ArikaJS CLI is licensed under the [Business Source License 1.1 (BSL-1.1)](../../LICENSE).
 
 ---
 

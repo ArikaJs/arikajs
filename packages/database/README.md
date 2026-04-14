@@ -697,4 +697,4 @@ await User.chunk(1000, async (users, page) => {
 
 ## 📄 License
 
-MIT License © ArikaJS
+BSL-1.1 License © Prakash Tank

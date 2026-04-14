@@ -221,4 +221,4 @@ Contributions are welcome! Please ensure you:
 
 ## License
 
-`@arikajs/router` is open-sourced software licensed under the **MIT license**.
+`@arikajs/router` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
