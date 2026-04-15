@@ -1,8 +1,8 @@
 {
   "name": "@arikajs/carbon",
   "version": "0.10.10",
-  "description": "Fluent, immutable, and timezone-aware Date & Time library for ArikaJS — inspired by PHP's Carbon.",
-  "license": "BSL-1.1",
+  "description": "Fluent, immutable, and timezone-aware Date & Time library for ArikaJS \u2014 inspired by PHP's Carbon.",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -17,13 +17,10 @@
   },
   "keywords": [
     "arikajs",
-    "carbon",
-    "date",
-    "time",
-    "datetime",
-    "timezone",
-    "immutable",
-    "fluent"
+    "framework",
+    "node.js",
+    "typescript",
+    "carbon"
   ],
   "author": "Prakash Tank",
   "repository": {

@@ -2,7 +2,7 @@
   "name": "@arikajs/scheduler",
   "version": "0.10.10",
   "description": "Task scheduling for ArikaJS.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -34,5 +34,12 @@
   "bugs": {
     "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/scheduler#readme"
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/scheduler#readme",
+  "keywords": [
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "scheduler"
+  ]
 }

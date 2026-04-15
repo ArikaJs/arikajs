@@ -8,14 +8,15 @@
 
 [![npm version](https://img.shields.io/npm/v/arikajs.svg?style=flat-square)](https://www.npmjs.com/package/arikajs)
 [![npm downloads](https://img.shields.io/npm/dm/arikajs.svg?style=flat-square)](https://www.npmjs.com/package/arikajs)
-[![License: BSL-1.1](https://img.shields.io/badge/License-BSL_1.1-orange.svg?style=flat-square)](../../LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](../../LICENSE)
+[![Discord](https://img.shields.io/badge/discord-join-7289da?style=flat&logo=discord&logoColor=white)](https://discord.gg/XUTjzwjrHK)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg?style=flat-square)](https://nodejs.org/)
 [![GitHub stars](https://img.shields.io/github/stars/arikajs/arikajs.svg?style=flat-square)](https://github.com/arikajs/arikajs/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/arikajs/arikajs.svg?style=flat-square)](https://github.com/arikajs/arikajs/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/arikajs/arikajs/pulls)
 
-[Quick Start](#quick-start) | [Core Modules](#-the-arikajs-ecosystem) | [Documentation](https://arikajs.com) | [Discord](https://discord.gg/arikajs)
+[Quick Start](#quick-start) | [Core Modules](#-the-arikajs-ecosystem) | [Documentation](https://github.com/arikajs/arikajs#readme) | [Discord](https://discord.gg/XUTjzwjrHK)
 
 </div>
 
@@ -124,13 +125,30 @@ const diff = Carbon.parse(user.created_at).diffForHumans();
 
 The ArikaJS CLI is your best friend during development.
 
-```bash
-arika list            # List all available commands
-arika help <command>  # Show detailed help for a specific command
-arika make:model      # Interactive menu to generate models/migrations
-arika migrate         # Run pending database migrations
-arika queue:work      # Start the background worker
-```
+### General Commands
+- `arika new <name>`        # Scaffold a new ArikaJS application
+- `arika serve --dev`       # Start the dev server with Hot Reload
+- `arika list`              # List all available commands
+- `arika help <command>`    # Show detailed help for a specific command
+- `arika key:generate`      # Generate a secure application key
+
+### Generators (Scaffolding)
+- `arika make:model`        # Generate a Model and Migration
+- `arika make:controller`   # Generate a new Controller
+- `arika make:middleware`   # Generate a new Middleware
+- `arika make:migration`    # Create a new migration file
+- `arika make:job`          # Create a new background job class
+
+### Database & Migrations
+- `arika migrate`           # Run pending database migrations
+- `arika migrate:rollback`  # Rollback the last database migration
+- `arika migrate:fresh`     # Drop all tables and re-run all migrations
+- `arika db:seed`           # Seed the database with records
+
+### Queue & Background Jobs
+- `arika queue:work`        # Start the background worker
+- `arika queue:retry`       # Retry a failed background job
+- `arika route:list`        # Display all registered application routes
 
 ---
 
@@ -142,7 +160,7 @@ We love our community! Please see our [Contributing Guide](CONTRIBUTING.md) to l
 
 ## 📝 License
 
-ArikaJS is licensed under the [Business Source License 1.1 (BSL-1.1)](../../LICENSE).
+ArikaJS is open-source software licensed under the [MIT License](../../LICENSE).
 
 <div align="center">
 
@@ -153,8 +171,7 @@ ArikaJS is licensed under the [Business Source License 1.1 (BSL-1.1)](../../LICE
 ## 💬 Community & Support
 
 - 📖 [Documentation](https://github.com/arikajs/arikajs#readme)
-- 💬 [Discord Community](https://discord.gg/arikajs)
-- 🐦 [Twitter](https://twitter.com/arikajs)
+- 💬 [Discord Community](https://discord.gg/XUTjzwjrHK)
 - 🐛 [Issue Tracker](https://github.com/arikajs/arikajs/issues)
 
 ---

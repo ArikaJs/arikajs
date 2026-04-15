@@ -1,8 +1,8 @@
 {
   "name": "@arikajs/sweet",
   "version": "0.10.10",
-  "description": "Premium, advanced alerts and notifications for ArikaJS — with Glassmorphism and fluent API.",
-  "license": "BSL-1.1",
+  "description": "Premium, advanced alerts and notifications for ArikaJS \u2014 with Glassmorphism and fluent API.",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -17,12 +17,10 @@
   },
   "keywords": [
     "arikajs",
-    "sweet",
-    "alert",
-    "notification",
-    "toast",
-    "ui",
-    "modal"
+    "framework",
+    "node.js",
+    "typescript",
+    "sweet"
   ],
   "author": "Prakash Tank",
   "repository": {

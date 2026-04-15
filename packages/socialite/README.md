@@ -5,7 +5,7 @@
 **Modern, Fluent, and Scalable Social Authentication for ArikaJS**
 
 [![npm version](https://img.shields.io/npm/v/@arikajs/socialite.svg?style=flat-square)](https://www.npmjs.com/package/@arikajs/socialite)
-[![License: BSL-1.1](https://img.shields.io/badge/License-BSL_1.1-orange.svg?style=flat-square)](../../LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](../../LICENSE)
 
 </div>
 
@@ -176,4 +176,4 @@ Need more? You will be able to easily create your own drivers by extending the `
 
 ## 📝 License
 
-ArikaJS Socialite is licensed under the [Business Source License 1.1 (BSL-1.1)](../../LICENSE).
+ArikaJS Socialite is licensed under the [MIT License](../../LICENSE).

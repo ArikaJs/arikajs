@@ -2,7 +2,13 @@
   "name": "arikajs",
   "version": "0.10.10",
   "description": "The ArikaJS Framework.",
-  "license": "BSL-1.1",
+  "keywords": [
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript"
+  ],
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

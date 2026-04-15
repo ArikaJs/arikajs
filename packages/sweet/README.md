@@ -91,4 +91,4 @@ sweet.fire({
 ---
 
 ## 📄 License
-BSL-1.1 © Prakash Tank(https://github.com/ArikaJs)
+MIT © Prakash Tank(https://github.com/ArikaJs)

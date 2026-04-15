@@ -374,4 +374,4 @@ arika make:view home
 ---
 
 ## License
-BSL-1.1
+MIT

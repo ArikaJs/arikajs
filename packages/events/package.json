@@ -2,7 +2,7 @@
   "name": "@arikajs/events",
   "version": "0.10.10",
   "description": "Event dispatching and listener system for the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,13 +18,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
+    "arikajs",
     "framework",
-    "events",
-    "listener",
-    "dispatcher",
-    "observer"
+    "node.js",
+    "typescript",
+    "events"
   ],
   "engines": {
     "node": ">=20.0.0"

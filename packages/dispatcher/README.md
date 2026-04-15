@@ -260,7 +260,7 @@ Before submitting a PR:
 
 ## License
 
-`@arikajs/dispatcher` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
+`@arikajs/dispatcher` is licensed under the **MIT License 1.1 ([MIT](../../LICENSE))**.
 
 ---
 

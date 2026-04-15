@@ -2,7 +2,7 @@
   "name": "@arikajs/cli",
   "version": "0.10.10",
   "description": "The command-line interface for the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -22,11 +22,11 @@
     "templates"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
-    "cli",
-    "console",
-    "scaffolding"
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "cli"
   ],
   "engines": {
     "node": ">=20.0.0"

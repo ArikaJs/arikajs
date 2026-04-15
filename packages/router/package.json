@@ -2,7 +2,7 @@
   "name": "@arikajs/router",
   "version": "0.10.10",
   "description": "Routing and request-dispatching layer of the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,12 +18,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
+    "arikajs",
     "framework",
-    "router",
-    "routing",
-    "dispatcher"
+    "node.js",
+    "typescript",
+    "router"
   ],
   "engines": {
     "node": ">=20.0.0"

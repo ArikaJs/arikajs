@@ -5,7 +5,7 @@
 **Modern, Automated, and Multi-Format Documentation for ArikaJS**
 
 [![npm version](https://img.shields.io/npm/v/@arikajs/docs.svg?style=flat-square)](https://www.npmjs.com/package/@arikajs/docs)
-[![License: BSL-1.1](https://img.shields.io/badge/License-BSL_1.1-orange.svg?style=flat-square)](../../LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](../../LICENSE)
 
 </div>
 
@@ -92,4 +92,4 @@ The `@arikajs/docs` package follows a strict **non-destructive** installation po
 
 ## 📝 License
 
-ArikaJS Docs is licensed under the [Business Source License 1.1 (BSL-1.1)](../../LICENSE).
+ArikaJS Docs is licensed under the [MIT License](../../LICENSE).

@@ -2,7 +2,7 @@
   "name": "@arikajs/encryption",
   "version": "0.10.10",
   "description": "Secure, application-level encryption for the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -34,5 +34,12 @@
   "bugs": {
     "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/encryption#readme"
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/encryption#readme",
+  "keywords": [
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "encryption"
+  ]
 }

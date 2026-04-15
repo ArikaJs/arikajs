@@ -2,7 +2,7 @@
   "name": "@arikajs/docs",
   "version": "0.10.10",
   "description": "API documentation and Postman collection generator for ArikaJS.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -15,12 +15,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
-    "docs",
-    "postman",
-    "openapi",
-    "documentation"
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "docs"
   ],
   "dependencies": {
     "@arikajs/console": "workspace:*",

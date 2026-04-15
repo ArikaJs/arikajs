@@ -2,7 +2,7 @@
   "name": "@arikajs/cache",
   "version": "0.10.10",
   "description": "Simple, fast, and driver-based caching system for the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,12 +18,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
-    "cache",
-    "memory",
-    "redis",
-    "performance"
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "cache"
   ],
   "engines": {
     "node": ">=20.0.0"

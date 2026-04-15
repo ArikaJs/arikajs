@@ -252,4 +252,4 @@ This package:
 
 ## 📄 License
 
-`@arikajs/encryption` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
+`@arikajs/encryption` is licensed under the **MIT License 1.1 ([MIT](../../LICENSE))**.

@@ -4,8 +4,8 @@
 
 ### Patch Changes
 
-- a1f7aac: - chore: complete transition of all individual package LICENSE files to BSL-1.1
-  - docs: update all package READMEs to reflect the new BSL-1.1 licensing and trademark notice
+- a1f7aac: - chore: complete transition of all individual package LICENSE files to MIT
+  - docs: update all package READMEs to reflect the new MIT licensing and trademark notice
   - chore: remove all remaining references to MIT license from the active source and documentation
 - Updated dependencies [a1f7aac]
   - @arikajs/foundation@0.10.10
@@ -15,11 +15,11 @@
 
 ### Patch Changes
 
-- 394c886: - chore: switch license from MIT to BSL-1.1 for all packages
+- 394c886: - chore: switch license from MIT to MIT for all packages
   - fix(ci): add ESLint v8 and root .eslintrc.json to resolve CI lint failures
   - fix(foundation): correct prefer-const and ban-types lint errors
   - fix(router): correct prefer-const lint error in RouteEntry
-  - docs: add trademark notice and BSL-1.1 license information to README
+  - docs: add trademark notice and MIT license information to README
 - Updated dependencies [394c886]
   - @arikajs/foundation@0.10.9
   - @arikajs/http@0.10.9

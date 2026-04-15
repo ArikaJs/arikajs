@@ -6,10 +6,11 @@
 
 **A Modern, Elegant Web Framework for Node.js**
 
-[![License: BSL-1.1](https://img.shields.io/badge/License-BSL_1.1-orange.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Performance](https://img.shields.io/badge/Performance-2.6x_Faster_than_Express-orange.svg)](#-blazing-fast-performance)
 [![Speed](https://img.shields.io/badge/Speed-Outperforms_Fastify-red.svg)](#-blazing-fast-performance)
+[![Discord](https://img.shields.io/badge/discord-join-7289da?style=flat&logo=discord&logoColor=white)](https://discord.gg/XUTjzwjrHK)
 
 </div>
 
@@ -181,26 +182,34 @@ npm test --workspace=@arikajs/auth
 
 ---
 
-## 📝 Publishing
+## 🛠️ CLI Commands
 
-Versioning and publishing are handled by **Changesets**.
+The ArikaJS CLI is your best friend during development.
 
-### 1. Create a changeset
-When you make a change, run:
-```bash
-npm run change
-```
+### General Commands
+- `arika new <name>`        # Scaffold a new ArikaJS application
+- `arika serve --dev`       # Start the dev server with Hot Reload
+- `arika list`              # List all available commands
+- `arika help <command>`    # Show detailed help for a specific command
+- `arika key:generate`      # Generate a secure application key
 
-### 2. Version packages
-When ready to release, run:
-```bash
-npm run version-packages
-```
+### Generators (Scaffolding)
+- `arika make:model`        # Generate a Model and Migration
+- `arika make:controller`   # Generate a new Controller
+- `arika make:middleware`   # Generate a new Middleware
+- `arika make:migration`    # Create a new migration file
+- `arika make:job`          # Create a new background job class
 
-### 3. Publish to NPM
-```bash
-npm run release
-```
+### Database & Migrations
+- `arika migrate`           # Run pending database migrations
+- `arika migrate:rollback`  # Rollback the last database migration
+- `arika migrate:fresh`     # Drop all tables and re-run all migrations
+- `arika db:seed`           # Seed the database with records
+
+### Queue & Background Jobs
+- `arika queue:work`        # Start the background worker
+- `arika queue:retry`       # Retry a failed background job
+- `arika route:list`        # Display all registered application routes
 
 ---
 
@@ -219,28 +228,9 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 📜 License & Trademark
+## 📜 License
 
-ArikaJS is licensed under the **[Business Source License 1.1 (BSL-1.1)](./LICENSE)**.
-
-- ✅ **Free** for personal, educational, and non-production use
-- ✅ **Free** for production use by individuals and small teams (< 5 persons)
-- 💼 **Commercial license required** for organizations with 5+ persons in production
-- 🔓 Automatically converts to **Apache 2.0** on **January 1, 2029**
-
-For commercial licensing, contact: **prakashtank@arikajs.dev**
-
----
-
-## ™️ Trademark Notice
-
-**"ArikaJS"** and the ArikaJS logo are trademarks of **Prakash Tank**.
-
-- ❌ You may **not** use the name "ArikaJS", "Arika Framework", or any confusingly similar name for derivative works
-- ❌ You may **not** publish any fork or derivative under the ArikaJS brand
-- ✅ You may reference "ArikaJS" in documentation, articles, and tutorials for informational purposes
-
-Unauthorized use of the ArikaJS trademark is a violation of trademark law.
+ArikaJS is open-source software licensed under the **[MIT License](./LICENSE)**.
 
 ---
 
@@ -253,8 +243,7 @@ ArikaJS draws inspiration from the best practices and design patterns of modern 
 ## 💬 Community
 
 - 📖 [Documentation](https://github.com/arikajs/arikajs#readme)
-- 💬 [Discord](https://discord.gg/arikajs)
-- 🐦 [Twitter](https://twitter.com/arikajs)
+- 💬 [Discord](https://discord.gg/XUTjzwjrHK)
 
 ---
 

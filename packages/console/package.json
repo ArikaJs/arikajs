@@ -2,7 +2,7 @@
   "name": "@arikajs/console",
   "version": "0.10.10",
   "description": "The command system for the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,11 +18,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
-    "console",
-    "command",
-    "cli"
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "console"
   ],
   "engines": {
     "node": ">=20.0.0"

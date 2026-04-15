@@ -2,7 +2,7 @@
   "name": "@arikajs/foundation",
   "version": "0.10.10",
   "description": "Core application and service container layer for the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -20,13 +20,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
+    "arikajs",
     "framework",
-    "foundation",
-    "dependency-injection",
-    "container",
-    "application-kernel"
+    "node.js",
+    "typescript",
+    "foundation"
   ],
   "engines": {
     "node": ">=20.0.0"

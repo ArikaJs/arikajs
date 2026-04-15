@@ -4,8 +4,8 @@
 
 ### Patch Changes
 
-- a1f7aac: - chore: complete transition of all individual package LICENSE files to BSL-1.1
-  - docs: update all package READMEs to reflect the new BSL-1.1 licensing and trademark notice
+- a1f7aac: - chore: complete transition of all individual package LICENSE files to MIT
+  - docs: update all package READMEs to reflect the new MIT licensing and trademark notice
   - chore: remove all remaining references to MIT license from the active source and documentation
 - Updated dependencies [a1f7aac]
   - @arikajs/console@0.10.10

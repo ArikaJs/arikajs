@@ -426,4 +426,4 @@ session/
 
 ## 📜 License
 
-`@arikajs/session` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
+`@arikajs/session` is licensed under the **MIT License 1.1 ([MIT](../../LICENSE))**.

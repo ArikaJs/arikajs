@@ -296,7 +296,7 @@ The storage layer is fully testable by mocking drivers or using temporary disks.
 
 ## 📄 License
 
-`@arikajs/storage` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
+`@arikajs/storage` is licensed under the **MIT License 1.1 ([MIT](../../LICENSE))**.
 
 ---
 

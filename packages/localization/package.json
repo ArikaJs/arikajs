@@ -15,13 +15,13 @@
   },
   "keywords": [
     "arikajs",
-    "localization",
-    "translation",
-    "i18n",
-    "l10n"
+    "framework",
+    "node.js",
+    "typescript",
+    "localization"
   ],
   "author": "ArikaJs",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/localization#readme",
   "repository": {
     "type": "git",

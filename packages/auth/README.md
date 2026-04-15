@@ -373,7 +373,7 @@ auth/
 
 ## 📜 License
 
-`@arikajs/auth` is licensed under the **Business Source License 1.1 ([BSL-1.1](../../LICENSE))**.
+`@arikajs/auth` is licensed under the **MIT License 1.1 ([MIT](../../LICENSE))**.
 
 ---
 

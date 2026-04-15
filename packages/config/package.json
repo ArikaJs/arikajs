@@ -3,7 +3,7 @@
   "version": "0.10.10",
   "description": "Premium configuration management for ArikaJS.",
   "type": "module",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -29,5 +29,12 @@
   "bugs": {
     "url": "https://github.com/ArikaJs/arikajs/issues"
   },
-  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/config#readme"
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/config#readme",
+  "keywords": [
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "config"
+  ]
 }

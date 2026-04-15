@@ -2,7 +2,7 @@
   "name": "@arikajs/database",
   "version": "0.10.10",
   "description": "Database layer for the ArikaJS framework with MySQL & PostgreSQL support.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,15 +18,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
-    "database",
-    "mysql",
-    "postgresql",
-    "query-builder",
-    "orm",
-    "active-record",
-    "migrations"
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "database"
   ],
   "engines": {
     "node": ">=20.0.0"

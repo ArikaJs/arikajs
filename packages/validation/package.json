@@ -2,7 +2,7 @@
   "name": "@arikajs/validation",
   "version": "0.10.10",
   "description": "Powerful, expressive validation system for the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,12 +18,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
+    "arikajs",
     "framework",
-    "validation",
-    "validator",
-    "rules"
+    "node.js",
+    "typescript",
+    "validation"
   ],
   "engines": {
     "node": ">=20.0.0"

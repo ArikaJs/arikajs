@@ -2,7 +2,7 @@
   "name": "@arikajs/queue",
   "version": "0.10.10",
   "description": "Asynchronous job processing for the ArikaJS framework.",
-  "license": "BSL-1.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,13 +18,11 @@
     "dist"
   ],
   "keywords": [
-    "arika",
-    "arika-js",
-    "queue",
-    "job",
-    "background-job",
-    "redis",
-    "worker"
+    "arikajs",
+    "framework",
+    "node.js",
+    "typescript",
+    "queue"
   ],
   "engines": {
     "node": ">=20.0.0"

@@ -69,7 +69,7 @@ describe('Enterprise Validation Features', () => {
         assert.ok(validator.errors().isActive);
         assert.ok(validator.errors().website);
 
-        const validData = { isActive: true, website: 'https://arikajs.com' };
+        const validData = { isActive: true, website: 'https://github.com/arikajs/arikajs#readme' };
         const validValidator = new Validator(validData, rules);
         assert.strictEqual(await validValidator.fails(), false);
     });
