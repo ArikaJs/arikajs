@@ -1,5 +1,18 @@
 # @arikajs/scheduler
 
+## 0.10.12
+
+### Patch Changes
+
+- 56e6015: docs: final polish of README footers and community links for public release.
+- Updated dependencies [56e6015]
+  - @arikajs/cache@0.10.12
+  - @arikajs/console@0.10.12
+  - @arikajs/events@0.10.12
+  - @arikajs/foundation@0.10.12
+  - @arikajs/logging@0.10.12
+  - @arikajs/queue@0.10.12
+
 ## 0.10.11
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/socialite",
-  "version": "0.10.11",
+  "version": "0.10.12",
   "description": "Modern OAuth authentication for ArikaJS applications.",
   "type": "module",
   "license": "MIT",

@@ -12,7 +12,6 @@
 [![Discord](https://img.shields.io/badge/discord-join-7289da?style=flat&logo=discord&logoColor=white)](https://discord.gg/XUTjzwjrHK)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg?style=flat-square)](https://nodejs.org/)
-[![GitHub stars](https://img.shields.io/github/stars/arikajs/arikajs.svg?style=flat-square)](https://github.com/arikajs/arikajs/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/arikajs/arikajs.svg?style=flat-square)](https://github.com/arikajs/arikajs/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/arikajs/arikajs/pulls)
 

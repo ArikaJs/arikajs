@@ -1,5 +1,35 @@
 # arikajs
 
+## 0.10.12
+
+### Patch Changes
+
+- 56e6015: docs: final polish of README footers and community links for public release.
+- Updated dependencies [56e6015]
+  - @arikajs/auth@0.10.12
+  - @arikajs/authorization@0.10.12
+  - @arikajs/cache@0.10.12
+  - @arikajs/carbon@0.10.12
+  - @arikajs/config@0.10.12
+  - @arikajs/console@0.10.12
+  - @arikajs/database@0.10.12
+  - @arikajs/dispatcher@0.10.12
+  - @arikajs/encryption@0.10.12
+  - @arikajs/events@0.10.12
+  - @arikajs/foundation@0.10.12
+  - @arikajs/http@0.10.12
+  - @arikajs/localization@0.10.12
+  - @arikajs/logging@0.10.12
+  - @arikajs/mail@0.10.12
+  - @arikajs/middleware@0.10.12
+  - @arikajs/queue@0.10.12
+  - @arikajs/router@0.10.12
+  - @arikajs/scheduler@0.10.12
+  - @arikajs/session@0.10.12
+  - @arikajs/storage@0.10.12
+  - @arikajs/validation@0.10.12
+  - @arikajs/view@0.10.12
+
 ## 0.10.11
 
 ### Patch Changes

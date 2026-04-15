@@ -1,5 +1,11 @@
 # @arikajs/sweet
 
+## 0.10.12
+
+### Patch Changes
+
+- 56e6015: docs: final polish of README footers and community links for public release.
+
 ## 0.10.11
 
 ### Patch Changes

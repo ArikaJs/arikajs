@@ -1,5 +1,13 @@
 # @arikajs/dispatcher
 
+## 0.10.12
+
+### Patch Changes
+
+- 56e6015: docs: final polish of README footers and community links for public release.
+- Updated dependencies [56e6015]
+  - @arikajs/middleware@0.10.12
+
 ## 0.10.11
 
 ### Patch Changes
