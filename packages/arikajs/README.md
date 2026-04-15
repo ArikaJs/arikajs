@@ -158,15 +158,11 @@ We love our community! Please see our [Contributing Guide](CONTRIBUTING.md) to l
 
 ---
 
-## 📝 License
+## 📜 License
 
-ArikaJS is open-source software licensed under the [MIT License](../../LICENSE).
+ArikaJS is open-source software licensed under the **[MIT License](../../LICENSE)**.
 
-<div align="center">
-
-**Built with ❤️ by [Prakash Tank](https://github.com/prakashtank) & The ArikaJS Team**
-
-</div>
+---
 
 ## 💬 Community & Support
 
@@ -178,7 +174,7 @@ ArikaJS is open-source software licensed under the [MIT License](../../LICENSE).
 
 <div align="center">
 
-**Built with ❤️ by the ArikaJS Team**
+**Built with ❤️ by [Prakash Tank](https://github.com/prakashtank) and the ArikaJS Team**
 
 [GitHub](https://github.com/arikajs) • [npm](https://www.npmjs.com/package/arikajs)
 
