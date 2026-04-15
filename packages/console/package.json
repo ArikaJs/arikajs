@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/console",
-  "version": "0.10.10",
+  "version": "0.10.11",
   "description": "The command system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",

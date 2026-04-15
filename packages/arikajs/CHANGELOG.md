@@ -1,5 +1,35 @@
 # arikajs
 
+## 0.10.11
+
+### Patch Changes
+
+- 360cda5: chore: transition to MIT license, update community links, and improve package metadata for public release.
+- Updated dependencies [360cda5]
+  - @arikajs/auth@0.10.11
+  - @arikajs/authorization@0.10.11
+  - @arikajs/cache@0.10.11
+  - @arikajs/carbon@0.10.11
+  - @arikajs/config@0.10.11
+  - @arikajs/console@0.10.11
+  - @arikajs/database@0.10.11
+  - @arikajs/dispatcher@0.10.11
+  - @arikajs/encryption@0.10.11
+  - @arikajs/events@0.10.11
+  - @arikajs/foundation@0.10.11
+  - @arikajs/http@0.10.11
+  - @arikajs/localization@0.10.11
+  - @arikajs/logging@0.10.11
+  - @arikajs/mail@0.10.11
+  - @arikajs/middleware@0.10.11
+  - @arikajs/queue@0.10.11
+  - @arikajs/router@0.10.11
+  - @arikajs/scheduler@0.10.11
+  - @arikajs/session@0.10.11
+  - @arikajs/storage@0.10.11
+  - @arikajs/validation@0.10.11
+  - @arikajs/view@0.10.11
+
 ## 0.10.10
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/mail",
-  "version": "0.10.10",
+  "version": "0.10.11",
   "description": "Email delivery system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",

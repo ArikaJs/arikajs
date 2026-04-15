@@ -1,5 +1,15 @@
 # @arikajs/docs
 
+## 0.10.11
+
+### Patch Changes
+
+- 360cda5: chore: transition to MIT license, update community links, and improve package metadata for public release.
+- Updated dependencies [360cda5]
+  - @arikajs/console@0.10.11
+  - @arikajs/foundation@0.10.11
+  - @arikajs/router@0.10.11
+
 ## 0.10.10
 
 ### Patch Changes

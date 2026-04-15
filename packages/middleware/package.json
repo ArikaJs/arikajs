@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/middleware",
-  "version": "0.10.10",
+  "version": "0.10.11",
   "description": "Flexible, composable middleware system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
