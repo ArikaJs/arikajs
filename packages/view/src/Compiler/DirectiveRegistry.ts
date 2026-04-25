@@ -55,7 +55,7 @@ export class DirectiveRegistry {
                     const ${key || '__k'} = Array.isArray(__fc) ? (__iteration - 1) : __item[0];
                     const ${value} = Array.isArray(__fc) ? __item : __item[1];
                     
-                    const $loop = {
+                    const loop = {
                         index: __iteration - 1,
                         iteration: __iteration,
                         remaining: __count - __iteration,
@@ -500,7 +500,7 @@ export class DirectiveRegistry {
                         const ${key || '__k'} = Array.isArray(__fc) ? (__iteration - 1) : __item[0];
                         const ${value} = Array.isArray(__fc) ? __item : __item[1];
                         
-                        const $loop = {
+                        const loop = {
                             index: __iteration - 1,
                             iteration: __iteration,
                             remaining: __count - __iteration,

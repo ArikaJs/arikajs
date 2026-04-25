@@ -61,6 +61,7 @@ Typical use cases include:
 - **Write optimization** — Avoid unnecessary storage writes.
 - **Session regeneration** — Protect against session fixation attacks.
 - **Environment configuration** — Configure using `.env`.
+- **Cryptographic Security** — All session cookies are signed with HMAC-SHA256 and verified using timing-safe comparisons to prevent tampering and side-channel attacks.
 
 ---
 
@@ -165,6 +166,8 @@ The middleware:
 **Set Value**
 ```ts
 req.session.set('cart_items', 3);
+// or
+req.session.put('cart_items', 3);
 ```
 
 **Get Value**
@@ -252,6 +255,37 @@ Recommended drivers:
 | Database | Good |
 | File | Basic |
 | Memory | Not recommended |
+
+---
+
+## 🧠 Implementation Strategies
+
+### 1. API-Based Session Management
+Arika Session is uniquely designed to work beyond cookies. For mobile apps or cross-origin SPAs, you can pass the session identifier through a header. The `StartSession` middleware automatically detects this.
+
+```typescript
+// Client-side (Fetch API)
+const sessionId = localStorage.getItem('session_id');
+
+const response = await fetch('/api/user', {
+    headers: {
+        'X-Session-Id': sessionId
+    }
+});
+
+// Arika will automatically attach the session to the request
+// and return the current ID in the response headers.
+```
+
+### 2. Middleware Priority
+The `StartSession` middleware MUST be registered before any authentication or authorization middleware. This ensures that the user session is available to the Auth engine during the request lifecycle.
+
+```typescript
+// Correct Order:
+app.use(StartSession);
+app.use(Authenticate);
+app.use(Authorize);
+```
 
 ---
 

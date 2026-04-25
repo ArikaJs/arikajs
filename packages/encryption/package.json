@@ -9,8 +9,8 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist",
     "prepare": "echo skip",
-    "test": "npm run build && node --test 'dist/tests/**/*.test.js'",
-    "test:watch": "npm run build && node --test --watch 'dist/tests/**/*.test.js'",
+    "test": "npm run build && node --test dist/tests",
+    "test:watch": "npm run build && node --test --watch dist/tests",
     "dev": "tsc -p tsconfig.json --watch"
   },
   "files": [

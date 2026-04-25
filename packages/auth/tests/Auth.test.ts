@@ -24,6 +24,8 @@ class MockPoolProvider implements UserProvider {
     }
 }
 
+import { Authenticate } from '../src/Middleware/Authenticate';
+
 describe('Arika Auth', () => {
     let authManager: AuthManager;
     let config: any;
@@ -135,7 +137,6 @@ describe('Arika Auth', () => {
     });
 
     it('middleware protects routes with AuthContext', async () => {
-        const { Authenticate } = require('../src/Middleware/Authenticate');
         const middleware = new Authenticate(authManager);
 
         const next = async () => 'success';

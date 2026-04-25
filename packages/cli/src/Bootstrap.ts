@@ -39,6 +39,8 @@ export class Bootstrap {
         registry.registerLazy('cache:clear {store?}', 'Flush the application cache', () => import('./Commands/CacheClearCommand'));
 
         // Scheduler commands
+        registry.registerLazy('schedule:list', 'List all scheduled tasks', () => import('./Commands/ScheduleListCommand'));
+        registry.registerLazy('schedule:test {--task=}', 'Run a specific scheduled task for testing', () => import('./Commands/ScheduleTestCommand'));
         registry.registerLazy('schedule:run', 'Run the scheduled tasks', () => import('./Commands/ScheduleRunCommand'));
         registry.registerLazy('schedule:work', 'Start the scheduler worker', () => import('./Commands/ScheduleWorkCommand'));
 
