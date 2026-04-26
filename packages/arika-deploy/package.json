@@ -1,6 +1,6 @@
 {
   "name": "arika-deploy",
-  "version": "0.1.0",
+  "version": "0.10.12",
   "description": "Zero-config deployment tool for Node.js apps (PM2 + Nginx/Apache + SSL)",
   "license": "MIT",
   "main": "dist/index.js",
