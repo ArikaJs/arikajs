@@ -1,5 +1,7 @@
 # @arikajs/authorization
 
+## 0.10.13
+
 ## 0.10.12
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @arikajs/console
 
+## 0.10.13
+
+### Patch Changes
+
+- feat: implement unique validation rule with database support
+  chore: update documentation links to arikajs.github.io
+  chore: fix tests and standardize test runner to use tsx
+
 ## 0.10.12
 
 ### Patch Changes

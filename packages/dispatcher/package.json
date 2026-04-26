@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/dispatcher",
-  "version": "0.10.12",
+  "version": "0.10.13",
   "description": "Request dispatching and handler execution layer of the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",

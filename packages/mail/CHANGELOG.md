@@ -1,5 +1,12 @@
 # @arikajs/mail
 
+## 0.10.13
+
+### Patch Changes
+
+- @arikajs/foundation@0.10.13
+- @arikajs/queue@0.10.13
+
 ## 0.10.12
 
 ### Patch Changes

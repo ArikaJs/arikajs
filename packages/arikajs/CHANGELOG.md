@@ -1,5 +1,37 @@
 # arikajs
 
+## 0.10.13
+
+### Patch Changes
+
+- feat: implement unique validation rule with database support
+  chore: update documentation links to arikajs.github.io
+  chore: fix tests and standardize test runner to use tsx
+- Updated dependencies
+  - @arikajs/validation@0.10.13
+  - @arikajs/database@0.10.13
+  - @arikajs/console@0.10.13
+  - @arikajs/http@0.10.13
+  - @arikajs/foundation@0.10.13
+  - @arikajs/scheduler@0.10.13
+  - @arikajs/middleware@0.10.13
+  - @arikajs/router@0.10.13
+  - @arikajs/dispatcher@0.10.13
+  - @arikajs/storage@0.10.13
+  - @arikajs/auth@0.10.13
+  - @arikajs/authorization@0.10.13
+  - @arikajs/cache@0.10.13
+  - @arikajs/carbon@0.10.13
+  - @arikajs/config@0.10.13
+  - @arikajs/encryption@0.10.13
+  - @arikajs/events@0.10.13
+  - @arikajs/localization@0.10.13
+  - @arikajs/logging@0.10.13
+  - @arikajs/mail@0.10.13
+  - @arikajs/queue@0.10.13
+  - @arikajs/session@0.10.13
+  - @arikajs/view@0.10.13
+
 ## 0.10.12
 
 ### Patch Changes

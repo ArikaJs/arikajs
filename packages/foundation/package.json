@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/foundation",
-  "version": "0.10.12",
+  "version": "0.10.13",
   "description": "Core application and service container layer for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
