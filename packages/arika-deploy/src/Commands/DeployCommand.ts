@@ -91,16 +91,59 @@ function installPM2(): void {
     execSync('npm install -g pm2', { stdio: 'inherit' });
 }
 
-function startWithPM2(config: DeployConfig): void {
-    const args = [
-        'start', config.entry,
-        '--name', config.name,
-        '-i', 'max',
-        '--no-autorestart', // we use restart-on-crash via watch
-    ];
-    spawnSync('pm2', args, { stdio: 'inherit', shell: true });
-    execSync('pm2 save', { stdio: 'ignore' });
+function detectPackageManager(): string {
+    if (fs.existsSync('pnpm-lock.yaml')) return 'pnpm';
+    if (fs.existsSync('yarn.lock')) return 'yarn';
+    return 'npm';
 }
+
+function installDependencies(): void {
+    const pm = detectPackageManager();
+    const cmd = pm === 'yarn'
+        ? 'yarn install --production'
+        : pm === 'pnpm'
+            ? 'pnpm install --prod'
+            : 'npm install --omit=dev';
+    execSync(cmd, { stdio: 'ignore' });
+}
+
+function startWithPM2(config: DeployConfig): void {
+    const isTypeScript = config.entry.endsWith('.ts');
+
+    let args: string[];
+
+    if (isTypeScript) {
+        // TypeScript apps: use tsx to run directly
+        args = [
+            'start', config.entry,
+            '--name', config.name,
+            '-i', 'max',
+            '--interpreter', 'node',
+            '--interpreter-args', '--import tsx',
+        ];
+    } else {
+        args = [
+            'start', config.entry,
+            '--name', config.name,
+            '-i', 'max',
+        ];
+    }
+
+    spawnSync('pm2', args, { stdio: 'inherit', shell: true });
+
+    // Save process list so PM2 restores after reboot
+    execSync('pm2 save', { stdio: 'ignore' });
+
+    // Configure PM2 to auto-start on system reboot
+    try {
+        spawnSync('pm2', ['startup', 'systemd', '-u', process.env.USER || '$USER', '--hp', process.env.HOME || '$HOME'],
+            { stdio: 'ignore', shell: false });
+    } catch {
+        // Non-fatal — may need manual sudo on some systems
+        warn('  ⚠ Run "pm2 startup" manually with sudo to enable reboot persistence.');
+    }
+}
+
 
 function writeNginxConfig(config: DeployConfig): void {
     const serverNames = config.domains.join(' ');
@@ -213,7 +256,9 @@ export class DeployCommand implements ICommand {
 
         // Step 2: Install dependencies
         step(2, total, 'Installing dependencies...');
-        execSync('npm install --production', { stdio: 'ignore' });
+        const pm = detectPackageManager();
+        info(`  Using package manager: ${pm}`);
+        installDependencies();
         success('  ✔ Dependencies installed');
 
         // Step 3: Start with PM2
