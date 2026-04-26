@@ -17,3 +17,4 @@ export * from './Rules/Url';
 export * from './Rules/Boolean';
 export * from './Rules/IsArray';
 export * from './Rules/Confirmed';
+export * from './Rules/Unique';

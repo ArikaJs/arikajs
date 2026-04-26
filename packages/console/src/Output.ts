@@ -109,6 +109,41 @@ export class Output {
     }
 
     /**
+     * Ask for a choice from a list.
+     */
+    public async choice(question: string, choices: string[], defaultValue: string | null = null): Promise<string> {
+        this.writeln(`${this.colors.bold}${question}${this.colors.reset}`);
+        choices.forEach((choice, index) => {
+            this.writeln(`  [${this.colors.cyan}${index}${this.colors.reset}] ${choice}`);
+        });
+
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        const suffix = defaultValue ? ` (default: ${defaultValue})` : '';
+
+        return new Promise(resolve => {
+            rl.question(`> ${suffix}`, (answer) => {
+                rl.close();
+                if (!answer && defaultValue) return resolve(defaultValue);
+                
+                const index = parseInt(answer);
+                if (!isNaN(index) && choices[index]) {
+                    return resolve(choices[index]);
+                }
+                
+                // Fallback to literal search if it's not a number
+                const found = choices.find(c => c.toLowerCase() === answer.toLowerCase());
+                if (found) return resolve(found);
+
+                resolve(answer); // Return as is if not found, handler will deal with it
+            });
+        });
+    }
+
+    /**
      * Progress bar support.
      */
     protected progressTotal: number = 0;

@@ -20,12 +20,14 @@ import { RouteServiceProvider } from '@Providers/RouteServiceProvider';
 import { ConsoleServiceProvider } from '@Providers/ConsoleServiceProvider';
 import { AuthServiceProvider } from '@Providers/AuthServiceProvider';
 import { EventServiceProvider } from '@Providers/EventServiceProvider';
+import { DatabaseServiceProvider } from 'arikajs';
 
 app.register(AppServiceProvider);
 app.register(RouteServiceProvider);
 app.register(ConsoleServiceProvider);
 app.register(AuthServiceProvider);
 app.register(EventServiceProvider);
+app.register(DatabaseServiceProvider);
 
 /*
 |--------------------------------------------------------------------------

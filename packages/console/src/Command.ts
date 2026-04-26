@@ -76,6 +76,10 @@ export abstract class Command {
         return await this.output.ask(question, defaultValue);
     }
 
+    protected async choice(question: string, choices: string[], defaultValue: string | null = null): Promise<string> {
+        return await this.output.choice(question, choices, defaultValue);
+    }
+
     protected progressStart(total: number, message: string = '') {
         this.output.progressStart(total, message);
     }

@@ -85,3 +85,4 @@ export { Session, SessionManager, StartSession, SessionDriver, MemoryDriver as S
 // Re-export Carbon (Date & Time) items
 export { Carbon, carbon } from '@arikajs/carbon';
 export type { CarbonInput, DiffUnit, DiffForHumansOptions } from '@arikajs/carbon';
+export { DatabaseServiceProvider } from '@arikajs/database';

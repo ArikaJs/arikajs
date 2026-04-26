@@ -15,6 +15,7 @@ import { Url } from './Rules/Url';
 import { IsBoolean } from './Rules/Boolean';
 import { IsArray } from './Rules/IsArray';
 import { Confirmed } from './Rules/Confirmed';
+import { Unique } from './Rules/Unique';
 
 export class Validator {
     private data: Record<string, any>;
@@ -177,6 +178,14 @@ export class Validator {
                 break;
             case 'required_if':
                 rule = new RequiredIf(parameters[0], parameters[1], this.data);
+                break;
+            case 'unique':
+                rule = new Unique(
+                    parameters[0], // table
+                    parameters[1], // column
+                    parameters[2], // exceptId
+                    parameters[3]  // idColumn
+                );
                 break;
             case 'sometimes':
             case 'nullable':

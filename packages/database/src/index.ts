@@ -63,3 +63,4 @@ export type {
     ForeignKeyDefinition as ForeignKeyDefinitionInterface,
     SchemaCallback,
 } from './Contracts/Schema';
+export { DatabaseServiceProvider } from './DatabaseServiceProvider';
