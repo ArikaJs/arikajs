@@ -1,0 +1,52 @@
+{
+  "name": "arika-deploy",
+  "version": "0.1.0",
+  "description": "Zero-config deployment tool for Node.js apps (PM2 + Nginx/Apache + SSL)",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "arika": "dist/bin/arika-deploy.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && chmod +x dist/bin/arika-deploy.js",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "arikajs",
+    "deployment",
+    "pm2",
+    "nginx",
+    "apache",
+    "ssl",
+    "deploy",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArikaJs/arikajs.git",
+    "directory": "packages/arika-deploy"
+  },
+  "bugs": {
+    "url": "https://github.com/ArikaJs/arikajs/issues"
+  },
+  "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/arika-deploy#readme",
+  "author": "Prakash Tank",
+  "dependencies": {
+    "inquirer": "^8.2.7"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^8.2.12",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}

@@ -64,6 +64,22 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/arika-deploy:
+    dependencies:
+      inquirer:
+        specifier: ^8.2.7
+        version: 8.2.7(@types/node@20.19.39)
+    devDependencies:
+      '@types/inquirer':
+        specifier: ^8.2.12
+        version: 8.2.12
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.19.39
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/arikajs:
     dependencies:
       '@arikajs/auth':
