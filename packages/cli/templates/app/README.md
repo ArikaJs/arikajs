@@ -54,7 +54,7 @@ Your application will be running at `http://localhost:3000` 🎉
 ## 🤝 Community & Support
 
 - [GitHub Repository](https://github.com/arikajs/arikajs)
-- [Documentation](https://github.com/arikajs/arikajs#readme)
+- [Documentation](https://arikajs.github.io/)
 - [Issue Tracker](https://github.com/arikajs/arikajs/issues)
 
 ---

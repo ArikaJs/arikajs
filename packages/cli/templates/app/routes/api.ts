@@ -10,7 +10,7 @@ Route.get('/', () => {
         status: 'Online',
         message: 'Welcome to your premium ArikaJS Fullstack Application',
         links: {
-            docs: 'https://github.com/arikajs/arikajs#readme',
+            docs: 'https://arikajs.github.io/',
             github: 'https://github.com/arikajs/arikajs'
         }
     };
