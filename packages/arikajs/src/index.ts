@@ -9,7 +9,7 @@ export { Repository as Config } from '@arikajs/foundation';
 export { mix } from '@arikajs/foundation';
 
 // Re-export HTTP items
-export { Request, Response, FormRequest, Middleware, HttpException, NotFoundHttpException } from '@arikajs/http';
+export { Request, Response, Controller, FormRequest, Middleware, HttpException, NotFoundHttpException } from '@arikajs/http';
 export { 
     BodyParserMiddleware, 
     CorsMiddleware, 

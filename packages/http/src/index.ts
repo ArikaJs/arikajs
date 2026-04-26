@@ -17,3 +17,4 @@ export * from './Contracts/Application';
 export * from './HttpServiceProvider';
 export * from './Middleware/ServeStaticMiddleware';
 export * from './RawResponse';
+export * from './Controller';

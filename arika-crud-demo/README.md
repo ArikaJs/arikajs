@@ -51,9 +51,6 @@ Your application will be running at `http://localhost:3000` 🎉
 - **Middleware Pipeline**: Flexible request/response processing.
 - **Templating Engine**: Fast and intuitive HTML rendering.
 
-> [!TIP]
-> **Async Validation**: Since ArikaJS supports database-backed validation rules (like `unique`), the `Validator.fails()` method is **asynchronous**. Always use `await validator.fails()` or the built-in `await req.validate()` helper.
-
 ## 🤝 Community & Support
 
 - [GitHub Repository](https://github.com/arikajs/arikajs)

@@ -29,30 +29,21 @@ export abstract class DatabaseCommand extends Command {
             throw new Error('Database configuration not found. Please ensure config/database.ts exists.');
         }
 
-        // Use ts-node for .ts files
-        if (configPath.endsWith('.ts')) {
-            try {
-                // Register ts-node if it exists in the project
-                const tsNodePath = path.join(root, 'node_modules', 'ts-node');
-                if (fs.existsSync(tsNodePath)) {
-                    require(tsNodePath).register({ transpileOnly: true });
-                } else {
-                    // Fallback to global/environment ts-node register
-                    require('ts-node/register');
-                }
-            } catch (e) {
-                // Ignore if ts-node/register fails, maybe it's already handled by arika-cli runner
-            }
-        }
-
+        // Use dynamic import for both .ts and .js files
         try {
-            // Clear cache for the config file to ensure we get fresh values
-            delete require.cache[require.resolve(configPath)];
-            const configModule = require(configPath);
+            // We use the file:// protocol to ensure absolute paths work correctly across all environments
+            // Adding a timestamp query parameter busts the ESM cache to ensure fresh config values
+            const fileUrl = `file://${configPath}?v=${Date.now()}`;
+            const configModule = await import(fileUrl);
             const config = configModule.default || configModule;
+            
             return new DatabaseManager(config);
         } catch (error: any) {
-            throw new Error(`Failed to load database configuration: ${error.message}`);
+            let message = error.message;
+            if (message.includes('Could not locate the bindings file')) {
+                message = 'Native database bindings are missing. Please run "npm install better-sqlite3" to recompile them for your architecture.';
+            }
+            throw new Error(`Failed to load database configuration: ${message}`);
         }
     }
 }
