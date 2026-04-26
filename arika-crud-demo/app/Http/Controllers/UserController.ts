@@ -1,7 +1,7 @@
-import { Request, Response, Validator } from 'arikajs';
+import { Request, Response, Validator, Controller } from 'arikajs';
 import { User } from '@Models/User';
 
-export class UserController {
+export class UserController extends Controller {
     /**
      * Display a listing of the resource.
      */

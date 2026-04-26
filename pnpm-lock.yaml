@@ -281,6 +281,9 @@ importers:
       inquirer:
         specifier: ^8.2.7
         version: 8.2.7(@types/node@20.19.39)
+      jiti:
+        specifier: ^2.6.1
+        version: 2.6.1
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.19.39)(typescript@5.9.3)
@@ -3361,6 +3364,10 @@ packages:
     peerDependenciesMeta:
       node-notifier:
         optional: true
+
+  jiti@2.6.1:
+    resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
+    hasBin: true
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -8099,6 +8106,8 @@ snapshots:
       - babel-plugin-macros
       - supports-color
       - ts-node
+
+  jiti@2.6.1: {}
 
   js-tokens@4.0.0: {}
 

@@ -21,18 +21,12 @@ export class ApplicationLoader {
         const bootstrapPath = path.join(root, 'bootstrap', 'app.ts');
 
         if (fs.existsSync(bootstrapPath)) {
-            // Register ts-node to handle .ts files
-            require('ts-node/register');
-
             try {
-                require(path.join(root, 'node_modules', 'tsconfig-paths', 'register'));
-            } catch (e) {
-                // Ignore if tsconfig-paths is not installed
-            }
-
-            try {
-                // Require the app file, which should call createApp() and set the instance
-                const appModule = require(bootstrapPath);
+                const { createJiti } = await import('jiti');
+                const jiti = createJiti(typeof __filename !== 'undefined' ? __filename : process.cwd(), {
+                    interopDefault: true
+                });
+                const appModule = await jiti.import(bootstrapPath) as any;
                 const app = appModule.default || appModule;
 
                 return {

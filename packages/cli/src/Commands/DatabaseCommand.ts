@@ -31,13 +31,13 @@ export abstract class DatabaseCommand extends Command {
 
         // Use dynamic import for both .ts and .js files
         try {
-            // We use the file:// protocol to ensure absolute paths work correctly across all environments
-            // Adding a timestamp query parameter busts the ESM cache to ensure fresh config values
-            const fileUrl = `file://${configPath}?v=${Date.now()}`;
-            const configModule = await import(fileUrl);
-            const config = configModule.default || configModule;
+            const { createJiti } = await import('jiti');
+            const jiti = createJiti(typeof __filename !== 'undefined' ? __filename : process.cwd(), {
+                interopDefault: true
+            });
+            const config = await jiti.import(configPath) as any;
             
-            return new DatabaseManager(config);
+            return new DatabaseManager(config.default || config);
         } catch (error: any) {
             let message = error.message;
             if (message.includes('Could not locate the bindings file')) {

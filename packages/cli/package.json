@@ -41,14 +41,15 @@
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/cli#readme",
   "dependencies": {
-    "arikajs": "workspace:*",
     "@arikajs/benchmark": "workspace:*",
     "@arikajs/console": "workspace:*",
     "@arikajs/database": "workspace:*",
     "@arikajs/docs": "workspace:*",
     "@arikajs/scheduler": "workspace:*",
+    "arikajs": "workspace:*",
     "dotenv": "^16.4.5",
     "inquirer": "^8.2.7",
+    "jiti": "^2.6.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.3.3"
