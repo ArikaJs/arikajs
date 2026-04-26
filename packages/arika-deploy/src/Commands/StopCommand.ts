@@ -22,7 +22,7 @@ export class StopCommand implements ICommand {
     public async handle(_args: string[], _flags: Record<string, string | boolean>): Promise<void> {
         const name = getAppName();
         if (!name) {
-            console.error('\x1b[31m❌ No deployment config found. Run "arika-deploy deploy" first.\x1b[0m');
+            console.error('\x1b[31m❌ No deployment config found. Run "arika deploy" first.\x1b[0m');
             process.exit(1);
         }
         console.log(`\x1b[36m  Stopping "${name}"...\x1b[0m`);

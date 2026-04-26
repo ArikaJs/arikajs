@@ -22,7 +22,7 @@ export class CommandRegistry {
 
         if (!command) {
             console.error(`\x1b[31m❌ Unknown command: "${commandName}"\x1b[0m`);
-            console.log(`\nRun \x1b[36marika-deploy help\x1b[0m to see all available commands.\n`);
+            console.log(`\nRun \x1b[36marika help\x1b[0m to see all available commands.\n`);
             process.exit(1);
         }
 
