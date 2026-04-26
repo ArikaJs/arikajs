@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/console",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "The command system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -36,7 +36,9 @@
     "url": "https://github.com/ArikaJs/arikajs/issues"
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/console#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@arikajs/foundation": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^20.11.24",
     "typescript": "^5.3.3",

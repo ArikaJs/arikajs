@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/middleware",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Flexible, composable middleware system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -38,7 +38,8 @@
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/middleware#readme",
   "dependencies": {
     "@arikajs/http": "workspace:*",
-    "@arikajs/logging": "workspace:*"
+    "@arikajs/logging": "workspace:*",
+    "@arikajs/foundation": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

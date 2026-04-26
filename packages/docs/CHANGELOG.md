@@ -1,5 +1,23 @@
 # @arikajs/docs
 
+## 0.10.15
+
+### Patch Changes
+
+- fix: synchronize all workspace protocols
+- Updated dependencies
+  - @arikajs/console@0.10.15
+  - @arikajs/foundation@0.10.15
+  - @arikajs/router@0.10.15
+
+## 0.10.14
+
+### Patch Changes
+
+- @arikajs/foundation@0.10.14
+- @arikajs/router@0.10.14
+- @arikajs/console@0.10.14
+
 ## 0.10.13
 
 ### Patch Changes

@@ -66,6 +66,9 @@ importers:
 
   packages/arika-deploy:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       inquirer:
         specifier: ^8.2.7
         version: 8.2.7(@types/node@20.19.39)
@@ -92,7 +95,7 @@ importers:
         specifier: workspace:*
         version: link:../cache
       '@arikajs/carbon':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../carbon
       '@arikajs/config':
         specifier: workspace:*
@@ -173,6 +176,9 @@ importers:
 
   packages/auth:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
@@ -194,6 +200,10 @@ importers:
         version: 5.9.3
 
   packages/authorization:
+    dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
     devDependencies:
       '@types/node':
         specifier: ^20.11.24
@@ -204,6 +214,9 @@ importers:
 
   packages/benchmark:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       '@arikajs/http':
         specifier: workspace:*
         version: link:../http
@@ -232,6 +245,9 @@ importers:
 
   packages/cache:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       ioredis:
         specifier: ^5.9.3
         version: 5.10.1
@@ -269,6 +285,9 @@ importers:
       '@arikajs/docs':
         specifier: workspace:*
         version: link:../docs
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       '@arikajs/scheduler':
         specifier: workspace:*
         version: link:../scheduler
@@ -321,6 +340,10 @@ importers:
         version: 5.9.3
 
   packages/console:
+    dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
     devDependencies:
       '@types/node':
         specifier: ^20.11.24
@@ -334,6 +357,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       better-sqlite3:
         specifier: ^11.7.0
         version: 11.10.0
@@ -368,6 +394,9 @@ importers:
 
   packages/dispatcher:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       '@arikajs/middleware':
         specifier: workspace:*
         version: link:../middleware
@@ -402,6 +431,10 @@ importers:
         version: 5.9.3
 
   packages/encryption:
+    dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
     devDependencies:
       '@types/node':
         specifier: ^20.11.24
@@ -414,6 +447,10 @@ importers:
         version: 5.9.3
 
   packages/events:
+    dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
     devDependencies:
       '@types/node':
         specifier: ^20.11.24
@@ -431,18 +468,6 @@ importers:
         specifier: workspace:*
         version: link:../config
     devDependencies:
-      '@arikajs/cache':
-        specifier: workspace:*
-        version: link:../cache
-      '@arikajs/database':
-        specifier: workspace:*
-        version: link:../database
-      '@arikajs/http':
-        specifier: workspace:*
-        version: link:../http
-      '@arikajs/logging':
-        specifier: workspace:*
-        version: link:../logging
       '@types/node':
         specifier: ^20.19.31
         version: 20.19.39
@@ -452,6 +477,9 @@ importers:
 
   packages/http:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       '@arikajs/validation':
         specifier: workspace:*
         version: link:../validation
@@ -507,6 +535,10 @@ importers:
         version: 5.9.3
 
   packages/logging:
+    dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
     devDependencies:
       '@types/node':
         specifier: ^20.11.24
@@ -554,6 +586,9 @@ importers:
 
   packages/middleware:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       '@arikajs/http':
         specifier: workspace:*
         version: link:../http
@@ -570,6 +605,9 @@ importers:
 
   packages/queue:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       ioredis:
         specifier: ^5.9.3
         version: 5.10.1
@@ -589,6 +627,9 @@ importers:
       '@arikajs/dispatcher':
         specifier: workspace:*
         version: link:../dispatcher
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       '@arikajs/http':
         specifier: workspace:*
         version: link:../http
@@ -639,6 +680,9 @@ importers:
 
   packages/session:
     dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
       cookie:
         specifier: ^0.6.0
         version: 0.6.0
@@ -716,6 +760,10 @@ importers:
         version: 5.9.3
 
   packages/sweet:
+    dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
     devDependencies:
       '@types/node':
         specifier: ^20.11.24
@@ -728,6 +776,10 @@ importers:
         version: 5.9.3
 
   packages/validation:
+    dependencies:
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
     devDependencies:
       '@types/node':
         specifier: ^20.11.24
@@ -739,8 +791,11 @@ importers:
   packages/view:
     dependencies:
       '@arikajs/carbon':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../carbon
+      '@arikajs/foundation':
+        specifier: workspace:*
+        version: link:../foundation
     devDependencies:
       '@types/node':
         specifier: ^20.11.24

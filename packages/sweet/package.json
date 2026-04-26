@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/sweet",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Premium, advanced alerts and notifications for ArikaJS — with Glassmorphism and fluent API.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -36,5 +36,8 @@
     "@types/node": "^20.11.24",
     "typescript": "^5.3.3",
     "tsx": "^4.7.1"
+  },
+  "dependencies": {
+    "@arikajs/foundation": "workspace:*"
   }
 }

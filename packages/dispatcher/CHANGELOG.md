@@ -1,5 +1,19 @@
 # @arikajs/dispatcher
 
+## 0.10.15
+
+### Patch Changes
+
+- fix: synchronize all workspace protocols
+- Updated dependencies
+  - @arikajs/middleware@0.10.15
+
+## 0.10.14
+
+### Patch Changes
+
+- @arikajs/middleware@0.10.14
+
 ## 0.10.13
 
 ### Patch Changes

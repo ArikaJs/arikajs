@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/events",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Event dispatching and listener system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -36,7 +36,9 @@
     "url": "https://github.com/ArikaJs/arikajs/issues"
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/events#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@arikajs/foundation": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^20.11.24",
     "tsx": "^4.7.1",

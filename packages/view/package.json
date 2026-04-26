@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/view",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Server-side rendering and template engine for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -37,7 +37,8 @@
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/view#readme",
   "dependencies": {
-    "@arikajs/carbon": "workspace:^"
+    "@arikajs/carbon": "workspace:*",
+    "@arikajs/foundation": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

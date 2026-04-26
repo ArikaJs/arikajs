@@ -1,5 +1,22 @@
 # @arikajs/middleware
 
+## 0.10.15
+
+### Patch Changes
+
+- fix: synchronize all workspace protocols
+- Updated dependencies
+  - @arikajs/http@0.10.15
+  - @arikajs/logging@0.10.15
+
+## 0.10.14
+
+### Patch Changes
+
+- Updated dependencies
+  - @arikajs/http@0.10.14
+  - @arikajs/logging@0.10.14
+
 ## 0.10.13
 
 ### Patch Changes

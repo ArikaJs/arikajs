@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/localization",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Flexible and powerful localization system for ArikaJS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

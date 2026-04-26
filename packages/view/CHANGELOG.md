@@ -1,5 +1,19 @@
 # @arikajs/view
 
+## 0.10.15
+
+### Patch Changes
+
+- fix: synchronize all workspace protocols
+- Updated dependencies
+  - @arikajs/carbon@0.10.15
+
+## 0.10.14
+
+### Patch Changes
+
+- @arikajs/carbon@0.10.14
+
 ## 0.10.13
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/foundation",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Core application and service container layer for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -42,10 +42,6 @@
     "@arikajs/config": "workspace:*"
   },
   "devDependencies": {
-    "@arikajs/logging": "workspace:*",
-    "@arikajs/http": "workspace:*",
-    "@arikajs/database": "workspace:*",
-    "@arikajs/cache": "workspace:*",
     "@types/node": "^20.19.31",
     "typescript": "^5.7.0"
   },

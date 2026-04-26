@@ -1,6 +1,6 @@
 {
   "name": "arikajs",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "The ArikaJS Framework.",
   "keywords": [
     "arikajs",
@@ -25,7 +25,7 @@
     "@arikajs/auth": "workspace:*",
     "@arikajs/authorization": "workspace:*",
     "@arikajs/cache": "workspace:*",
-    "@arikajs/carbon": "workspace:^",
+    "@arikajs/carbon": "workspace:*",
     "@arikajs/config": "workspace:*",
     "@arikajs/console": "workspace:*",
     "@arikajs/database": "workspace:*",

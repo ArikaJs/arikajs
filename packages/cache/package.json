@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/cache",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Simple, fast, and driver-based caching system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -37,7 +37,8 @@
   },
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/cache#readme",
   "dependencies": {
-    "ioredis": "^5.9.3"
+    "ioredis": "^5.9.3",
+    "@arikajs/foundation": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

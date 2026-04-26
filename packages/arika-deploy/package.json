@@ -1,12 +1,12 @@
 {
   "name": "arika-deploy",
-  "version": "0.10.12",
+  "version": "0.10.19",
   "description": "Zero-config deployment tool for Node.js apps (PM2 + Nginx/Apache + SSL)",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "arika": "dist/bin/arika-deploy.js"
+    "arika-deploy": "dist/bin/arika-deploy.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && chmod +x dist/bin/arika-deploy.js",
@@ -42,7 +42,8 @@
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/arika-deploy#readme",
   "author": "Prakash Tank",
   "dependencies": {
-    "inquirer": "^8.2.7"
+    "inquirer": "^8.2.7",
+    "@arikajs/foundation": "workspace:*"
   },
   "devDependencies": {
     "@types/inquirer": "^8.2.12",

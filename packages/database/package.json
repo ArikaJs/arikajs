@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/database",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Database layer for the ArikaJS framework with MySQL & PostgreSQL support.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -40,7 +40,8 @@
     "better-sqlite3": "^11.7.0",
     "mongodb": "^7.1.0",
     "mysql2": "^3.11.5",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "@arikajs/foundation": "workspace:*"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.12",

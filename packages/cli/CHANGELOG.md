@@ -1,5 +1,31 @@
 # @arikajs/cli
 
+## 0.10.15
+
+### Patch Changes
+
+- fix: synchronize all workspace protocols
+- Updated dependencies
+  - arikajs@0.10.15
+  - @arikajs/benchmark@0.10.15
+  - @arikajs/console@0.10.15
+  - @arikajs/database@0.10.15
+  - @arikajs/docs@0.10.15
+  - @arikajs/scheduler@0.10.15
+
+## 0.10.14
+
+### Patch Changes
+
+- fix: use jiti for robust CLI loading, add base Controller class, and improve async validation awareness
+- Updated dependencies
+  - arikajs@0.10.14
+  - @arikajs/benchmark@0.10.14
+  - @arikajs/docs@0.10.14
+  - @arikajs/console@0.10.14
+  - @arikajs/database@0.10.14
+  - @arikajs/scheduler@0.10.14
+
 ## 0.10.13
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/validation",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Powerful, expressive validation system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -40,5 +40,8 @@
     "@types/node": "^20.11.24",
     "typescript": "^5.3.3"
   },
-  "author": "Prakash Tank"
+  "author": "Prakash Tank",
+  "dependencies": {
+    "@arikajs/foundation": "workspace:*"
+  }
 }

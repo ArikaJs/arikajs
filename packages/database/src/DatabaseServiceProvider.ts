@@ -17,10 +17,6 @@ export class DatabaseServiceProvider extends ServiceProvider {
             return this.app.make(DatabaseManager).connection();
         });
 
-        // Initialize Facade
-        this.app.make(DatabaseManager); 
-        Database.setManager(this.app.make(DatabaseManager));
-        
         // Alias
         this.app.alias(Database, 'db');
     }
@@ -29,6 +25,9 @@ export class DatabaseServiceProvider extends ServiceProvider {
      * Bootstrap any application services.
      */
     public boot(): void {
+        // Initialize Facade
+        Database.setManager(this.app.make(DatabaseManager));
+        
         DatabaseValidation.register();
     }
 }

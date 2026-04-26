@@ -1,6 +1,6 @@
 {
   "name": "@arikajs/auth",
-  "version": "0.10.13",
+  "version": "0.10.19",
   "description": "Flexible, multi-guard authentication system for the ArikaJS framework.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -38,7 +38,8 @@
   "homepage": "https://github.com/ArikaJs/arikajs/tree/main/packages/auth#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "@arikajs/foundation": "workspace:*"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

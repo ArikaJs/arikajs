@@ -1,5 +1,65 @@
 # arikajs
 
+## 0.10.15
+
+### Patch Changes
+
+- fix: synchronize all workspace protocols
+- Updated dependencies
+  - @arikajs/auth@0.10.15
+  - @arikajs/authorization@0.10.15
+  - @arikajs/cache@0.10.15
+  - @arikajs/carbon@0.10.15
+  - @arikajs/config@0.10.15
+  - @arikajs/console@0.10.15
+  - @arikajs/database@0.10.15
+  - @arikajs/dispatcher@0.10.15
+  - @arikajs/encryption@0.10.15
+  - @arikajs/events@0.10.15
+  - @arikajs/foundation@0.10.15
+  - @arikajs/http@0.10.15
+  - @arikajs/localization@0.10.15
+  - @arikajs/logging@0.10.15
+  - @arikajs/mail@0.10.15
+  - @arikajs/middleware@0.10.15
+  - @arikajs/queue@0.10.15
+  - @arikajs/router@0.10.15
+  - @arikajs/scheduler@0.10.15
+  - @arikajs/session@0.10.15
+  - @arikajs/storage@0.10.15
+  - @arikajs/validation@0.10.15
+  - @arikajs/view@0.10.15
+
+## 0.10.14
+
+### Patch Changes
+
+- fix: use jiti for robust CLI loading, add base Controller class, and improve async validation awareness
+- Updated dependencies
+  - @arikajs/http@0.10.14
+  - @arikajs/foundation@0.10.14
+  - @arikajs/middleware@0.10.14
+  - @arikajs/router@0.10.14
+  - @arikajs/dispatcher@0.10.14
+  - @arikajs/storage@0.10.14
+  - @arikajs/auth@0.10.14
+  - @arikajs/authorization@0.10.14
+  - @arikajs/cache@0.10.14
+  - @arikajs/carbon@0.10.14
+  - @arikajs/config@0.10.14
+  - @arikajs/console@0.10.14
+  - @arikajs/database@0.10.14
+  - @arikajs/encryption@0.10.14
+  - @arikajs/events@0.10.14
+  - @arikajs/localization@0.10.14
+  - @arikajs/logging@0.10.14
+  - @arikajs/mail@0.10.14
+  - @arikajs/queue@0.10.14
+  - @arikajs/scheduler@0.10.14
+  - @arikajs/session@0.10.14
+  - @arikajs/validation@0.10.14
+  - @arikajs/view@0.10.14
+
 ## 0.10.13
 
 ### Patch Changes
