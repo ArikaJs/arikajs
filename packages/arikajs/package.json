@@ -18,7 +18,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && cp -R src/http/views dist/http/",
     "clean": "rm -rf dist",
-    "test": "npx tsx tests/Framework.test.ts",
+    "test": "npx tsx --test tests/*.test.ts",
     "dev": "tsc -p tsconfig.json --watch"
   },
   "dependencies": {

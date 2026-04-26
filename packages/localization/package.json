@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "jest",
+    "test": "npx tsx --test tests/*.test.ts",
     "prepublishOnly": "npm run build",
     "dev": "tsc -p tsconfig.json --watch"
   },

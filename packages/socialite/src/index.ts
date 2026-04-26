@@ -1,5 +1,5 @@
 import { SocialiteManager } from './SocialiteManager.js';
-import { Provider, User } from './Contracts/index.js';
+import type { Provider, User } from './Contracts/index.js';
 
 export let socialite: SocialiteManager;
 
@@ -36,7 +36,8 @@ export class Socialite {
     }
 }
 
-export { SocialiteManager, Provider, User };
+export { SocialiteManager };
+export type { Provider, User };
 export { AbstractProvider } from './Providers/AbstractProvider.js';
 export { GoogleProvider } from './Providers/GoogleProvider.js';
 export { GithubProvider } from './Providers/GithubProvider.js';

@@ -10,7 +10,7 @@
     "build:tests": "tsc -p tsconfig.test.json",
     "clean": "rm -rf dist",
     "prepare": "echo skip",
-    "test": "npx tsx tests/Database.test.ts",
+    "test": "npx tsx --test tests/*.test.ts",
     "test:watch": "npx tsx --watch tests/Database.test.ts",
     "dev": "tsc -p tsconfig.json --watch"
   },

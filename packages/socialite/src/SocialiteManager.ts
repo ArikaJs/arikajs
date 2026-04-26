@@ -1,5 +1,5 @@
 
-import { Provider } from './Contracts/index.js';
+import type { Provider } from './Contracts/index.js';
 import { GoogleProvider } from './Providers/GoogleProvider.js';
 import { GithubProvider } from './Providers/GithubProvider.js';
 import { FacebookProvider } from './Providers/FacebookProvider.js';

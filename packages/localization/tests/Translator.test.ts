@@ -1,3 +1,5 @@
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert';
 import { Translator } from '../src/Translator';
 
 describe('Translator Pluralization', () => {
@@ -11,25 +13,25 @@ describe('Translator Pluralization', () => {
         });
     });
 
-    test('it can choose zero form', () => {
-        expect(translator.choice('auth.apples', 0)).toBe('No apples');
+    it('it can choose zero form', () => {
+        assert.strictEqual(translator.choice('auth.apples', 0), 'No apples');
     });
 
-    test('it can choose singular form', () => {
-        expect(translator.choice('auth.apples', 1)).toBe('One apple');
+    it('it can choose singular form', () => {
+        assert.strictEqual(translator.choice('auth.apples', 1), 'One apple');
     });
 
-    test('it can choose plural form with range', () => {
-        expect(translator.choice('auth.apples', 5)).toBe('5 apples');
-        expect(translator.choice('auth.apples', 10)).toBe('10 apples');
+    it('it can choose plural form with range', () => {
+        assert.strictEqual(translator.choice('auth.apples', 5), '5 apples');
+        assert.strictEqual(translator.choice('auth.apples', 10), '10 apples');
     });
 
-    test('it can choose simple singular/plural', () => {
-        expect(translator.choice('auth.simple', 1)).toBe('Singular');
-        expect(translator.choice('auth.simple', 2)).toBe('Plural');
+    it('it can choose simple singular/plural', () => {
+        assert.strictEqual(translator.choice('auth.simple', 1), 'Singular');
+        assert.strictEqual(translator.choice('auth.simple', 2), 'Plural');
     });
 
-    test('it returns key if not found', () => {
-        expect(translator.choice('auth.missing', 1)).toBe('auth.missing');
+    it('it returns key if not found', () => {
+        assert.strictEqual(translator.choice('auth.missing', 1), 'auth.missing');
     });
 });

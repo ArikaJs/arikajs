@@ -9,7 +9,7 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist",
     "prepare": "echo skip",
-    "test": "npm run build && node --test dist/tests",
+    "test": "npx tsx --test tests/*.test.ts",
     "test:watch": "npm run build && node --test --watch dist/tests",
     "dev": "tsc -p tsconfig.json --watch"
   },
