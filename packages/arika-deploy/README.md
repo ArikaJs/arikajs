@@ -1,179 +1,280 @@
 # Arika Deploy 🚀
-> Zero-config deployment tool for Node.js apps (PM2 + Nginx/Apache + SSL)
+> Zero-config deployment tool for ArikaJS apps — PM2 + Nginx/Apache + SSL, fully automated.
 
-Arika Deploy is a developer-first deployment tool designed to make Node.js app deployment **simple, automated, and repeatable**.
+Arika Deploy is a developer-first deployment tool. You built your app with **ArikaJS** — now deploy it to a real server in minutes, without touching Nginx configs, PM2 setup, or SSL certificates manually.
 
-No more manual setup of:
-- PM2 ❌
-- Nginx / Apache ❌
-- SSL ❌
-- Ports ❌
-
-Just run:
 ```bash
+npm install -g arika-deploy
 arika deploy
 ```
 
-## ✨ Features
+That's it. ✅
 
-**🔹 Zero-Config Deploy**
-- First time: interactive setup
-- Next time: fully automatic
+---
 
-**🔹 Smart Server Detection**
-Detects:
-- Nginx
-- Apache
-- None → installs Nginx
+## 📋 Table of Contents
+- [How It Works](#-how-it-works)
+- [Complete Deployment Guide](#-complete-deployment-guide-step-by-step)
+- [Commands Reference](#-commands-reference)
+- [Configuration](#-configuration)
+- [Web Server Config](#-web-server-config)
+- [SSL Setup](#-ssl-setup)
+- [Common Errors](#-common-errors)
+- [Future Roadmap](#-future-roadmap)
 
-**🔹 PM2 Integration (Hidden)**
-- Auto install PM2
-- Runs app in cluster mode
-- Auto restart on crash
+---
 
-**🔹 SSL Support (HTTPS)**
-- Free SSL using Let's Encrypt
-- Auto renewal
+## 🔍 How It Works
 
-**🔹 Multiple Domains**
-Supports: `example.com`, `www.example.com`, `api.example.com`
-
-**🔹 Logs & Debugging**
-- `arika logs`
-- `arika status`
-- `arika restart`
-- `arika stop`
-
-**🔹 Smart Error Handling**
-Clear errors with fixes:
-```text
-❌ Nginx not installed
-👉 Run: sudo apt install nginx
+```
+Developer's Machine          Linux Server
+      │                           │
+      │  git push / scp           │
+      │ ─────────────────────────>│
+      │                           │
+      │                    arika deploy
+      │                           │
+      │                   ┌───────▼────────┐
+      │                   │  PM2 (Node App)│
+      │                   └───────┬────────┘
+      │                           │
+      │                   ┌───────▼────────┐
+      │                   │ Nginx / Apache  │
+      │                   └───────┬────────┘
+      │                           │
+      │                   ┌───────▼────────┐
+      │                   │  SSL (HTTPS)   │
+      │                   └───────┬────────┘
+      │                           │
+   Browser ──────────────────────>│ https://example.com
 ```
 
-## 📦 Installation
+---
+
+## 🚀 Complete Deployment Guide (Step by Step)
+
+This guide takes you from **zero → live HTTPS app** on a Linux server.
+
+---
+
+### Step 1 — Get a Linux Server
+
+You need a VPS (Virtual Private Server). Recommended providers:
+- [DigitalOcean](https://digitalocean.com) (Droplet — $6/mo)
+- [Vultr](https://vultr.com)
+- [Hetzner](https://hetzner.com)
+- [AWS EC2](https://aws.amazon.com/ec2/)
+
+> **Recommended:** Ubuntu 22.04 LTS, minimum 1GB RAM.
+
+---
+
+### Step 2 — Point Your Domain to the Server
+
+Go to your domain registrar's DNS settings and add an **A Record**:
+
+| Type | Name | Value |
+|------|------|-------|
+| A | `@` | `YOUR_SERVER_IP` |
+| A | `www` | `YOUR_SERVER_IP` |
+
+> ⏳ DNS propagation can take 5–30 minutes.
+
+---
+
+### Step 3 — Connect to Your Server
+
+```bash
+ssh root@YOUR_SERVER_IP
+```
+
+---
+
+### Step 4 — Install Node.js on the Server
+
+```bash
+# Install Node.js 20 (LTS)
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Verify
+node -v   # v20.x.x
+npm -v    # 10.x.x
+```
+
+---
+
+### Step 5 — Install Arika Deploy (Global)
+
 ```bash
 npm install -g arika-deploy
 ```
 
-## 🚀 Usage
-
-### 1. Deploy App
+Verify installation:
 ```bash
+arika help
+```
+
+---
+
+### Step 6 — Upload Your ArikaJS App to the Server
+
+**Option A — Clone from Git (Recommended)**
+```bash
+cd /var/www
+git clone https://github.com/your-username/your-app.git
+cd your-app
+```
+
+**Option B — Upload via SCP from your local machine**
+```bash
+scp -r ./my-app root@YOUR_SERVER_IP:/var/www/my-app
+```
+
+---
+
+### Step 7 — Set Up Environment Variables
+
+```bash
+cd /var/www/your-app
+cp .env.example .env
+nano .env
+```
+
+Set your production values:
+```env
+NODE_ENV=production
+PORT=3000
+DB_HOST=localhost
+APP_KEY=your-secret-key
+```
+
+---
+
+### Step 8 — Run Doctor (Health Check)
+
+Before deploying, verify your server has everything needed:
+
+```bash
+arika doctor
+```
+
+**Expected output on a fresh server:**
+```text
+🩺 Arika Deploy — Doctor
+
+  ✅ Node.js installed (>=16)
+  ✅ npm installed
+  ❌ PM2 installed
+     👉 Run: npm install -g pm2
+  ❌ Nginx installed
+     👉 Run: sudo apt install nginx
+  ❌ Certbot (SSL) installed
+     👉 Run: sudo apt install certbot python3-certbot-nginx
+  ✅ Git installed
+```
+
+Fix any missing tools, then run `arika doctor` again until all are ✅.
+
+---
+
+### Step 9 — Deploy 🚀
+
+```bash
+cd /var/www/your-app
 arika deploy
 ```
 
-**First Run (Interactive Mode)**
+**First time — it will ask you a few questions:**
 ```text
-? Domain: example.com
-? Use existing web server? (auto-detected)
-? Enable SSL? (Y/n)
-? App port (default: from .env or 3000)
+📋 First-time setup (answers saved for next run):
+
+  Domain(s) [comma separated, e.g. example.com,www.example.com]: example.com,www.example.com
+  App port [default: 3000]:
+  Entry file [default: server.js]:
+  Web server [nginx/apache/none, auto-detected: nginx]:
+  Enable SSL (Let's Encrypt)? [Y/n]: Y
 ```
 
-**Output**
+**Then it runs automatically:**
 ```text
-🚀 Deploying...
+🚀 Arika Deploy
+─────────────────────────────────
+  ✔ Config saved to .arika/config.json
 
-[1/5] Checking environment...
-[2/5] Installing dependencies...
-[3/5] Starting app with PM2...
-[4/5] Configuring web server...
-[5/5] Setting up SSL...
+[1/5] Checking environment...     ✔
+[2/5] Installing dependencies...  ✔
+[3/5] Starting app with PM2...    ✔
+[4/5] Configuring web server...   ✔
+[5/5] Setting up SSL...           ✔
 
+─────────────────────────────────
 ✅ App running at https://example.com
 ```
 
-### 2. Deploy Without Questions
+---
+
+### Step 10 — Verify It's Running
+
 ```bash
+arika status      # PM2 process list
+arika logs        # Live logs
+```
+
+Open your browser: **https://example.com** 🎉
+
+---
+
+### Next Deployments (Fully Automatic)
+
+After the first deploy, every future deploy is one command — no questions asked:
+
+```bash
+git pull
 arika deploy --yes
 ```
 
-### 3. Force Specific Server
-```bash
-arika deploy --nginx
-arika deploy --apache
-```
+Config is saved in `.arika/config.json` — everything is remembered.
 
-### 4. Disable Features
-```bash
-arika deploy --no-nginx
-arika deploy --no-ssl
-```
+---
+
+## 🔧 Commands Reference
+
+| Command | Description |
+|---------|-------------|
+| `arika deploy` | Deploy the app (interactive first time) |
+| `arika deploy --yes` | Deploy using saved config (no prompts) |
+| `arika deploy --nginx` | Force Nginx as web server |
+| `arika deploy --apache` | Force Apache as web server |
+| `arika deploy --no-ssl` | Skip SSL setup |
+| `arika logs` | View live logs |
+| `arika logs --error` | View error logs only |
+| `arika status` | Show PM2 process status |
+| `arika restart` | Restart the app |
+| `arika stop` | Stop the app |
+| `arika remove` | Remove the full deployment |
+| `arika doctor` | Check environment health |
+
+---
 
 ## ⚙️ Configuration
-After first deploy, config is saved at: `.arika/config.json`
 
-Example:
+After first deploy, config is saved at `.arika/config.json`:
+
 ```json
 {
   "name": "my-app",
   "domains": ["example.com", "www.example.com"],
   "port": 3000,
   "server": "nginx",
-  "ssl": true
+  "ssl": true,
+  "entry": "server.js"
 }
 ```
 
-## 🔍 How It Works
+Edit this file anytime to change settings, then run `arika deploy --yes`.
 
-**Flow:**
-```
-User → Domain → Nginx/Apache → PM2 → Node App
-```
-
-**Internally Arika:**
-1. Detects environment
-2. Installs missing dependencies
-3. Starts app via PM2
-4. Configures reverse proxy
-5. Sets up SSL (optional)
-
-### 🧠 Smart Detection Logic
-| Scenario | Action |
-|----------|--------|
-| Nginx installed | Use Nginx |
-| Apache installed | Ask or use Apache |
-| None installed | Install Nginx |
-
-## 🔧 Commands
-
-**Logs**
-```bash
-arika logs
-arika logs --error
-```
-
-**Status**
-```bash
-arika status
-```
-
-**Restart App**
-```bash
-arika restart
-```
-
-**Stop App**
-```bash
-arika stop
-```
-
-**Remove Deployment**
-```bash
-arika remove
-```
-
-## 🩺 Doctor (Health Check)
-```bash
-arika doctor
-```
-**Output:**
-```text
-✅ Node installed
-✅ PM2 installed
-❌ Nginx missing
-```
+---
 
 ## 🌐 Web Server Config
 
@@ -181,10 +282,15 @@ arika doctor
 ```nginx
 server {
     listen 80;
-    server_name example.com;
+    server_name example.com www.example.com;
 
     location / {
         proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
     }
 }
 ```
@@ -193,28 +299,33 @@ server {
 ```apache
 <VirtualHost *:80>
     ServerName example.com
+    ServerAlias www.example.com
 
     ProxyPass / http://localhost:3000/
     ProxyPassReverse / http://localhost:3000/
 </VirtualHost>
 ```
 
-## 🔐 SSL Setup
-- Uses Let's Encrypt
-- Auto HTTPS redirect
-- Auto renewal enabled
+---
 
-## ⚠️ Requirements
-- Node.js >= 16
-- Linux server (Ubuntu recommended)
-- Root or sudo access
+## 🔐 SSL Setup
+
+Arika Deploy uses **Let's Encrypt** (free SSL) via Certbot:
+- Auto installs Certbot if missing
+- Generates certificate for all your domains
+- Enables automatic HTTPS redirect
+- Auto renewal configured
+
+> ⚠️ SSL requires your domain's DNS to be pointing to the server **before** running deploy.
+
+---
 
 ## ❌ Common Errors
 
 **Port Already in Use**
 ```text
 ❌ Port 3000 is busy
-👉 Suggested: 3001
+👉 Change PORT in your .env file or edit .arika/config.json
 ```
 
 **Permission Denied**
@@ -226,30 +337,66 @@ server {
 **SSL Failed**
 ```text
 ❌ Domain not pointing to server
-👉 Fix DNS A record
+👉 Fix your DNS A record to point to this server's IP
+👉 Wait 5–30 minutes for DNS to propagate, then retry
 ```
+
+**Nginx not installed**
+```text
+❌ Nginx not installed
+👉 Run: sudo apt install nginx
+```
+
+---
+
+## ⚠️ Requirements
+
+- Node.js >= 16
+- Linux server (Ubuntu 20.04+ recommended)
+- Root or sudo access
+- Domain pointing to your server (for SSL)
+
+---
 
 ## 📁 Project Structure
+
 ```text
-project/
-├── .env
+your-app/
+├── .env                  ← Environment variables
 ├── .arika/
-│   └── config.json
-├── app.js / server.js
+│   └── config.json       ← Auto-generated deploy config
+├── server.js / app.js    ← App entry point
+└── package.json
 ```
 
+---
+
+## 📦 Installation
+
+```bash
+npm install -g arika-deploy
+```
+
+---
+
 ## 🔮 Future Roadmap
-- Remote deploy (`--host`)
-- CI/CD integration
+- Remote deploy (`--host`) — deploy from local machine directly
+- CI/CD integration (GitHub Actions support)
 - Docker support
-- Git-based auto deploy
+- Git-based auto deploy (webhook trigger)
 - Dashboard UI
 
+---
+
 ## 🤝 Contributing
-Pull requests are welcome.
+Pull requests are welcome. Please open an issue first for major changes.
+
+---
 
 ## 📄 License
 MIT
+
+---
 
 ## 💡 Vision
 Arika Deploy is not just a deployment tool.
