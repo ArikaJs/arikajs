@@ -11,6 +11,9 @@
 [![Performance](https://img.shields.io/badge/Performance-2.6x_Faster_than_Express-orange.svg)](#-blazing-fast-performance)
 [![Speed](https://img.shields.io/badge/Speed-Outperforms_Fastify-red.svg)](#-blazing-fast-performance)
 [![Discord](https://img.shields.io/badge/discord-join-7289da?style=flat&logo=discord&logoColor=white)](https://discord.gg/XUTjzwjrHK)
+[![Docs](https://img.shields.io/badge/docs-arikajs.github.io-green.svg)](https://arikajs.github.io/)
+
+📖 **[Official Documentation → arikajs.github.io](https://arikajs.github.io/)**
 
 </div>
 
@@ -41,6 +44,7 @@ This monorepo contains all the core packages that make up the ArikaJS framework:
 | [`arikajs`](./packages/arikajs) | [![npm](https://img.shields.io/npm/v/arikajs.svg)](https://www.npmjs.com/package/arikajs) | Main framework package |
 | [`@arikajs/cli`](./packages/cli) | [![npm](https://img.shields.io/npm/v/@arikajs/cli.svg)](https://www.npmjs.com/package/@arikajs/cli) | Command-line interface |
 | [`@arikajs/foundation`](./packages/foundation) | [![npm](https://img.shields.io/npm/v/@arikajs/foundation.svg)](https://www.npmjs.com/package/@arikajs/foundation) | Application foundation |
+| [`arika-deploy`](./packages/arika-deploy) | [![npm](https://img.shields.io/npm/v/arika-deploy.svg)](https://www.npmjs.com/package/arika-deploy) | Zero-config deployment tool (PM2 + Nginx + SSL) |
 
 ### HTTP & Routing
 
@@ -242,8 +246,9 @@ ArikaJS draws inspiration from the best practices and design patterns of modern 
 
 ## 💬 Community
 
-- 📖 [Documentation](https://github.com/arikajs/arikajs#readme)
+- 📖 **[Official Documentation](https://arikajs.github.io/)** — Full guides, API reference & examples
 - 💬 [Discord](https://discord.gg/XUTjzwjrHK)
+- ⭐ [GitHub](https://github.com/ArikaJs/arikajs)
 
 ---
 
@@ -251,6 +256,6 @@ ArikaJS draws inspiration from the best practices and design patterns of modern 
 
 **Built with ❤️ by [Prakash Tank](https://github.com/prakashtank) and contributors**
 
-[GitHub](https://github.com/arikajs) • [npm](https://www.npmjs.com/package/arikajs)
+[Documentation](https://arikajs.github.io/) • [GitHub](https://github.com/arikajs) • [npm](https://www.npmjs.com/package/arikajs) • [Discord](https://discord.gg/XUTjzwjrHK)
 
 </div>
