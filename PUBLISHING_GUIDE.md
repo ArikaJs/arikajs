@@ -115,3 +115,97 @@ The publish process will intentionally halt if `turbo build` fails. Investigate 
 ---
 
 **Happy publishing! 🚀**
+
+---
+
+## 🌿 Version Branch Workflow (Recommended)
+
+After publishing to npm, it is best practice to create a **version branch** in the repository that permanently marks the exact state of the code for that release. This makes it easy to hot-fix old versions without touching `main`.
+
+### The Complete Publish → Branch Flow
+
+```
+Validate → npm publish → Create version branch → Push branch
+```
+
+### Step-by-Step
+
+#### 1. Validate the Package Before Publishing
+
+Run a dry-run to confirm the package looks correct before it goes live on npm:
+
+```bash
+# Check what files will be included in the published package
+npm pack --dry-run
+
+# Verify the binary works
+node dist/bin/arika-deploy.js help
+
+# Run doctor to check the tool itself
+node dist/bin/arika-deploy.js doctor
+```
+
+#### 2. Publish to npm
+
+```bash
+# For monorepo packages (using pnpm changesets)
+pnpm release
+
+# For standalone package (e.g. arika-deploy)
+cd packages/arika-deploy
+npm publish --access public
+```
+
+#### 3. Create a Version Branch
+
+Once published, immediately create a branch named after the version:
+
+```bash
+# Format: release/v<version>
+# Example for version 0.1.0:
+git checkout -b release/v0.1.0
+
+git push origin release/v0.1.0
+```
+
+> **Branch Naming Convention:**
+> | Release Type | Branch Name |
+> |---|---|
+> | Major release | `release/v1.0.0` |
+> | Minor release | `release/v0.2.0` |
+> | Patch / hotfix | `release/v0.1.1` |
+
+#### 4. Go Back to `main` for Next Development
+
+```bash
+git checkout main
+```
+
+### Why This Matters
+
+| Benefit | Description |
+|---------|-------------|
+| 🔖 **Permanent snapshot** | The branch captures the exact code that was published |
+| 🔥 **Hotfix support** | If a bug is found in v0.1.0, checkout `release/v0.1.0`, fix, publish `v0.1.1` |
+| 🧹 **Clean `main`** | `main` always has the latest development code |
+| 🏷️ **GitHub Releases** | Each version branch maps to a GitHub Release tag |
+
+### Full Example (arika-deploy v0.1.0)
+
+```bash
+# 1. Validate
+cd packages/arika-deploy
+node dist/bin/arika-deploy.js help
+npm pack --dry-run
+
+# 2. Publish
+npm publish --access public
+
+# 3. Create version branch
+cd ../..  # back to monorepo root
+git checkout -b release/v0.1.0
+git push origin release/v0.1.0
+
+# 4. Back to main
+git checkout main
+```
